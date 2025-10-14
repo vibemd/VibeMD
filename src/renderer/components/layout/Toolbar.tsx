@@ -2,6 +2,7 @@ import {
   FileText, 
   FolderOpen, 
   Save, 
+  SaveAs,
   Printer, 
   Settings 
 } from 'lucide-react';
@@ -63,6 +64,18 @@ export function Toolbar() {
       }
     } else {
       await fileService.saveFile(doc.filepath, doc.content);
+      markAsSaved(doc.id);
+    }
+  };
+
+  const handleSaveAs = async () => {
+    const doc = getActiveDocument();
+    if (!doc) return;
+
+    const filepath = await fileService.saveFileAs(doc.content, doc.filepath);
+    if (filepath) {
+      updateDocument(doc.id, { filepath });
+      await fileService.saveFile(filepath, doc.content);
       markAsSaved(doc.id);
     }
   };
@@ -149,6 +162,24 @@ export function Toolbar() {
           </TooltipTrigger>
           <TooltipContent>
             <p>Save Document (Ctrl+S)</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSaveAs}
+              className="gap-2"
+              disabled={!activeDoc}
+            >
+              <SaveAs className="h-4 w-4" />
+              Save As
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Save Document As (Ctrl+Shift+S)</p>
           </TooltipContent>
         </Tooltip>
 

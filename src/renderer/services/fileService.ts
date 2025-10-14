@@ -1,8 +1,12 @@
 import { Document } from '@shared/types';
 
 export class FileService {
+  private generateId(): string {
+    return `doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
+
   async createNewFile(): Promise<string> {
-    return await window.electronAPI.fileNew();
+    return this.generateId();
   }
 
   async openFile(): Promise<Omit<Document, 'isModified' | 'lastSaved'> | null> {
@@ -10,7 +14,7 @@ export class FileService {
     if (!result) return null;
 
     return {
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      id: this.generateId(),
       filename: result.filename,
       filepath: result.filepath,
       content: result.content,

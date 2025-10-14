@@ -14,6 +14,7 @@ ipcMain.handle('file:open', async () => {
     properties: ['openFile'],
     filters: [
       { name: 'Markdown Files', extensions: ['md', 'markdown'] },
+      { name: 'Template Files', extensions: ['vibe'] },
       { name: 'All Files', extensions: ['*'] }
     ]
   });
@@ -23,11 +24,12 @@ ipcMain.handle('file:open', async () => {
     try {
       const content = await readFile(filepath, 'utf-8');
       const filename = filepath.split('/').pop() || 'Untitled.md';
+      const isTemplate = filepath.endsWith('.vibe');
       return {
-        id: `file-${Date.now()}`,
         filename,
         filepath,
-        content
+        content,
+        isTemplate
       };
     } catch (error) {
       console.error('Error reading file:', error);
