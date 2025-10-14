@@ -24,8 +24,8 @@ export function StatusBar() {
   }, [activeDocument?.lastSaved]);
 
   return (
-    <div style={{ height: '2rem', borderTop: '1px solid hsl(var(--border))' }} className="test-flex test-items-center test-px-4 test-text-sm test-text-muted-foreground test-bg-background">
-      <div className="test-flex-1">
+    <div style={{ height: '2rem', borderTop: '1px solid hsl(var(--border))' }} className="flex items-center px-4 text-sm text-muted-foreground bg-background">
+      <div className="flex-1">
         {stats ? (
           <span>{stats.words} words, {stats.chars} characters</span>
         ) : (

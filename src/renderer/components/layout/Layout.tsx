@@ -6,9 +6,9 @@ import { SettingsDialog } from '@/components/dialogs/SettingsDialog';
 
 export function Layout() {
   return (
-    <div className="test-h-screen test-flex test-flex-col test-bg-background">
+    <div className="h-screen flex flex-col bg-background">
       <Toolbar />
-      <div className="test-flex-1 test-flex test-overflow-hidden">
+      <div className="flex-1 flex overflow-hidden">
         <Sidebar />
         <EditorWindow />
       </div>

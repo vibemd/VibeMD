@@ -98,7 +98,7 @@ export function Toolbar() {
 
   return (
     <TooltipProvider>
-      <div className="test-h-14 test-border-b test-flex test-items-center test-px-4 test-gap-2 test-bg-background">
+      <div className="h-14 border-b flex items-center px-4 gap-2 bg-background">
         {/* Left side - File operations */}
         <Tooltip>
           <TooltipTrigger asChild>
@@ -106,7 +106,7 @@ export function Toolbar() {
               variant="ghost"
               size="sm"
               onClick={handleNew}
-              className="test-gap-2"
+              className="gap-2"
             >
               <FileText className="h-4 w-4" />
               New
@@ -123,7 +123,7 @@ export function Toolbar() {
               variant="ghost"
               size="sm"
               onClick={handleOpen}
-              className="test-gap-2"
+              className="gap-2"
             >
               <FolderOpen className="h-4 w-4" />
               Open
@@ -140,7 +140,7 @@ export function Toolbar() {
               variant="ghost"
               size="sm"
               onClick={handleSave}
-              className="test-gap-2"
+              className="gap-2"
               disabled={!hasUnsavedChanges}
             >
               <Save className="h-4 w-4" />
@@ -162,7 +162,7 @@ export function Toolbar() {
               variant="ghost"
               size="sm"
               onClick={handlePrint}
-              className="test-gap-2"
+              className="gap-2"
               disabled={!activeDoc}
             >
               <Printer className="h-4 w-4" />
@@ -182,7 +182,7 @@ export function Toolbar() {
               variant="ghost"
               size="sm"
               onClick={handleSettings}
-              className="test-gap-2"
+              className="gap-2"
             >
               <Settings className="h-4 w-4" />
               Settings

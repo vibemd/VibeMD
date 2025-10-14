@@ -5,25 +5,25 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'test-inline-flex test-items-center test-justify-center test-whitespace-nowrap test-rounded-md test-text-sm test-font-medium test-transition-colors test-disabled-pointer-events-none test-disabled-opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'test-bg-primary test-text-primary-foreground test-hover-bg-primary-90',
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
         destructive:
-          'test-bg-destructive test-text-destructive-foreground test-hover-bg-destructive/90',
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline:
-          'test-border test-border-input test-bg-background test-hover-bg-accent test-hover-text-accent-foreground',
+          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
         secondary:
-          'test-bg-secondary test-text-secondary-foreground test-hover-bg-secondary-80',
-        ghost: 'test-hover-bg-accent test-hover-text-accent-foreground',
-        link: 'test-text-primary test-underline-offset-4 test-hover-underline',
+          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {
-        default: 'test-h-10 test-px-4 test-py-2',
-        sm: 'test-h-9 test-rounded-md test-px-3',
-        lg: 'test-h-11 test-rounded-md test-px-8',
-        icon: 'test-h-10 test-w-10',
+        default: 'h-10 px-4 py-2',
+        sm: 'h-9 rounded-md px-3',
+        lg: 'h-11 rounded-md px-8',
+        icon: 'h-10 w-10',
       },
     },
     defaultVariants: {

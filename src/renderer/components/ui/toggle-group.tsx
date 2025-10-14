@@ -5,18 +5,18 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const toggleVariants = cva(
-  'test-inline-flex test-items-center test-justify-center test-rounded-md test-text-sm test-font-medium test-ring-offset-background test-transition-colors test-hover-bg-muted test-hover-text-muted-foreground test-focus-visible:outline-none test-focus-visible:ring-2 test-focus-visible:ring-ring test-focus-visible:ring-offset-2 test-disabled-pointer-events-none test-disabled-opacity-50 data-[state=on]:test-bg-accent data-[state=on]:test-text-accent-foreground',
+  'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
   {
     variants: {
       variant: {
-        default: 'test-bg-transparent',
+        default: 'bg-transparent',
         outline:
-          'test-border test-border-input test-bg-transparent test-hover-bg-accent test-hover-text-accent-foreground',
+          'border border-input bg-transparent hover:bg-accent hover:text-accent-foreground',
       },
       size: {
-        default: 'test-h-10 test-px-3',
-        sm: 'test-h-9 test-px-2\.5',
-        lg: 'test-h-11 test-px-5',
+        default: 'h-10 px-3',
+        sm: 'h-9 px-2.5',
+        lg: 'h-11 px-5',
       },
     },
     defaultVariants: {
@@ -33,7 +33,7 @@ const ToggleGroup = React.forwardRef<
 >(({ className, variant, size, children, ...props }, ref) => (
   <ToggleGroupPrimitive.Root
     ref={ref}
-    className={cn('test-flex test-items-center test-justify-center test-gap-1', className)}
+    className={cn('flex items-center justify-center gap-1', className)}
     {...props}
   >
     {children}

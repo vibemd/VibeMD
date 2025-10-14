@@ -14,9 +14,9 @@ export function EditorWindow() {
 
   if (!hasActiveDocument) {
     return (
-      <div className="test-flex-1 test-flex test-flex-col">
-        <div className="test-flex-1 test-flex test-items-center test-justify-center" style={{ padding: '2rem' }}>
-          <div style={{ textAlign: 'center' }} className="test-space-y-4">
+      <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex items-center justify-center" style={{ padding: '2rem' }}>
+          <div style={{ textAlign: 'center' }} className="space-y-4">
             <FileText style={{ height: '4rem', width: '4rem', margin: '0 auto', color: 'hsl(var(--muted-foreground))' }} />
             <h2 style={{ fontSize: '1.5rem', fontWeight: '600' }}>No document open</h2>
             <p style={{ color: 'hsl(var(--muted-foreground))' }}>
@@ -29,7 +29,7 @@ export function EditorWindow() {
   }
 
   return (
-    <div className="test-flex-1 test-flex test-flex-col">
+    <div className="flex-1 flex flex-col">
       <ModeSelector />
       {editorMode === 'wysiwyg' && <WYSIWYGEditor />}
       {editorMode === 'split' && <SplitEditor />}
