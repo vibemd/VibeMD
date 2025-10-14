@@ -45,7 +45,7 @@ export function TemplatesTab() {
 
   if (templates.length === 0) {
     return (
-      <div style={{ padding: '1rem', textAlign: 'center' }} className="test-space-y-2">
+      <div style={{ padding: '1rem', textAlign: 'center' }} className="space-y-2">
         <FileText style={{ height: '3rem', width: '3rem', margin: '0 auto', color: 'hsl(var(--muted-foreground))' }} />
         <p style={{ fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>No templates available</p>
         <p style={{ fontSize: '0.75rem', color: 'hsl(var(--muted-foreground))' }}>
@@ -56,22 +56,22 @@ export function TemplatesTab() {
   }
 
   return (
-    <div style={{ padding: '0.5rem' }} className="test-space-y-1">
+    <div style={{ padding: '0.5rem' }} className="space-y-1">
       {templates.map((template) => (
         <div
           key={template.id}
-          className="test-p-2 test-rounded test-hover-bg-accent test-group"
+          className="p-2 rounded hover:bg-accent group"
         >
-          <div className="test-flex test-items-center test-gap-2">
+          <div className="flex items-center gap-2">
             <FileText style={{ height: '1rem', width: '1rem' }} />
-            <span className="test-flex-1 test-truncate test-text-sm">
+            <span className="flex-1 truncate text-sm">
               {template.filename}
             </span>
           </div>
           <Button
             size="sm"
             variant="ghost"
-            className="test-w-full test-mt-2"
+            className="w-full mt-2"
             onClick={() => handleUseTemplate(template)}
           >
             Use

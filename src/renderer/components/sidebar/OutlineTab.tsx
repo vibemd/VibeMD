@@ -38,13 +38,13 @@ export function OutlineTab() {
         <div
           key={index}
           className={cn(
-            'test-p-2 test-rounded test-hover-bg-accent test-cursor-pointer test-text-sm',
-            heading.depth === 1 && 'test-font-semibold',
-            heading.depth === 2 && 'test-ml-2',
-            heading.depth === 3 && 'test-ml-4',
-            heading.depth === 4 && 'test-ml-6',
-            heading.depth === 5 && 'test-ml-8',
-            heading.depth === 6 && 'test-ml-10'
+            'p-2 rounded hover:bg-accent cursor-pointer text-sm',
+            heading.depth === 1 && 'font-semibold',
+            heading.depth === 2 && 'ml-2',
+            heading.depth === 3 && 'ml-4',
+            heading.depth === 4 && 'ml-6',
+            heading.depth === 5 && 'ml-8',
+            heading.depth === 6 && 'ml-10'
           )}
           onClick={() => {
             // TODO: Implement scroll to heading

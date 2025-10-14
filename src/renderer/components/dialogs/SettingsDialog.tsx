@@ -33,14 +33,14 @@ export function SettingsDialog() {
 
   return (
     <Dialog open={settingsDialogOpen} onOpenChange={toggleSettingsDialog}>
-      <DialogContent className="test-max-w-4xl" style={{ height: '600px' }}>
+      <DialogContent className="max-w-4xl" style={{ height: '600px' }}>
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
         </DialogHeader>
         
-        <div className="test-flex-1 test-overflow-hidden">
-          <Tabs defaultValue="general" className="test-h-full test-flex">
-            <TabsList className="test-flex-col test-h-full" style={{ width: '12rem' }}>
+        <div className="flex-1 overflow-hidden">
+          <Tabs defaultValue="general" className="h-full flex">
+            <TabsList className="flex-col h-full" style={{ width: '12rem' }}>
               <TabsTrigger value="general">General</TabsTrigger>
               <TabsTrigger value="theme">Theme</TabsTrigger>
               <TabsTrigger value="files">Files</TabsTrigger>
@@ -48,36 +48,36 @@ export function SettingsDialog() {
               <TabsTrigger value="about">About</TabsTrigger>
             </TabsList>
             
-            <div className="test-flex-1" style={{ marginLeft: '1rem' }}>
-              <TabsContent value="general" className="test-h-full">
-                <GeneralSettings 
-                  settings={localSettings} 
-                  onChange={setLocalSettings} 
+            <div className="flex-1" style={{ marginLeft: '1rem' }}>
+              <TabsContent value="general" className="h-full">
+                <GeneralSettings
+                  settings={localSettings}
+                  onChange={setLocalSettings}
                 />
               </TabsContent>
-              
-              <TabsContent value="theme" className="test-h-full">
-                <ThemeSettings 
-                  settings={localSettings} 
-                  onChange={setLocalSettings} 
+
+              <TabsContent value="theme" className="h-full">
+                <ThemeSettings
+                  settings={localSettings}
+                  onChange={setLocalSettings}
                 />
               </TabsContent>
-              
-              <TabsContent value="files" className="test-h-full">
-                <FilesSettings 
-                  settings={localSettings} 
-                  onChange={setLocalSettings} 
+
+              <TabsContent value="files" className="h-full">
+                <FilesSettings
+                  settings={localSettings}
+                  onChange={setLocalSettings}
                 />
               </TabsContent>
-              
-              <TabsContent value="editor" className="test-h-full">
-                <EditorSettings 
-                  settings={localSettings} 
-                  onChange={setLocalSettings} 
+
+              <TabsContent value="editor" className="h-full">
+                <EditorSettings
+                  settings={localSettings}
+                  onChange={setLocalSettings}
                 />
               </TabsContent>
-              
-              <TabsContent value="about" className="test-h-full">
+
+              <TabsContent value="about" className="h-full">
                 <AboutTab />
               </TabsContent>
             </div>

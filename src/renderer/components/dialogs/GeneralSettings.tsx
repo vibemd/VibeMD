@@ -16,12 +16,12 @@ export function GeneralSettings({ settings, onChange }: GeneralSettingsProps) {
   };
 
   return (
-    <div className="test-space-y-6">
+    <div className="space-y-6">
       <div>
         <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '1rem' }}>General Settings</h3>
         
-        <div className="test-space-y-4">
-          <div className="test-flex test-items-center test-space-x-2">
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
             <Checkbox
               id="autosave"
               checked={settings.general.autosave}
@@ -32,13 +32,13 @@ export function GeneralSettings({ settings, onChange }: GeneralSettingsProps) {
             </label>
           </div>
           
-          <div className="test-space-y-2">
+          <div className="space-y-2">
             <label style={{ fontSize: '0.875rem', fontWeight: '500' }}>Autosave interval</label>
             <Select
               value={settings.general.autosaveInterval?.toString() || '5'}
               onValueChange={(value) => updateGeneral({ autosaveInterval: parseInt(value) })}
             >
-              <SelectTrigger className="test-w-48">
+              <SelectTrigger className="w-48">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

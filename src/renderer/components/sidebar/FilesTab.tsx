@@ -48,15 +48,15 @@ export function FilesTab() {
 
   if (documents.size === 0) {
     return (
-      <div style={{ padding: '1rem' }} className="test-space-y-4">
-        <div style={{ textAlign: 'center' }} className="test-space-y-2">
+      <div style={{ padding: '1rem' }} className="space-y-4">
+        <div style={{ textAlign: 'center' }} className="space-y-2">
           <FileText style={{ height: '3rem', width: '3rem', margin: '0 auto', color: 'hsl(var(--muted-foreground))' }} />
           <p style={{ fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>No documents open</p>
           <p style={{ fontSize: '0.75rem', color: 'hsl(var(--muted-foreground))' }}>
             Get started by creating or opening a document
           </p>
         </div>
-        <div className="test-space-y-2">
+        <div className="space-y-2">
           <Button style={{ width: '100%' }} variant="default" onClick={handleNew}>
             New Document
           </Button>
@@ -77,14 +77,14 @@ export function FilesTab() {
         <div
           key={doc.id}
           className={cn(
-            'test-p-2 test-rounded test-hover-bg-accent test-cursor-pointer test-group',
-            doc.id === activeDocumentId && 'test-bg-accent'
+            'p-2 rounded hover:bg-accent cursor-pointer group',
+            doc.id === activeDocumentId && 'bg-accent'
           )}
           onClick={() => setActiveDocument(doc.id)}
         >
-          <div className="test-flex test-items-center test-gap-2">
+          <div className="flex items-center gap-2">
             <FileText style={{ height: '1rem', width: '1rem' }} />
-            <span className="test-flex-1 test-truncate">{doc.filename}</span>
+            <span className="flex-1 truncate">{doc.filename}</span>
             {doc.isModified && (
               <span style={{ width: '0.5rem', height: '0.5rem', borderRadius: '50%', backgroundColor: '#3b82f6' }} />
             )}
@@ -92,7 +92,7 @@ export function FilesTab() {
               variant="ghost"
               size="icon"
               style={{ height: '1.5rem', width: '1.5rem', opacity: 0 }}
-              className="test-group-hover:test-opacity-100"
+              className="group-hover:opacity-100"
               onClick={(e) => {
                 e.stopPropagation();
                 removeDocument(doc.id);

@@ -12,29 +12,29 @@ export function SplitEditor() {
 
   if (!activeDocument) {
     return (
-      <div className="test-flex-1 test-flex test-items-center test-justify-center">
+      <div className="flex-1 flex items-center justify-center">
         <p style={{ color: 'hsl(var(--muted-foreground))' }}>No document selected</p>
       </div>
     );
   }
 
   return (
-    <div className="test-flex-1 test-flex">
+    <div className="flex-1 flex">
       {/* Code Editor */}
-      <div className="test-flex-1" style={{ padding: '1rem', borderRight: '1px solid hsl(var(--border))' }}>
+      <div className="flex-1" style={{ padding: '1rem', borderRight: '1px solid hsl(var(--border))' }}>
         <textarea
           value={activeDocument.content}
           onChange={handleChange}
           placeholder="Start typing your markdown here..."
-          className="test-w-full test-h-full test-resize-none test-border-none test-outline-none test-bg-transparent test-text-foreground placeholder:test-text-muted-foreground"
+          className="w-full h-full resize-none border-none outline-none bg-transparent text-foreground placeholder:text-muted-foreground"
           style={{ fontFamily: 'monospace' }}
         />
       </div>
       
       {/* Preview */}
-      <div className="test-flex-1" style={{ padding: '1rem' }}>
-        <div className="test-prose test-prose-sm test-max-w-none">
-          <pre className="test-whitespace-pre-wrap test-text-sm">
+      <div className="flex-1" style={{ padding: '1rem' }}>
+        <div className="prose prose-sm max-w-none">
+          <pre className="whitespace-pre-wrap text-sm">
             {activeDocument.content}
           </pre>
         </div>
