@@ -1,47 +1,39 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useDocumentStore } from '@/stores/documentStore';
-import { Editor, rootCtx } from '@milkdown/react';
-import { Milkdown, useEditor } from '@milkdown/react';
-import { commonmark } from '@milkdown/preset-commonmark';
-import { gfm } from '@milkdown/preset-gfm';
-import { history } from '@milkdown/plugin-history';
-import { clipboard } from '@milkdown/plugin-clipboard';
-import { cursor } from '@milkdown/plugin-cursor';
-import { listener, listenerCtx } from '@milkdown/plugin-listener';
-import { trailing } from '@milkdown/plugin-trailing';
-import { nord } from '@milkdown/theme-nord';
+import { useSettingsStore } from '@/stores/settingsStore';
+import { remark } from 'remark';
+import remarkHtml from 'remark-html';
 
 export function WYSIWYGEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
   const updateDocument = useDocumentStore((state) => state.updateDocument);
   const markAsModified = useDocumentStore((state) => state.markAsModified);
+  const settings = useSettingsStore((state) => state.settings);
+  const [htmlContent, setHtmlContent] = useState('');
 
-  const { get } = useEditor((root) =>
-    root
-      .config((ctx) => {
-        ctx.set(rootCtx, root);
-        ctx.get(listenerCtx).markdownUpdated((ctx, markdown, prevMarkdown) => {
-          if (activeDocument && markdown !== prevMarkdown) {
-            updateDocument(activeDocument.id, { content: markdown });
-            markAsModified(activeDocument.id);
-          }
-        });
-      })
-      .use(nord)
-      .use(commonmark)
-      .use(gfm)
-      .use(history)
-      .use(clipboard)
-      .use(cursor)
-      .use(listener)
-      .use(trailing)
-  );
-
+  // Convert markdown to HTML for display
   useEffect(() => {
-    if (activeDocument && get()) {
-      get()?.setMarkdown(activeDocument.content);
+    if (activeDocument?.content) {
+      remark()
+        .use(remarkHtml)
+        .process(activeDocument.content)
+        .then((result) => {
+          setHtmlContent(String(result));
+        })
+        .catch((error) => {
+          console.error('Error converting markdown to HTML:', error);
+          setHtmlContent(activeDocument.content);
+        });
     }
-  }, [activeDocument?.id, get]);
+  }, [activeDocument?.content]);
+
+  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+    if (activeDocument) {
+      const newContent = e.currentTarget.textContent || '';
+      updateDocument(activeDocument.id, { content: newContent });
+      markAsModified(activeDocument.id);
+    }
+  };
 
   if (!activeDocument) {
     return (
@@ -58,9 +50,17 @@ export function WYSIWYGEditor() {
   return (
     <div className="flex-1 flex flex-col">
       <div className="flex-1" style={{ padding: '1rem' }}>
-        <Milkdown>
-          <Editor />
-        </Milkdown>
+        <div 
+          contentEditable
+          onInput={handleInput}
+          className="prose prose-sm max-w-none outline-none"
+          style={{
+            fontSize: `${settings?.editor?.fontSize ?? 14}px`,
+            fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
+            minHeight: '100%',
+          }}
+          dangerouslySetInnerHTML={{ __html: htmlContent }}
+        />
       </div>
     </div>
   );

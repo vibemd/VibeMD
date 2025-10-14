@@ -1,8 +1,5 @@
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import CodeMirror from '@uiw/react-codemirror';
-import { markdown } from '@codemirror/lang-markdown';
-import { EditorView } from '@codemirror/view';
 import { useEffect, useState } from 'react';
 import { remark } from 'remark';
 import remarkHtml from 'remark-html';
@@ -14,9 +11,9 @@ export function SplitEditor() {
   const settings = useSettingsStore((state) => state.settings);
   const [htmlContent, setHtmlContent] = useState('');
 
-  const handleChange = (value: string) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (activeDocument) {
-      updateDocument(activeDocument.id, { content: value });
+      updateDocument(activeDocument.id, { content: e.target.value });
       markAsModified(activeDocument.id);
     }
   };
@@ -51,40 +48,16 @@ export function SplitEditor() {
     <div className="flex-1 flex">
       {/* Code Editor */}
       <div className="flex-1" style={{ padding: '1rem', borderRight: '1px solid hsl(var(--border))' }}>
-        <CodeMirror
+        <textarea
           value={activeDocument.content}
           onChange={handleChange}
-          extensions={[
-            markdown(),
-            EditorView.theme({
-              '&': {
-                fontSize: `${settings?.editor?.fontSize ?? 14}px`,
-                fontFamily: settings?.editor?.fontFamily ?? 'monospace',
-              },
-              '.cm-content': {
-                padding: '1rem',
-              },
-              '.cm-editor': {
-                height: '100%',
-              },
-              '.cm-scroller': {
-                fontFamily: settings?.editor?.fontFamily ?? 'monospace',
-              },
-            }),
-            ...(showLineNumbers ? [EditorView.lineWrapping] : []),
-          ]}
-          basicSetup={{
-            lineNumbers: showLineNumbers,
-            foldGutter: true,
-            dropCursor: false,
-            allowMultipleSelections: false,
-            indentOnInput: true,
-            bracketMatching: true,
-            closeBrackets: true,
-            autocompletion: true,
-            highlightSelectionMatches: false,
-          }}
           placeholder="Start typing your markdown here..."
+          className="w-full h-full resize-none border-none outline-none bg-transparent text-foreground placeholder:text-muted-foreground"
+          style={{ 
+            fontFamily: settings?.editor?.fontFamily ?? 'monospace',
+            fontSize: `${settings?.editor?.fontSize ?? 14}px`,
+            lineHeight: '1.5',
+          }}
         />
       </div>
       
