@@ -1,24 +1,47 @@
 import { useEffect, useRef } from 'react';
 import { useDocumentStore } from '@/stores/documentStore';
+import { Editor, rootCtx } from '@milkdown/react';
+import { Milkdown, useEditor } from '@milkdown/react';
+import { commonmark } from '@milkdown/preset-commonmark';
+import { gfm } from '@milkdown/preset-gfm';
+import { history } from '@milkdown/plugin-history';
+import { clipboard } from '@milkdown/plugin-clipboard';
+import { cursor } from '@milkdown/plugin-cursor';
+import { listener, listenerCtx } from '@milkdown/plugin-listener';
+import { trailing } from '@milkdown/plugin-trailing';
+import { nord } from '@milkdown/theme-nord';
 
 export function WYSIWYGEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
   const updateDocument = useDocumentStore((state) => state.updateDocument);
   const markAsModified = useDocumentStore((state) => state.markAsModified);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const { get } = useEditor((root) =>
+    root
+      .config((ctx) => {
+        ctx.set(rootCtx, root);
+        ctx.get(listenerCtx).markdownUpdated((ctx, markdown, prevMarkdown) => {
+          if (activeDocument && markdown !== prevMarkdown) {
+            updateDocument(activeDocument.id, { content: markdown });
+            markAsModified(activeDocument.id);
+          }
+        });
+      })
+      .use(nord)
+      .use(commonmark)
+      .use(gfm)
+      .use(history)
+      .use(clipboard)
+      .use(cursor)
+      .use(listener)
+      .use(trailing)
+  );
 
   useEffect(() => {
-    if (textareaRef.current && activeDocument) {
-      textareaRef.current.value = activeDocument.content;
+    if (activeDocument && get()) {
+      get()?.setMarkdown(activeDocument.content);
     }
-  }, [activeDocument]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (activeDocument) {
-      updateDocument(activeDocument.id, { content: e.target.value });
-      markAsModified(activeDocument.id);
-    }
-  };
+  }, [activeDocument?.id, get]);
 
   if (!activeDocument) {
     return (
@@ -35,14 +58,9 @@ export function WYSIWYGEditor() {
   return (
     <div className="flex-1 flex flex-col">
       <div className="flex-1" style={{ padding: '1rem' }}>
-        <textarea
-          ref={textareaRef}
-          value={activeDocument.content}
-          onChange={handleChange}
-          placeholder="Start typing your markdown here..."
-          className="w-full h-full resize-none border-none outline-none bg-transparent text-foreground placeholder:text-muted-foreground"
-          style={{ fontFamily: 'monospace' }}
-        />
+        <Milkdown>
+          <Editor />
+        </Milkdown>
       </div>
     </div>
   );
