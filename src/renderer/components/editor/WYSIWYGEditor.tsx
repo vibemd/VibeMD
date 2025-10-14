@@ -4,6 +4,7 @@ import { useDocumentStore } from '@/stores/documentStore';
 export function WYSIWYGEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
   const updateDocument = useDocumentStore((state) => state.updateDocument);
+  const markAsModified = useDocumentStore((state) => state.markAsModified);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -15,6 +16,7 @@ export function WYSIWYGEditor() {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (activeDocument) {
       updateDocument(activeDocument.id, { content: e.target.value });
+      markAsModified(activeDocument.id);
     }
   };
 

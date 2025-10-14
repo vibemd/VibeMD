@@ -2,7 +2,7 @@ import {
   FileText, 
   FolderOpen, 
   Save, 
-  SaveAs,
+  Download,
   Printer, 
   Settings 
 } from 'lucide-react';
@@ -72,7 +72,7 @@ export function Toolbar() {
     const doc = getActiveDocument();
     if (!doc) return;
 
-    const filepath = await fileService.saveFileAs(doc.content, doc.filepath);
+    const filepath = await fileService.saveFileAs(doc.content, doc.filepath || undefined);
     if (filepath) {
       updateDocument(doc.id, { filepath });
       await fileService.saveFile(filepath, doc.content);
@@ -174,7 +174,7 @@ export function Toolbar() {
               className="gap-2"
               disabled={!activeDoc}
             >
-              <SaveAs className="h-4 w-4" />
+              <Download className="h-4 w-4" />
               Save As
             </Button>
           </TooltipTrigger>

@@ -3,10 +3,12 @@ import { useDocumentStore } from '@/stores/documentStore';
 export function SplitEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
   const updateDocument = useDocumentStore((state) => state.updateDocument);
+  const markAsModified = useDocumentStore((state) => state.markAsModified);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (activeDocument) {
       updateDocument(activeDocument.id, { content: e.target.value });
+      markAsModified(activeDocument.id);
     }
   };
 
