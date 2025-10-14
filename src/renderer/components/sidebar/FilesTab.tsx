@@ -162,8 +162,8 @@ export function FilesTab() {
               <Button
                 variant="ghost"
                 size="icon"
-                style={{ height: '1.5rem', width: '1.5rem', opacity: 0 }}
-                className="group-hover:opacity-100"
+                style={{ height: '1.5rem', width: '1.5rem', opacity: 0.5 }}
+                className="hover:opacity-100 transition-opacity"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleCloseFile(doc);
