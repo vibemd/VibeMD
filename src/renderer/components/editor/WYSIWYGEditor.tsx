@@ -1,67 +1,55 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { Editor, rootCtx, editorViewCtx, parserCtx, serializerCtx } from '@milkdown/core';
-import { Milkdown, MilkdownProvider, useEditor } from '@milkdown/react';
-import { commonmark } from '@milkdown/preset-commonmark';
-import { gfm } from '@milkdown/preset-gfm';
-import { history } from '@milkdown/plugin-history';
-import { clipboard } from '@milkdown/plugin-clipboard';
-import { cursor } from '@milkdown/plugin-cursor';
-import { listener, listenerCtx } from '@milkdown/plugin-listener';
-import { trailing } from '@milkdown/plugin-trailing';
-import { nord } from '@milkdown/theme-nord';
+import { remark } from 'remark';
+import remarkHtml from 'remark-html';
 
-function MilkdownEditor() {
+export function WYSIWYGEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
   const updateDocument = useDocumentStore((state) => state.updateDocument);
   const markAsModified = useDocumentStore((state) => state.markAsModified);
   const settings = useSettingsStore((state) => state.settings);
-  const editorRef = useRef<Editor | null>(null);
+  const [htmlContent, setHtmlContent] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const editorRef = useRef<HTMLDivElement>(null);
 
-  const { get } = useEditor((root) =>
-    Editor.make()
-      .config((ctx) => {
-        ctx.set(rootCtx, root);
-        
-        // Listen for markdown changes
-        ctx.get(listenerCtx).markdownUpdated((ctx, markdown, prevMarkdown) => {
-          if (activeDocument && markdown !== prevMarkdown) {
-            updateDocument(activeDocument.id, { content: markdown });
-            markAsModified(activeDocument.id);
-          }
-        });
-      })
-      .use(nord)
-      .use(commonmark)
-      .use(gfm)
-      .use(history)
-      .use(clipboard)
-      .use(cursor)
-      .use(listener)
-      .use(trailing)
-  );
-
-  // Update editor content when document changes
+  // Convert markdown to HTML for display
   useEffect(() => {
-    if (activeDocument && get()) {
-      const editor = get();
-      if (editor && editor.action) {
-        editor.action((ctx) => {
-          const view = ctx.get(editorViewCtx);
-          const parser = ctx.get(parserCtx);
-          
-          try {
-            const doc = parser(activeDocument.content);
-            const tr = view.state.tr.replaceWith(0, view.state.doc.content.size, doc.content);
-            view.dispatch(tr);
-          } catch (error) {
-            console.error('Error parsing markdown:', error);
-          }
+    if (activeDocument?.content && !isEditing) {
+      remark()
+        .use(remarkHtml)
+        .process(activeDocument.content)
+        .then((result) => {
+          setHtmlContent(String(result));
+        })
+        .catch((error) => {
+          console.error('Error converting markdown to HTML:', error);
+          setHtmlContent(activeDocument.content);
         });
+    }
+  }, [activeDocument?.content, isEditing]);
+
+  const handleDoubleClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleBlur = () => {
+    setIsEditing(false);
+    if (activeDocument && editorRef.current) {
+      const newContent = editorRef.current.textContent || '';
+      if (newContent !== activeDocument.content) {
+        updateDocument(activeDocument.id, { content: newContent });
+        markAsModified(activeDocument.id);
       }
     }
-  }, [activeDocument?.id, get]);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      document.execCommand('insertHTML', false, '<br>');
+    }
+  };
 
   if (!activeDocument) {
     return (
@@ -78,16 +66,40 @@ function MilkdownEditor() {
   return (
     <div className="flex-1 flex flex-col">
       <div className="flex-1" style={{ padding: '1rem' }}>
-        <Milkdown />
+        {isEditing ? (
+          <div
+            ref={editorRef}
+            contentEditable
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            className="prose prose-sm max-w-none outline-none min-h-full"
+            style={{
+              fontSize: `${settings?.editor?.fontSize ?? 14}px`,
+              fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
+              minHeight: '100%',
+            }}
+            suppressContentEditableWarning={true}
+          >
+            {activeDocument.content}
+          </div>
+        ) : (
+          <div
+            onDoubleClick={handleDoubleClick}
+            className="prose prose-sm max-w-none cursor-text hover:bg-muted/20 transition-colors rounded p-2"
+            style={{
+              fontSize: `${settings?.editor?.fontSize ?? 14}px`,
+              fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
+              minHeight: '100%',
+            }}
+            dangerouslySetInnerHTML={{ __html: htmlContent }}
+          />
+        )}
+        {!isEditing && (
+          <div className="text-xs text-muted-foreground mt-2 text-center">
+            Double-click to edit
+          </div>
+        )}
       </div>
     </div>
-  );
-}
-
-export function WYSIWYGEditor() {
-  return (
-    <MilkdownProvider>
-      <MilkdownEditor />
-    </MilkdownProvider>
   );
 }
