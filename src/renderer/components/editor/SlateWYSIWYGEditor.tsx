@@ -4,10 +4,6 @@ import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { remark } from 'remark';
-import remarkSlate from 'remark-slate-transformer';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
 
 // Custom types for our editor
 type CustomElement = {
@@ -35,7 +31,7 @@ declare module 'slate' {
 const Toolbar = ({ editor }: { editor: Editor }) => {
   const isMarkActive = (format: string) => {
     const marks = Editor.marks(editor);
-    return marks ? marks[format] === true : false;
+    return marks ? marks[format as keyof CustomText] === true : false;
   };
 
   const toggleMark = (format: string) => {
@@ -67,15 +63,15 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
     if (isActive) {
       newProperties = { type: 'paragraph' };
     } else if (isList) {
-      newProperties = { type: format };
+      newProperties = { type: format as CustomElement['type'] };
     } else {
-      newProperties = { type: format };
+      newProperties = { type: format as CustomElement['type'] };
     }
 
     Transforms.setNodes<SlateElement>(editor, newProperties);
 
     if (!isActive && isList) {
-      const block = { type: 'list-item', children: [] };
+      const block: CustomElement = { type: 'list-item', children: [] };
       Transforms.wrapNodes(editor, block);
     }
   };
@@ -242,24 +238,54 @@ const Leaf = ({ attributes, children, leaf }: any) => {
 
 // Markdown conversion utilities
 const markdownToSlate = (markdown: string): Descendant[] => {
-  const processor = remark()
-    .use(remarkGfm)
-    .use(remarkMath)
-    .use(remarkSlate);
-
-  try {
-    const result = processor.processSync(markdown);
-    return result.result as Descendant[];
-  } catch (error) {
-    console.error('Error converting markdown to Slate:', error);
-    // Fallback to simple paragraph
-    return [
-      {
+  // Simple conversion for now - in a real implementation, you'd want a more robust converter
+  const lines = markdown.split('\n');
+  const nodes: Descendant[] = [];
+  
+  for (const line of lines) {
+    if (line.trim() === '') {
+      continue;
+    }
+    
+    if (line.startsWith('# ')) {
+      nodes.push({
+        type: 'heading-one',
+        children: [{ text: line.substring(2) }],
+      });
+    } else if (line.startsWith('## ')) {
+      nodes.push({
+        type: 'heading-two',
+        children: [{ text: line.substring(3) }],
+      });
+    } else if (line.startsWith('### ')) {
+      nodes.push({
+        type: 'heading-three',
+        children: [{ text: line.substring(4) }],
+      });
+    } else if (line.startsWith('- ')) {
+      nodes.push({
+        type: 'list-item',
+        children: [{ text: line.substring(2) }],
+      });
+    } else if (line.startsWith('> ')) {
+      nodes.push({
+        type: 'block-quote',
+        children: [{ text: line.substring(2) }],
+      });
+    } else {
+      nodes.push({
         type: 'paragraph',
-        children: [{ text: markdown }],
-      },
-    ];
+        children: [{ text: line }],
+      });
+    }
   }
+  
+  return nodes.length > 0 ? nodes : [
+    {
+      type: 'paragraph',
+      children: [{ text: '' }],
+    },
+  ];
 };
 
 const slateToMarkdown = (nodes: Descendant[]): string => {
@@ -364,7 +390,6 @@ export function SlateWYSIWYGEditor() {
       <Slate
         editor={editor}
         initialValue={slateValue}
-        value={slateValue}
         onChange={handleChange}
       >
         <Toolbar editor={editor} />
