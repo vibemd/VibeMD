@@ -30,7 +30,7 @@ export function SplitEditor() {
         onChange={handleChange}
         data-color-mode="light"
         height="100%"
-        visibleDragBar={false}
+        visibleDragbar={false}
         hideToolbar={false}
         preview="edit"
         style={{

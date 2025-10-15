@@ -1,67 +1,19 @@
-import { useEffect, useRef } from 'react';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { Editor, rootCtx, editorViewOptionsCtx } from '@milkdown/core';
-import { Milkdown, MilkdownProvider, useEditor } from '@milkdown/react';
-import { commonmark } from '@milkdown/preset-commonmark';
-import { gfm } from '@milkdown/preset-gfm';
-import { history } from '@milkdown/plugin-history';
-import { clipboard } from '@milkdown/plugin-clipboard';
-import { cursor } from '@milkdown/plugin-cursor';
-import { listener, listenerCtx } from '@milkdown/plugin-listener';
-import { trailing } from '@milkdown/plugin-trailing';
-import { nord } from '@milkdown/theme-nord';
+import MDEditor from '@uiw/react-md-editor';
 
-const MilkdownEditor = () => {
+export function WYSIWYGEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
   const updateDocument = useDocumentStore((state) => state.updateDocument);
   const markAsModified = useDocumentStore((state) => state.markAsModified);
   const settings = useSettingsStore((state) => state.settings);
 
-  const { get } = useEditor((root) =>
-    Editor.make()
-      .config((ctx) => {
-        ctx.set(rootCtx, root);
-        ctx.set(editorViewOptionsCtx, {
-          attributes: {
-            style: `font-size: ${settings?.editor?.fontSize ?? 14}px; font-family: ${settings?.editor?.fontFamily ?? 'system-ui'};`,
-          },
-        });
-        ctx.get(listenerCtx).markdownUpdated((ctx, markdown, prevMarkdown) => {
-          if (activeDocument && markdown !== prevMarkdown) {
-            updateDocument(activeDocument.id, { content: markdown });
-            markAsModified(activeDocument.id);
-          }
-        });
-      })
-      .use(nord())
-      .use(commonmark())
-      .use(gfm())
-      .use(history())
-      .use(clipboard())
-      .use(cursor())
-      .use(listener())
-      .use(trailing())
-  );
-
-  useEffect(() => {
-    if (activeDocument && get()) {
-      const editor = get();
-      if (editor && editor.action) {
-        editor.action((ctx) => {
-          const view = ctx.get(editorViewOptionsCtx);
-          // Load content into editor
-          editor.action((ctx) => {
-            const view = ctx.get(editorViewOptionsCtx);
-            if (view && view.state) {
-              const tr = view.state.tr.replaceWith(0, view.state.doc.content.size, view.state.schema.text(activeDocument.content));
-              view.dispatch(tr);
-            }
-          });
-        });
-      }
+  const handleChange = (value?: string) => {
+    if (activeDocument && value !== undefined) {
+      updateDocument(activeDocument.id, { content: value });
+      markAsModified(activeDocument.id);
     }
-  }, [activeDocument?.id, get]);
+  };
 
   if (!activeDocument) {
     return (
@@ -76,16 +28,20 @@ const MilkdownEditor = () => {
   }
 
   return (
-    <div className="flex-1" style={{ padding: '1rem' }}>
-      <Milkdown />
+    <div className="flex-1">
+      <MDEditor
+        value={activeDocument.content}
+        onChange={handleChange}
+        data-color-mode="light"
+        height="100%"
+        visibleDragbar={false}
+        hideToolbar={false}
+        preview="live"
+        style={{
+          fontSize: `${settings?.editor?.fontSize ?? 14}px`,
+          fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
+        }}
+      />
     </div>
-  );
-};
-
-export function WYSIWYGEditor() {
-  return (
-    <MilkdownProvider>
-      <MilkdownEditor />
-    </MilkdownProvider>
   );
 }
