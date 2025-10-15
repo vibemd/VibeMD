@@ -1,6 +1,7 @@
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import MDEditor from '@uiw/react-md-editor';
+import katex from 'katex';
 
 export function WYSIWYGEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
@@ -40,6 +41,28 @@ export function WYSIWYGEditor() {
         style={{
           fontSize: `${settings?.editor?.fontSize ?? 14}px`,
           fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
+        }}
+        previewOptions={{
+          components: {
+            code: ({ children, className, ...props }) => {
+              // Handle inline LaTeX: $$...$$
+              if (typeof children === 'string' && /^\$\$(.*)\$\$/.test(children)) {
+                const html = katex.renderToString(
+                  children.replace(/^\$\$(.*)\$\$/, '$1'), 
+                  { throwOnError: false }
+                );
+                return <code dangerouslySetInnerHTML={{ __html: html }} style={{ background: 'transparent' }} />;
+              }
+              
+              // Handle block LaTeX: ```KaTeX
+              if (typeof className === 'string' && /^language-katex/.test(className.toLowerCase())) {
+                const html = katex.renderToString(String(children), { throwOnError: false });
+                return <code style={{ fontSize: '150%' }} dangerouslySetInnerHTML={{ __html: html }} />;
+              }
+              
+              return <code className={String(className)}>{children}</code>;
+            },
+          },
         }}
       />
     </div>

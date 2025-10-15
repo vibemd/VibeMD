@@ -1,6 +1,9 @@
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import MDEditor from '@uiw/react-md-editor';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import remarkGfm from 'remark-gfm';
 
 export function PreviewEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
@@ -15,20 +18,21 @@ export function PreviewEditor() {
   }
 
   return (
-    <div className="flex-1">
-      <MDEditor
-        value={activeDocument.content}
-        onChange={() => {}}
-        data-color-mode="light"
-        height="100%"
-        visibleDragbar={false}
-        hideToolbar={true}
-        preview="preview"
+    <div className="flex-1 p-4 overflow-auto bg-background">
+      <div 
+        className="prose prose-sm max-w-none"
         style={{
           fontSize: `${settings?.editor?.fontSize ?? 14}px`,
           fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
         }}
-      />
+      >
+        <ReactMarkdown
+          remarkPlugins={[remarkMath, remarkGfm]}
+          rehypePlugins={[rehypeKatex]}
+        >
+          {activeDocument.content}
+        </ReactMarkdown>
+      </div>
     </div>
   );
 }

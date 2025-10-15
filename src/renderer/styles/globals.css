@@ -5,6 +5,9 @@
 /* Import @uiw/react-md-editor CSS */
 @import '@uiw/react-md-editor/markdown-editor.css';
 
+/* Import KaTeX CSS for LaTeX math rendering */
+@import 'katex/dist/katex.css';
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -233,5 +236,46 @@
     border-top-width: 1px;
     margin-top: 3em;
     margin-bottom: 3em;
+  }
+
+  /* LaTeX-specific styles */
+  .katex {
+    font-size: 1em;
+  }
+
+  .katex-display {
+    margin: 1em 0;
+    text-align: center;
+  }
+
+  .katex-display > .katex {
+    display: inline-block;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow-x: auto;
+    text-align: initial;
+  }
+
+  /* Inline math styling */
+  .prose .katex {
+    font-size: 0.9em;
+  }
+
+  /* CodeMirror editor styles */
+  .cm-editor {
+    height: 100%;
+  }
+
+  .cm-focused {
+    outline: none;
+  }
+
+  .cm-content {
+    padding: 1rem;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Source Code Pro', monospace;
+  }
+
+  .cm-line {
+    line-height: 1.5;
   }
 }
