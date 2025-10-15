@@ -389,4 +389,35 @@
     min-width: 0 !important;
   }
 
+  /* Force 50/50 split for @uiw/react-markdown-editor */
+  .w-md-editor-text-input,
+  .w-md-editor-preview {
+    flex: 1 1 50% !important;
+    width: 50% !important;
+    min-width: 0 !important;
+    max-width: 50% !important;
+  }
+
+  /* Ensure the editor container uses flexbox */
+  .w-md-editor {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+  }
+
+  /* Target any nested containers */
+  .w-md-editor > div {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+  }
+
+  /* Force all direct children to be equal width */
+  .w-md-editor > * {
+    flex: 1 1 50% !important;
+    width: 50% !important;
+    min-width: 0 !important;
+    max-width: 50% !important;
+  }
+
 }
