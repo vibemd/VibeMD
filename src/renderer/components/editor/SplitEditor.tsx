@@ -30,28 +30,6 @@ export function SplitEditor() {
 
   return (
     <div className="flex-1">
-      <style jsx>{`
-        .w-md-editor {
-          display: flex !important;
-          flex-direction: row !important;
-        }
-        
-        .w-md-editor-content {
-          flex: 1 !important;
-          display: flex !important;
-          flex-direction: row !important;
-        }
-        
-        .w-md-editor-text-input {
-          flex: 1 !important;
-          width: 50% !important;
-        }
-        
-        .w-md-editor-preview {
-          flex: 1 !important;
-          width: 50% !important;
-        }
-      `}</style>
       <MarkdownEditor
         value={activeDocument.content}
         onChange={handleChange}

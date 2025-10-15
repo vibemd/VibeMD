@@ -285,4 +285,30 @@
     min-width: 0 !important;
   }
 
+  /* Alternative selectors for @uiw/react-markdown-editor */
+  .w-md-editor .w-md-editor-text-input,
+  .w-md-editor .w-md-editor-preview {
+    flex: 1 !important;
+    width: 50% !important;
+    min-width: 0 !important;
+  }
+
+  /* Force equal width distribution */
+  .w-md-editor > div {
+    display: flex !important;
+    width: 100% !important;
+  }
+
+  .w-md-editor > div > div:first-child {
+    flex: 1 !important;
+    width: 50% !important;
+    min-width: 0 !important;
+  }
+
+  .w-md-editor > div > div:last-child {
+    flex: 1 !important;
+    width: 50% !important;
+    min-width: 0 !important;
+  }
+
 }
