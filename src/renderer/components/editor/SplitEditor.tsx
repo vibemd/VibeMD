@@ -3,6 +3,9 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import { useEffect, useState } from 'react';
 import { remark } from 'remark';
 import remarkHtml from 'remark-html';
+import CodeMirror from '@uiw/react-codemirror';
+import { markdown } from '@codemirror/lang-markdown';
+import { EditorView } from '@codemirror/view';
 
 export function SplitEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
@@ -11,9 +14,9 @@ export function SplitEditor() {
   const settings = useSettingsStore((state) => state.settings);
   const [htmlContent, setHtmlContent] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = (value: string) => {
     if (activeDocument) {
-      updateDocument(activeDocument.id, { content: e.target.value });
+      updateDocument(activeDocument.id, { content: value });
       markAsModified(activeDocument.id);
     }
   };
@@ -47,22 +50,51 @@ export function SplitEditor() {
   return (
     <div className="flex-1 flex">
       {/* Code Editor */}
-      <div className="flex-1" style={{ padding: '1rem', borderRight: '1px solid hsl(var(--border))' }}>
-        <textarea
+      <div className="flex-1" style={{ borderRight: '1px solid hsl(var(--border))' }}>
+        <CodeMirror
           value={activeDocument.content}
           onChange={handleChange}
-          placeholder="Start typing your markdown here..."
-          className="w-full h-full resize-none border-none outline-none bg-transparent text-foreground placeholder:text-muted-foreground"
-          style={{ 
-            fontFamily: settings?.editor?.fontFamily ?? 'monospace',
-            fontSize: `${settings?.editor?.fontSize ?? 14}px`,
-            lineHeight: '1.5',
+          extensions={[
+            markdown(),
+            EditorView.theme({
+              '&': {
+                fontSize: `${settings?.editor?.fontSize ?? 14}px`,
+                fontFamily: settings?.editor?.fontFamily ?? 'monospace',
+              },
+              '.cm-content': {
+                padding: '1rem',
+                minHeight: '100%',
+              },
+              '.cm-focused': {
+                outline: 'none',
+              },
+              '.cm-editor': {
+                height: '100%',
+              },
+              '.cm-scroller': {
+                fontFamily: settings?.editor?.fontFamily ?? 'monospace',
+              },
+            }),
+            ...(showLineNumbers ? [] : []), // Line numbers are enabled by default in CodeMirror
+          ]}
+          basicSetup={{
+            lineNumbers: showLineNumbers,
+            foldGutter: true,
+            dropCursor: false,
+            allowMultipleSelections: false,
+            indentOnInput: true,
+            bracketMatching: true,
+            closeBrackets: true,
+            autocompletion: true,
+            highlightSelectionMatches: false,
+            searchKeymap: true,
           }}
+          placeholder="Start typing your markdown here..."
         />
       </div>
       
       {/* Preview */}
-      <div className="flex-1" style={{ padding: '1rem' }}>
+      <div className="flex-1" style={{ padding: '1rem', overflow: 'auto' }}>
         <div 
           className="prose prose-sm max-w-none"
           dangerouslySetInnerHTML={{ __html: htmlContent }}
