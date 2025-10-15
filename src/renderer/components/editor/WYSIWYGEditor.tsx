@@ -3,6 +3,21 @@ import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { remark } from 'remark';
 import remarkHtml from 'remark-html';
+import { 
+  Bold, 
+  Italic, 
+  Underline, 
+  List, 
+  ListOrdered, 
+  Quote, 
+  Code, 
+  Link,
+  Heading1,
+  Heading2,
+  Heading3
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
 export function WYSIWYGEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
@@ -51,6 +66,48 @@ export function WYSIWYGEditor() {
     }
   };
 
+  const execCommand = (command: string, value?: string) => {
+    document.execCommand(command, false, value);
+    editorRef.current?.focus();
+  };
+
+  const insertMarkdown = (markdown: string) => {
+    if (editorRef.current) {
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(document.createTextNode(markdown));
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    }
+  };
+
+  const ToolbarButton = ({ 
+    onClick, 
+    icon: Icon, 
+    title, 
+    disabled = false 
+  }: { 
+    onClick: () => void; 
+    icon: any; 
+    title: string; 
+    disabled?: boolean;
+  }) => (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={onClick}
+      disabled={disabled}
+      className="h-8 w-8 p-0"
+      title={title}
+    >
+      <Icon className="h-4 w-4" />
+    </Button>
+  );
+
   if (!activeDocument) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -65,6 +122,88 @@ export function WYSIWYGEditor() {
 
   return (
     <div className="flex-1 flex flex-col">
+      {/* Toolbar */}
+      <div className="border-b bg-background px-4 py-2">
+        <div className="flex items-center gap-1">
+          <ToolbarButton
+            onClick={() => insertMarkdown('# ')}
+            icon={Heading1}
+            title="Heading 1"
+            disabled={!isEditing}
+          />
+          <ToolbarButton
+            onClick={() => insertMarkdown('## ')}
+            icon={Heading2}
+            title="Heading 2"
+            disabled={!isEditing}
+          />
+          <ToolbarButton
+            onClick={() => insertMarkdown('### ')}
+            icon={Heading3}
+            title="Heading 3"
+            disabled={!isEditing}
+          />
+          
+          <Separator orientation="vertical" className="h-6 mx-1" />
+          
+          <ToolbarButton
+            onClick={() => execCommand('bold')}
+            icon={Bold}
+            title="Bold"
+            disabled={!isEditing}
+          />
+          <ToolbarButton
+            onClick={() => execCommand('italic')}
+            icon={Italic}
+            title="Italic"
+            disabled={!isEditing}
+          />
+          <ToolbarButton
+            onClick={() => execCommand('underline')}
+            icon={Underline}
+            title="Underline"
+            disabled={!isEditing}
+          />
+          
+          <Separator orientation="vertical" className="h-6 mx-1" />
+          
+          <ToolbarButton
+            onClick={() => insertMarkdown('- ')}
+            icon={List}
+            title="Bullet List"
+            disabled={!isEditing}
+          />
+          <ToolbarButton
+            onClick={() => insertMarkdown('1. ')}
+            icon={ListOrdered}
+            title="Numbered List"
+            disabled={!isEditing}
+          />
+          <ToolbarButton
+            onClick={() => insertMarkdown('> ')}
+            icon={Quote}
+            title="Quote"
+            disabled={!isEditing}
+          />
+          
+          <Separator orientation="vertical" className="h-6 mx-1" />
+          
+          <ToolbarButton
+            onClick={() => insertMarkdown('`')}
+            icon={Code}
+            title="Inline Code"
+            disabled={!isEditing}
+          />
+          <ToolbarButton
+            onClick={() => insertMarkdown('[Link](url)')}
+            icon={Link}
+            title="Link"
+            disabled={!isEditing}
+          />
+        </div>
+      </div>
+
+      {/* Editor Area */}
       <div className="flex-1" style={{ padding: '1rem' }}>
         {isEditing ? (
           <div
@@ -72,7 +211,7 @@ export function WYSIWYGEditor() {
             contentEditable
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            className="prose prose-sm max-w-none outline-none min-h-full"
+            className="prose prose-sm max-w-none outline-none min-h-full focus:outline-none"
             style={{
               fontSize: `${settings?.editor?.fontSize ?? 14}px`,
               fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
@@ -96,7 +235,7 @@ export function WYSIWYGEditor() {
         )}
         {!isEditing && (
           <div className="text-xs text-muted-foreground mt-2 text-center">
-            Double-click to edit
+            Double-click to edit • Use toolbar for formatting
           </div>
         )}
       </div>
