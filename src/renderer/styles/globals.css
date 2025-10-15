@@ -261,4 +261,28 @@
     font-size: 0.9em;
   }
 
+  /* @uiw/react-markdown-editor Split Mode Pane Distribution */
+  .w-md-editor {
+    display: flex !important;
+    flex-direction: row !important;
+  }
+  
+  .w-md-editor-content {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: row !important;
+  }
+  
+  .w-md-editor-text-input {
+    flex: 1 !important;
+    width: 50% !important;
+    min-width: 0 !important;
+  }
+  
+  .w-md-editor-preview {
+    flex: 1 !important;
+    width: 50% !important;
+    min-width: 0 !important;
+  }
+
 }
