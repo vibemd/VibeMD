@@ -1,7 +1,9 @@
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import MDEditor from '@uiw/react-md-editor';
-import katex from 'katex';
+import { Editor, rootCtx, defaultValueCtx } from '@milkdown/core';
+import { commonmark } from '@milkdown/preset-commonmark';
+import { Milkdown, MilkdownProvider, useEditor } from '@milkdown/react';
+import { useEffect } from 'react';
 
 export function WYSIWYGEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
@@ -9,12 +11,48 @@ export function WYSIWYGEditor() {
   const markAsModified = useDocumentStore((state) => state.markAsModified);
   const settings = useSettingsStore((state) => state.settings);
 
-  const handleChange = (value?: string) => {
-    if (activeDocument && value !== undefined) {
-      updateDocument(activeDocument.id, { content: value });
-      markAsModified(activeDocument.id);
-    }
-  };
+  const { get } = useEditor((root) => {
+    const editor = Editor.make()
+      .use(commonmark)
+      .config((ctx) => {
+        ctx.set(rootCtx, root);
+        if (activeDocument) {
+          ctx.set(defaultValueCtx, activeDocument.content);
+        }
+      });
+
+    return editor;
+  }, [activeDocument?.id]);
+
+  useEffect(() => {
+    if (!activeDocument) return;
+
+    const editor = get();
+    if (!editor) return;
+
+    // Listen for content changes
+    const listener = () => {
+      const markdown = editor.action((ctx) => {
+        const editorView = ctx.get('editorViewCtx') as any;
+        return editorView.state.doc.textContent;
+      });
+
+      if (markdown !== activeDocument.content) {
+        updateDocument(activeDocument.id, { content: markdown });
+        markAsModified(activeDocument.id);
+      }
+    };
+
+    // Add listener
+    editor.action((ctx) => {
+      const editorView = ctx.get('editorViewCtx') as any;
+      editorView.dom.addEventListener('input', listener);
+    });
+
+    return () => {
+      // Cleanup
+    };
+  }, [activeDocument, get, updateDocument, markAsModified]);
 
   if (!activeDocument) {
     return (
@@ -30,41 +68,9 @@ export function WYSIWYGEditor() {
 
   return (
     <div className="flex-1">
-      <MDEditor
-        value={activeDocument.content}
-        onChange={handleChange}
-        data-color-mode="light"
-        height="100%"
-        visibleDragbar={false}
-        hideToolbar={false}
-        preview="live"
-        style={{
-          fontSize: `${settings?.editor?.fontSize ?? 14}px`,
-          fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
-        }}
-        previewOptions={{
-          components: {
-            code: ({ children, className, ...props }) => {
-              // Handle inline LaTeX: $$...$$
-              if (typeof children === 'string' && /^\$\$(.*)\$\$/.test(children)) {
-                const html = katex.renderToString(
-                  children.replace(/^\$\$(.*)\$\$/, '$1'), 
-                  { throwOnError: false }
-                );
-                return <code dangerouslySetInnerHTML={{ __html: html }} style={{ background: 'transparent' }} />;
-              }
-              
-              // Handle block LaTeX: ```KaTeX
-              if (typeof className === 'string' && /^language-katex/.test(className.toLowerCase())) {
-                const html = katex.renderToString(String(children), { throwOnError: false });
-                return <code style={{ fontSize: '150%' }} dangerouslySetInnerHTML={{ __html: html }} />;
-              }
-              
-              return <code className={String(className)}>{children}</code>;
-            },
-          },
-        }}
-      />
+      <MilkdownProvider>
+        <Milkdown />
+      </MilkdownProvider>
     </div>
   );
 }

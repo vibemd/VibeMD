@@ -106,8 +106,13 @@ export function SplitEditor() {
           }}
         >
           <ReactMarkdown
-            remarkPlugins={[remarkMath, remarkGfm]}
-            rehypePlugins={[rehypeKatex]}
+            remarkPlugins={[
+              remarkGfm,  // GFM support (Phase 2)
+              remarkMath  // LaTeX support (Phase 3)
+            ]}
+            rehypePlugins={[
+              rehypeKatex  // LaTeX rendering (Phase 3)
+            ]}
           >
             {activeDocument.content}
           </ReactMarkdown>
