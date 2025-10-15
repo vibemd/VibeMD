@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import @uiw/react-md-editor CSS */
-@import '@uiw/react-md-editor/markdown-editor.css';
+/* Import @uiw/react-markdown-editor CSS */
+@import '@uiw/react-markdown-editor/markdown-editor.css';
 
 /* Import KaTeX CSS for LaTeX math rendering */
 @import 'katex/dist/katex.css';
@@ -261,21 +261,4 @@
     font-size: 0.9em;
   }
 
-  /* CodeMirror editor styles */
-  .cm-editor {
-    height: 100%;
-  }
-
-  .cm-focused {
-    outline: none;
-  }
-
-  .cm-content {
-    padding: 1rem;
-    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Source Code Pro', monospace;
-  }
-
-  .cm-line {
-    line-height: 1.5;
-  }
 }
