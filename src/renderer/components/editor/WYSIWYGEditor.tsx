@@ -1,5 +1,5 @@
-import { SlateWYSIWYGEditor } from './SlateWYSIWYGEditor';
+import { WysimarkWYSIWYGEditor } from './WysimarkWYSIWYGEditor';
 
 export function WYSIWYGEditor() {
-  return <SlateWYSIWYGEditor />;
+  return <WysimarkWYSIWYGEditor />;
 }

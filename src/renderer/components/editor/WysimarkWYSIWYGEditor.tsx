@@ -1,17 +1,19 @@
-import React from 'react';
-import MarkdownEditor from '@uiw/react-markdown-editor';
+import React, { useEffect } from 'react';
+import { Editable, useEditor } from '@wysimark/react';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 
-export function SplitEditor() {
+export function WysimarkWYSIWYGEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
   const updateDocument = useDocumentStore((state) => state.updateDocument);
   const markAsModified = useDocumentStore((state) => state.markAsModified);
   const settings = useSettingsStore((state) => state.settings);
 
-  const handleChange = (value: string) => {
-    if (activeDocument && value !== activeDocument.content) {
-      updateDocument(activeDocument.id, { content: value });
+  const editor = useEditor();
+
+  const handleChange = (markdown: string) => {
+    if (activeDocument && markdown !== activeDocument.content) {
+      updateDocument(activeDocument.id, { content: markdown });
       markAsModified(activeDocument.id);
     }
   };
@@ -30,20 +32,19 @@ export function SplitEditor() {
 
   return (
     <div className="flex-1">
-      <MarkdownEditor
-        value={activeDocument.content}
-        onChange={handleChange}
-        height="100%"
-        visible={true}
-        visibleEditor={true}
-        enablePreview={true}
-        enableScroll={true}
-        data-color-mode="light"
+      <div
         style={{
           fontSize: `${settings?.editor?.fontSize ?? 14}px`,
           fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
+          height: '100%',
         }}
-      />
+      >
+        <Editable
+          editor={editor}
+          value={activeDocument.content}
+          onChange={handleChange}
+        />
+      </div>
     </div>
   );
 }

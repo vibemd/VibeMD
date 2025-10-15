@@ -1,7 +1,6 @@
 import { ModeSelector } from '@/components/editor/ModeSelector';
 import { WYSIWYGEditor } from '@/components/editor/WYSIWYGEditor';
 import { SplitEditor } from '@/components/editor/SplitEditor';
-import { PreviewEditor } from '@/components/editor/PreviewEditor';
 import { useUIStore } from '@/stores/uiStore';
 import { useDocumentStore } from '@/stores/documentStore';
 import { FileText } from 'lucide-react';
@@ -33,7 +32,6 @@ export function EditorWindow() {
       <ModeSelector />
       {editorMode === 'wysiwyg' && <WYSIWYGEditor />}
       {editorMode === 'split' && <SplitEditor />}
-      {editorMode === 'preview' && <PreviewEditor />}
     </div>
   );
 }
