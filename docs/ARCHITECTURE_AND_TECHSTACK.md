@@ -24,61 +24,47 @@
 ### 1.4 Editor Components
 
 #### WYSIWYG Editor
-- **Milkdown Crepe**: Primary WYSIWYG markdown editor
-  - Version: Latest stable
-  - Built-in extensible toolbar with formatting buttons
-  - CommonMark support built-in (Phase 1)
-  - Plugin ecosystem for extensibility
+- **Wysimark**: Primary WYSIWYG markdown editor
+  - Version: Latest stable (@wysimark/react)
+  - Built-in toolbar with formatting buttons
+  - 100% CommonMark + GFM support
+  - True WYSIWYG editing experience
   - Components:
-    - @milkdown/crepe (complete editor solution)
-    - Built-in toolbar with bold, italic, headings, lists, links, images, code blocks
+    - @wysimark/react (complete editor solution)
+    - Built-in toolbar with bold, italic, headings, lists, links, images, code blocks, tables, strikethrough
 
 #### Split View Editor
-- **CodeMirror 6**: Plain text editor (via react-codemirror)
-  - Syntax highlighting for markdown
-  - Line numbers support
-  - Customizable key bindings
-  - Package: @uiw/react-codemirror
-
-- **react-markdown**: Markdown preview renderer
-  - HTML rendering of markdown
-  - CommonMark compatible (Phase 1)
-  - Synchronized scrolling support
-
-#### Preview Mode
-- **react-markdown**: Preview-only renderer
-  - Same component as split view preview
+- **@uiw/react-markdown-editor**: Complete split-view markdown editor
+  - Built-in markdown source editor with syntax highlighting
+  - Live HTML preview pane
+  - 100% CommonMark + GFM support
+  - Integrated toolbar and editing controls
+  - Package: @uiw/react-markdown-editor
   - Ensures consistent rendering
   - CommonMark compatible (Phase 1)
 
 ### 1.5 Markdown Processing
-- **remark**: Markdown processor
-  - remark-parse: Markdown to AST
-  - remark-gfm: GitHub Flavored Markdown (Phase 2)
-  - remark-math: LaTeX math support (Phase 3)
-  - remark-rehype: Markdown to HTML
+- **Wysimark**: Built-in markdown processing
+  - 100% CommonMark + GFM support
+  - No additional processing libraries needed
+  - Handles all markdown parsing and rendering internally
 
-- **rehype**: HTML processor
-  - rehype-katex: LaTeX rendering (Phase 3)
-  - rehype-sanitize: Security (XSS prevention)
-  - rehype-stringify: HTML output
+- **@uiw/react-markdown-editor**: Built-in markdown processing
+  - 100% CommonMark + GFM support
+  - Integrated markdown parsing and HTML rendering
+  - No additional processing libraries needed
 
 ### 1.6 Phased Markdown Support
 
-#### Phase 1: CommonMark (MVP)
-- **Core Features**: Headings, emphasis, lists, links, images, code blocks, blockquotes
-- **WYSIWYG**: Milkdown Crepe with built-in toolbar
-- **Split/Preview**: react-markdown with CommonMark support
-- **Status**: Primary implementation focus
+#### Phase 1: CommonMark + GFM (Current)
+- **Core Features**: Headings, emphasis, lists, links, images, code blocks, blockquotes, tables, strikethrough, task lists
+- **WYSIWYG**: Wysimark with built-in toolbar
+- **Split**: @uiw/react-markdown-editor with full GFM support
+- **Status**: ✅ Implemented
 
-#### Phase 2: GFM Extensions (Future)
-- **Features**: Strikethrough, tables, task lists
-- **Implementation**: Extend Crepe toolbar, add remark-gfm to react-markdown
-- **Status**: Planned enhancement
-
-#### Phase 3: LaTeX Support (Future)
+#### Phase 2: LaTeX Support (Future)
 - **Features**: Math expressions via KaTeX
-- **Implementation**: Add remark-math + rehype-katex to react-markdown
+- **Implementation**: Add LaTeX support to both editors
 - **Status**: Planned enhancement
 
 ### 1.7 Styling

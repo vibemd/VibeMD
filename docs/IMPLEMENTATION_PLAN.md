@@ -1369,93 +1369,67 @@ export function StatusBar() {
 
 ---
 
-## 7. Phase 5: Editor Implementation (WYSIWYG)
+## 7. Phase 3: Editor Implementation (WYSIWYG)
 
-**Duration**: 10-14 days
+**Duration**: 5-7 days
 
-### 7.1 Install Milkdown Crepe Dependencies
+### 7.1 Install Wysimark Dependencies
 ```bash
-npm install @milkdown/crepe
-npm install @milkdown/react
-npm install katex
+npm install @wysimark/react
 ```
 
 ### 7.2 Create WYSIWYG Editor Component
 
 ```typescript
-// src/renderer/components/editor/WYSIWYGEditor.tsx
-import { useEffect, useRef } from 'react';
-import { crepe } from '@milkdown/crepe';
-import { Milkdown, MilkdownProvider, useEditor } from '@milkdown/react';
+// src/renderer/components/editor/WysimarkWYSIWYGEditor.tsx
+import React, { useEffect } from 'react';
+import { Editable, useEditor } from '@wysimark/react';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 
-export function WYSIWYGEditor() {
+export function WysimarkWYSIWYGEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
   const updateDocument = useDocumentStore((state) => state.updateDocument);
   const markAsModified = useDocumentStore((state) => state.markAsModified);
-  const latexSupport = useSettingsStore((state) => state.settings.editor.latexSupport);
+  const settings = useSettingsStore((state) => state.settings);
 
-  const { get } = useEditor((root) => {
-    const editor = crepe({
-      root,
-      features: [
-        'toolbar',           // Built-in formatting toolbar
-        'commonmark',        // CommonMark support (Phase 1)
-        'code-highlight',    // Syntax highlighting
-        'image',             // Image handling
-        'link',              // Link management
-        ...(latexSupport ? ['latex'] : [])  // LaTeX support (Phase 3)
-      ]
-    });
+  const editor = useEditor();
 
-    return editor;
-  }, [activeDocument?.id, latexSupport]);
-
-  useEffect(() => {
-    if (!activeDocument) return;
-
-    const editor = get();
-    if (!editor) return;
-
-    // Listen for content changes
-    const listener = () => {
-      const markdown = editor.action((ctx) => {
-        const editorView = ctx.get(editorViewCtx);
-        return serializer(editorView.state.doc);
-      });
-
-      if (markdown !== activeDocument.content) {
-        updateDocument(activeDocument.id, { content: markdown });
-        markAsModified(activeDocument.id);
-      }
-    };
-
-    // Add listener
-    editor.action((ctx) => {
-      const editorView = ctx.get(editorViewCtx);
-      editorView.dom.addEventListener('input', listener);
-    });
-
-    return () => {
-      // Cleanup
-    };
-  }, [activeDocument, get, updateDocument, markAsModified]);
+  const handleChange = (markdown: string) => {
+    if (activeDocument && markdown !== activeDocument.content) {
+      updateDocument(activeDocument.id, { content: markdown });
+      markAsModified(activeDocument.id);
+    }
+  };
 
   if (!activeDocument) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <p className="text-muted-foreground">No document selected</p>
+        <div style={{ textAlign: 'center' }} className="space-y-4">
+          <div style={{ fontSize: '3.75rem', color: 'hsl(var(--muted-foreground))' }}>📝</div>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: 'hsl(var(--muted-foreground))' }}>No document open</h2>
+          <p style={{ fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>Create or open a document to start editing</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <MilkdownProvider>
-      <div className="flex-1 overflow-auto p-8">
-        <Milkdown />
+    <div className="flex-1">
+      <div
+        style={{
+          fontSize: `${settings?.editor?.fontSize ?? 14}px`,
+          fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
+          height: '100%',
+        }}
+      >
+        <Editable
+          editor={editor}
+          value={activeDocument.content}
+          onChange={handleChange}
+        />
       </div>
-    </MilkdownProvider>
+    </div>
   );
 }
 ```
@@ -1466,27 +1440,26 @@ export function WYSIWYGEditor() {
 // src/renderer/components/editor/ModeSelector.tsx
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useUIStore } from '@/stores/uiStore';
+import { SplitSquareHorizontal, Type } from 'lucide-react';
 
 export function ModeSelector() {
   const { editorMode, setEditorMode } = useUIStore();
 
   return (
-    <div className="h-12 border-b flex items-center px-4">
+    <div style={{ borderBottom: '1px solid hsl(var(--border))', backgroundColor: 'hsl(var(--background))', padding: '0.5rem' }}>
       <ToggleGroup
         type="single"
         value={editorMode}
-        onValueChange={(value) => {
-          if (value) setEditorMode(value as any);
-        }}
+        onValueChange={(value) => setEditorMode(value as any)}
+        style={{ justifyContent: 'flex-start' }}
       >
-        <ToggleGroupItem value="wysiwyg">
+        <ToggleGroupItem value="wysiwyg" className="gap-2">
+          <Type style={{ height: '1rem', width: '1rem' }} />
           WYSIWYG
         </ToggleGroupItem>
-        <ToggleGroupItem value="split">
+        <ToggleGroupItem value="split" className="gap-2">
+          <SplitSquareHorizontal style={{ height: '1rem', width: '1rem' }} />
           Split
-        </ToggleGroupItem>
-        <ToggleGroupItem value="preview">
-          Preview
         </ToggleGroupItem>
       </ToggleGroup>
     </div>
@@ -1501,7 +1474,6 @@ export function ModeSelector() {
 import { ModeSelector } from '@/components/editor/ModeSelector';
 import { WYSIWYGEditor } from '@/components/editor/WYSIWYGEditor';
 import { SplitEditor } from '@/components/editor/SplitEditor';
-import { PreviewEditor } from '@/components/editor/PreviewEditor';
 import { useUIStore } from '@/stores/uiStore';
 import { useDocumentStore } from '@/stores/documentStore';
 
@@ -1524,7 +1496,6 @@ export function EditorWindow() {
       <ModeSelector />
       {editorMode === 'wysiwyg' && <WYSIWYGEditor />}
       {editorMode === 'split' && <SplitEditor />}
-      {editorMode === 'preview' && <PreviewEditor />}
     </div>
   );
 }
@@ -1536,7 +1507,7 @@ export function EditorWindow() {
 // src/renderer/stores/uiStore.ts
 import { create } from 'zustand';
 
-type EditorMode = 'wysiwyg' | 'split' | 'preview';
+type EditorMode = 'wysiwyg' | 'split';
 type SidebarTab = 'files' | 'outline' | 'templates';
 
 interface UIStore {
@@ -1562,12 +1533,12 @@ export const useUIStore = create<UIStore>((set) => ({
 ```
 
 ### 7.6 Deliverables
-- [ ] Milkdown Crepe installed and configured
-- [ ] WYSIWYG editor functional with built-in toolbar
-- [ ] Mode selector implemented
-- [ ] Editor updates document store
-- [ ] CommonMark support working (Phase 1)
-- [ ] Editor preserves formatting
+- [x] Wysimark installed and configured
+- [x] WYSIWYG editor functional with built-in toolbar
+- [x] Mode selector implemented (WYSIWYG and Split only)
+- [x] Editor updates document store
+- [x] CommonMark + GFM support working
+- [x] Editor preserves formatting
 
 ---
 
@@ -1609,107 +1580,76 @@ npm install remark-math rehype-katex katex
 
 ---
 
-## 8. Phase 6: Editor Implementation (Split & Preview)
+## 8. Phase 4: Editor Implementation (Split)
 
-**Duration**: 7-10 days
+**Duration**: 3-5 days
 
 ### 8.1 Install Dependencies
 ```bash
-npm install @uiw/react-codemirror react-markdown
-npm install @codemirror/lang-markdown
-npm install remark remark-gfm remark-math
-npm install rehype-katex rehype-sanitize
+npm install @uiw/react-markdown-editor
 ```
 
 ### 8.2 Create Split Editor
 
 ```typescript
 // src/renderer/components/editor/SplitEditor.tsx
-import { useRef, useCallback } from 'react';
-import CodeMirror from '@uiw/react-codemirror';
-import { markdown } from '@codemirror/lang-markdown';
-import MDEditor from '@uiw/react-md-editor';
+import React from 'react';
+import MarkdownEditor from '@uiw/react-markdown-editor';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { useSyncScroll } from '@/hooks/useSyncScroll';
 
 export function SplitEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
   const updateDocument = useDocumentStore((state) => state.updateDocument);
   const markAsModified = useDocumentStore((state) => state.markAsModified);
-  
-  const { showLineNumbers, fontSize } = useSettingsStore(
-    (state) => state.settings.editor
-  );
+  const settings = useSettingsStore((state) => state.settings);
 
-  const editorRef = useRef<HTMLDivElement>(null);
-  const previewRef = useRef<HTMLDivElement>(null);
-  
-  const { syncScroll } = useSyncScroll(editorRef, previewRef);
+  const handleChange = (value: string) => {
+    if (activeDocument && value !== activeDocument.content) {
+      updateDocument(activeDocument.id, { content: value });
+      markAsModified(activeDocument.id);
+    }
+  };
 
-  const handleChange = useCallback((value: string) => {
-    if (!activeDocument) return;
-    updateDocument(activeDocument.id, { content: value });
-    markAsModified(activeDocument.id);
-  }, [activeDocument, updateDocument, markAsModified]);
-
-  if (!activeDocument) return null;
+  if (!activeDocument) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <div style={{ textAlign: 'center' }} className="space-y-4">
+          <div style={{ fontSize: '3.75rem', color: 'hsl(var(--muted-foreground))' }}>📝</div>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: 'hsl(var(--muted-foreground))' }}>No document open</h2>
+          <p style={{ fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>Create or open a document to start editing</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex-1 flex">
-      {/* Plain Text Editor */}
-      <div 
-        ref={editorRef}
-        className="flex-1 overflow-auto"
-        onScroll={() => syncScroll('editor')}
-      >
-        <CodeMirror
-          value={activeDocument.content}
-          onChange={handleChange}
-          extensions={[markdown()]}
-          options={{
-            lineNumbers: showLineNumbers,
-            fontSize: `${fontSize}px`,
-          }}
-          theme="light"
-        />
-      </div>
-
-      {/* Preview */}
-      <div 
-        ref={previewRef}
-        className="flex-1 border-l overflow-auto"
-        onScroll={() => syncScroll('preview')}
-      >
-        <MDEditor.Markdown 
-          source={activeDocument.content}
-          style={{ padding: '1rem' }}
-        />
-      </div>
+    <div className="flex-1">
+      <MarkdownEditor
+        value={activeDocument.content}
+        onChange={handleChange}
+        height="100%"
+        visible={true}
+        visibleEditor={true}
+        enablePreview={true}
+        enableScroll={true}
+        data-color-mode="light"
+        style={{
+          fontSize: `${settings?.editor?.fontSize ?? 14}px`,
+          fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
+        }}
+      />
     </div>
   );
 }
 ```
 
-### 8.3 Create Preview Editor
-
-```typescript
-// src/renderer/components/editor/PreviewEditor.tsx
-import MDEditor from '@uiw/react-md-editor';
-import { useDocumentStore } from '@/stores/documentStore';
-
-export function PreviewEditor() {
-  const activeDocument = useDocumentStore((state) => state.getActiveDocument());
-
-  if (!activeDocument) return null;
-
-  return (
-    <div className="flex-1 overflow-auto p-8">
-      <MDEditor.Markdown source={activeDocument.content} />
-    </div>
-  );
-}
-```
+### 8.3 Deliverables
+- [x] @uiw/react-markdown-editor installed and configured
+- [x] Split editor functional with markdown source and live preview
+- [x] Editor updates document store
+- [x] CommonMark + GFM support working
+- [x] Integrated toolbar and editing controls
 
 ### 8.4 Create Sync Scroll Hook
 

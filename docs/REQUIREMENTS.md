@@ -6,10 +6,10 @@
 VibeMD is a cross-platform desktop markdown editor designed for Windows, macOS, and Linux. It provides a flexible editing environment with multiple viewing modes and a template system for rapid document creation.
 
 ### 1.2 Core Value Proposition
-- Seamless switching between WYSIWYG, split-view, and preview modes
+- Seamless switching between WYSIWYG and split-view modes
 - Template-based document scaffolding for increased productivity
 - Native OS integration for familiar file management
-- Full markdown standard support (CommonMark, GFM, LaTeX)
+- Full markdown standard support (CommonMark + GFM, with LaTeX planned)
 
 ### 1.3 Target Platforms
 - Windows 10/11
@@ -22,26 +22,20 @@ VibeMD is a cross-platform desktop markdown editor designed for Windows, macOS, 
 
 #### 2.1.1 WYSIWYG Mode
 - **FR-101**: Provide inline editing with visual formatting
-- **FR-102**: Display full formatting toolbar from Milkdown Crepe
-- **FR-103**: Support all CommonMark syntax elements (Phase 1)
+- **FR-102**: Display full formatting toolbar from Wysimark
+- **FR-103**: Support all CommonMark + GFM syntax elements
 - **FR-104**: Allow direct manipulation of formatted content
 - **FR-105**: Support real-time formatting preview
 - **FR-106**: Enable keyboard shortcuts for common formatting operations
 
 #### 2.1.2 Split Mode
-- **FR-201**: Display plain text editor on left side
+- **FR-201**: Display markdown source editor on left side
 - **FR-202**: Display synchronized HTML preview on right side
 - **FR-203**: Implement bidirectional scroll synchronization
-- **FR-204**: Hide formatting toolbar in this mode
+- **FR-204**: Show integrated formatting toolbar
 - **FR-205**: Maintain cursor position mapping between views
 - **FR-206**: Support live preview updates as user types
 - **FR-207**: Display line numbers when enabled in settings
-
-#### 2.1.3 Preview Mode
-- **FR-301**: Render document in full HTML view
-- **FR-302**: Disable all editing capabilities
-- **FR-303**: Support navigation through document sections
-- **FR-304**: Maintain same styling as split-view preview
 
 ### 2.2 File Management
 
