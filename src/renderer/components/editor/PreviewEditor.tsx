@@ -1,29 +1,10 @@
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { useEffect, useState } from 'react';
-import { remark } from 'remark';
-import remarkHtml from 'remark-html';
+import MDEditor from '@uiw/react-md-editor';
 
 export function PreviewEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
   const settings = useSettingsStore((state) => state.settings);
-  const [htmlContent, setHtmlContent] = useState('');
-
-  // Convert markdown to HTML
-  useEffect(() => {
-    if (activeDocument?.content) {
-      remark()
-        .use(remarkHtml)
-        .process(activeDocument.content)
-        .then((result) => {
-          setHtmlContent(String(result));
-        })
-        .catch((error) => {
-          console.error('Error converting markdown to HTML:', error);
-          setHtmlContent(activeDocument.content);
-        });
-    }
-  }, [activeDocument?.content]);
 
   if (!activeDocument) {
     return (
@@ -34,13 +15,14 @@ export function PreviewEditor() {
   }
 
   return (
-    <div className="flex-1" style={{ padding: '2rem' }}>
-      <div 
-        className="prose prose-sm max-w-none"
-        dangerouslySetInnerHTML={{ __html: htmlContent }}
+    <div className="flex-1">
+      <MDEditor.Markdown
+        source={activeDocument.content}
+        data-color-mode="light"
         style={{
           fontSize: `${settings?.editor?.fontSize ?? 14}px`,
           fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
+          padding: '1rem',
         }}
       />
     </div>
