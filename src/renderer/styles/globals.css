@@ -420,23 +420,15 @@
     max-width: 50% !important;
   }
 
-  /* Make toolbar completely transparent and non-interactive */
+  /* Hide toolbar by setting height to zero */
   .w-md-editor .w-md-editor-toolbar {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    height: 40px !important;
-    min-height: 40px !important;
-    padding: 8px !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    padding: 0 !important;
     margin: 0 !important;
     border: none !important;
-    background: transparent !important;
-  }
-
-  /* Hide all toolbar buttons */
-  .w-md-editor .w-md-editor-toolbar button,
-  .w-md-editor .w-md-editor-toolbar .w-md-editor-toolbar-item {
-    opacity: 0 !important;
-    pointer-events: none !important;
+    overflow: hidden !important;
   }
 
   /* Ensure editor content takes full height when toolbar is hidden */
