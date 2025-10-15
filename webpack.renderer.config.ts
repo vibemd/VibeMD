@@ -37,6 +37,8 @@ export const rendererConfig: Configuration = {
       buffer: require.resolve('buffer/'),
       url: require.resolve('url/'),
     },
+    // Enable ES modules support
+    fullySpecified: false,
   },
   // Use web target and configure externals manually for better control
   target: 'web',

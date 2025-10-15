@@ -18,6 +18,13 @@ export const rules: Required<ModuleOptions>['rules'] = [
       },
     },
   },
+  // Handle ES modules from node_modules
+  {
+    test: /\.m?js$/,
+    resolve: {
+      fullySpecified: false,
+    },
+  },
 ];
 
 // Separate rules for main process only (includes asset relocator)

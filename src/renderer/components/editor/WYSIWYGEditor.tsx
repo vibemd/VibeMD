@@ -2,6 +2,9 @@ import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import MDEditor from '@uiw/react-md-editor';
 import katex from 'katex';
+import remarkMath from 'remark-math';
+import remarkGfm from 'remark-gfm';
+import rehypeKatex from 'rehype-katex';
 
 export function WYSIWYGEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
@@ -43,6 +46,13 @@ export function WYSIWYGEditor() {
           fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
         }}
         previewOptions={{
+          remarkPlugins: [
+            remarkGfm,  // GFM support (Phase 2)
+            remarkMath  // LaTeX support (Phase 3)
+          ],
+          rehypePlugins: [
+            rehypeKatex  // LaTeX rendering (Phase 3)
+          ],
           components: {
             code: ({ children, className, ...props }) => {
               // Handle inline LaTeX: $$...$$
