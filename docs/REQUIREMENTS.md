@@ -264,7 +264,7 @@ VibeMD is a cross-platform desktop markdown editor designed for Windows, macOS, 
 #### 2.7.4 Phased Implementation Plan
 - **Phase 1 (MVP)**: CommonMark support only
   - Headings, emphasis, lists, links, images, code blocks, blockquotes
-  - Milkdown Crepe WYSIWYG editor
+  - Wysimark WYSIWYG editor
   - react-markdown for Split and Preview modes
 - **Phase 2 (Future)**: GFM extensions
   - Strikethrough, tables, task lists
@@ -395,7 +395,7 @@ VibeMD is a cross-platform desktop markdown editor designed for Windows, macOS, 
 
 ### 6.1 Technical Constraints
 - Must use Electron Forge (not Vite)
-- Must use Milkdown for WYSIWYG editing
+- Must use Wysimark for WYSIWYG editing
 - Must use specified editor components
 - Must use ShadCN for UI components
 - Desktop-only for initial release

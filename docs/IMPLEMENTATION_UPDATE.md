@@ -97,7 +97,7 @@ After extensive debugging and a critical Tailwind CSS v4 → v3 downgrade, all s
 **Completion Date:** Initial development
 
 **Completed Items:**
-- ✅ Milkdown dependencies installed
+- ✅ Wysimark dependencies installed
 - ✅ Mode selector component created (`src/renderer/components/editor/ModeSelector.tsx`)
 - ✅ WYSIWYG editor component created (`src/renderer/components/editor/WYSIWYGEditor.tsx`)
 - ✅ Split editor component created (`src/renderer/components/editor/SplitEditor.tsx`)
@@ -264,12 +264,12 @@ After extensive debugging and a critical Tailwind CSS v4 → v3 downgrade, all s
 
 **What Exists:**
 - Editor component files created
-- Milkdown dependencies installed
+- Wysimark dependencies installed
 - Mode selector working (UI only)
 
 **What's Needed:**
-- ❌ **WYSIWYG Editor (Milkdown Crepe) Integration**
-  - Configure Milkdown Crepe editor with built-in toolbar
+- ❌ **WYSIWYG Editor (Wysimark) Integration**
+  - Configure Wysimark editor with built-in toolbar
   - Connect editor to document store
   - Implement content change handlers
   - Implement markdown serialization
@@ -518,7 +518,7 @@ Not Started: ░░░░░░░░░░░░░░ 35%
 
 3. **Complete Phase 5-6: Editor Implementation** (10-14 days)
    - Start with simple textarea implementation
-   - Integrate Milkdown for WYSIWYG
+   - Integrate Wysimark for WYSIWYG
    - Implement split and preview modes
    - Test all three editor modes
 

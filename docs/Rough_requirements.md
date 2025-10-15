@@ -31,7 +31,7 @@ The main app window will consist of four main areas:
     - Outline: Using Headings 1 to 6 in the markdown document in focus to generate a collapsable outline view of the document and allowing the user to click on elements in the outline to move the editor window to that section of the document
     - Templates: List of all the markdown templates created/available for use by the user to scaffold new markdown documents (refer to below for details of templates)
 - Editor window - The main window of the app on the right side displaying one of the three editor window types visible at any time for the in-focus markdown document being edited/displayed:
-    - WYSIWYG: Inline editing of the in-focus markdown document with full WYSIWYG formatting toolbar provided by Milkdown Crepe
+    - WYSIWYG: Inline editing of the in-focus markdown document with full WYSIWYG formatting toolbar provided by Wysimark
     - Split: Plain text editing window on left with synchronous display and scrolling of 'pretty' (HTML) format on the right using react-markdown, no formatting toolbar displayed
     - Preview: Display the in-focus document in HTML rendering with no editing using react-markdown
 - Status bar at the bottom displaying:
@@ -77,7 +77,7 @@ The Settings dialog is accessed via the Settings button in the top toolbar. It s
 ## Other considerations
 
 - Use icon.svg to generate favicons, app icons, etc
-- WYSIWYG editor to use Milkdown Crepe with built-in extensible toolbar
-- Split view to use CodeMirror for plain text editing and react-markdown for HTML rendering, Preview view to use react-markdown
+- WYSIWYG editor to use Wysimark with built-in extensible toolbar
+- Split view to use @uiw/react-markdown-editor for integrated markdown source editing and HTML preview
 - App to be built with Electron Forge for Desktop (do not use Vite) from start with Capacitor planned for Mobile
 - Use ShadCN for display components

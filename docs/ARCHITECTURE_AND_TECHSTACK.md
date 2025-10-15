@@ -143,11 +143,9 @@ App (Root)
 │   │       └── EmptyState
 │   ├── EditorWindow
 │   │   ├── ModeSelector
-│   │   ├── WYSIWYGEditor (Milkdown)
+│   │   ├── WYSIWYGEditor (Wysimark)
 │   │   ├── SplitEditor
-│   │   │   ├── PlainTextEditor (CodeMirror)
-│   │   │   └── PreviewPane (react-md-editor)
-│   │   ├── PreviewEditor (react-md-editor)
+│   │   │   └── MarkdownEditor (@uiw/react-markdown-editor)
 │   │   └── EmptyState
 │   └── StatusBar
 │       ├── DocumentStats (words, characters)
@@ -423,7 +421,7 @@ src/
 
 ### 3.1 Editor Selection Rationale
 
-#### Milkdown Crepe for WYSIWYG
+#### Wysimark for WYSIWYG
 - **Pros**:
   - Built specifically for markdown
   - Excellent TypeScript support
