@@ -24,17 +24,14 @@
 ### 1.4 Editor Components
 
 #### WYSIWYG Editor
-- **Milkdown**: Primary WYSIWYG markdown editor
+- **Milkdown Crepe**: Primary WYSIWYG markdown editor
   - Version: Latest stable
+  - Built-in extensible toolbar with formatting buttons
+  - CommonMark support built-in (Phase 1)
   - Plugin ecosystem for extensibility
-  - CommonMark/GFM support built-in
   - Components:
-    - @milkdown/core
-    - @milkdown/react
-    - @milkdown/preset-commonmark
-    - @milkdown/preset-gfm
-    - @milkdown/plugin-math (for LaTeX)
-    - @milkdown/theme-nord (base theme)
+    - @milkdown/crepe (complete editor solution)
+    - Built-in toolbar with bold, italic, headings, lists, links, images, code blocks
 
 #### Split View Editor
 - **CodeMirror 6**: Plain text editor (via react-codemirror)
@@ -43,29 +40,48 @@
   - Customizable key bindings
   - Package: @uiw/react-codemirror
 
-- **@uiw/react-md-editor**: Markdown preview renderer
+- **react-markdown**: Markdown preview renderer
   - HTML rendering of markdown
+  - CommonMark compatible (Phase 1)
   - Synchronized scrolling support
-  - CommonMark/GFM compatible
 
 #### Preview Mode
-- **@uiw/react-md-editor**: Preview-only renderer
+- **react-markdown**: Preview-only renderer
   - Same component as split view preview
   - Ensures consistent rendering
+  - CommonMark compatible (Phase 1)
 
 ### 1.5 Markdown Processing
 - **remark**: Markdown processor
   - remark-parse: Markdown to AST
-  - remark-gfm: GitHub Flavored Markdown
-  - remark-math: LaTeX math support
+  - remark-gfm: GitHub Flavored Markdown (Phase 2)
+  - remark-math: LaTeX math support (Phase 3)
   - remark-rehype: Markdown to HTML
 
 - **rehype**: HTML processor
-  - rehype-katex: LaTeX rendering
+  - rehype-katex: LaTeX rendering (Phase 3)
   - rehype-sanitize: Security (XSS prevention)
   - rehype-stringify: HTML output
 
-### 1.6 Styling
+### 1.6 Phased Markdown Support
+
+#### Phase 1: CommonMark (MVP)
+- **Core Features**: Headings, emphasis, lists, links, images, code blocks, blockquotes
+- **WYSIWYG**: Milkdown Crepe with built-in toolbar
+- **Split/Preview**: react-markdown with CommonMark support
+- **Status**: Primary implementation focus
+
+#### Phase 2: GFM Extensions (Future)
+- **Features**: Strikethrough, tables, task lists
+- **Implementation**: Extend Crepe toolbar, add remark-gfm to react-markdown
+- **Status**: Planned enhancement
+
+#### Phase 3: LaTeX Support (Future)
+- **Features**: Math expressions via KaTeX
+- **Implementation**: Add remark-math + rehype-katex to react-markdown
+- **Status**: Planned enhancement
+
+### 1.7 Styling
 - **Tailwind CSS**: Utility-first CSS framework
   - Version: 3.x
   - Custom configuration for theming
@@ -421,18 +437,19 @@ src/
 
 ### 3.1 Editor Selection Rationale
 
-#### Milkdown for WYSIWYG
+#### Milkdown Crepe for WYSIWYG
 - **Pros**:
   - Built specifically for markdown
   - Excellent TypeScript support
-  - Plugin architecture for extensibility
+  - Built-in extensible toolbar with formatting buttons
   - Active development and community
   - Good performance
-  - Built-in CommonMark/GFM support
+  - Built-in CommonMark support (Phase 1)
 
 - **Implementation Notes**:
-  - Use plugin system for LaTeX support
-  - Create custom theme matching app design
+  - Use @milkdown/crepe for complete editor solution
+  - Built-in toolbar eliminates custom development
+  - Extensible for future GFM and LaTeX features
   - Integrate with React via @milkdown/react
 
 #### CodeMirror 6 for Plain Text
@@ -449,17 +466,18 @@ src/
   - Implement custom key bindings
   - Synchronize scroll with preview
 
-#### @uiw/react-md-editor for Preview
+#### react-markdown for Preview
 - **Pros**:
   - React-friendly
   - Good rendering performance
-  - Supports CommonMark/GFM
+  - Supports CommonMark (Phase 1)
   - Easy integration with remark/rehype
+  - Extensible for GFM and LaTeX (future phases)
 
 - **Implementation Notes**:
   - Use in preview-only mode
   - Share rendering pipeline with split view
-  - Configure for LaTeX support
+  - Configure for LaTeX support (Phase 3)
 
 ### 3.2 State Management: Zustand
 

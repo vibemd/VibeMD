@@ -4,10 +4,10 @@ A cross-platform desktop markdown editor for Windows, macOS, and Linux featuring
 
 ## Features
 
-- **Three Editor Modes**: WYSIWYG (Milkdown), Split view (CodeMirror + preview), and Preview-only
+- **Three Editor Modes**: WYSIWYG (Milkdown Crepe), Split view (CodeMirror + preview), and Preview-only
 - **Template System**: Create and use `.vibe` files for document scaffolding
 - **Native OS Integration**: File dialogs, printing, and system theme support
-- **Markdown Support**: CommonMark, GitHub Flavored Markdown, and optional LaTeX rendering
+- **Markdown Support**: CommonMark support (Phase 1), with GFM and LaTeX planned for future phases
 - **Settings Management**: Autosave, theming, and customization options
 - **Multi-document Support**: Work with multiple documents simultaneously
 
@@ -15,7 +15,7 @@ A cross-platform desktop markdown editor for Windows, macOS, and Linux featuring
 
 - **Electron Forge** with Webpack (desktop app framework)
 - **React 18** + **TypeScript 5** (UI framework)
-- **Milkdown** (WYSIWYG markdown editor)
+- **Milkdown Crepe** (WYSIWYG markdown editor)
 - **CodeMirror 6** (plain text editor)
 - **ShadCN/ui** (UI components)
 - **Tailwind CSS** (styling)

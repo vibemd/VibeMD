@@ -5,7 +5,7 @@ VibeMD is a simple desktop markdown editor for use across Windows, macOS and Lin
 - provides both plain text markdown editing with side-by-side synchronous preview and WYSIWYG inline editing;
 - leverages underlying operating system services for file management (document storage, opening/closing files dialogs, print services);
 - provides a templating capability where markdown files may be created by the user and re-used as templates to provide scaffolding for structuring markdown documents more quickly, and;
-- provides full support for Commonmark, GFM and (via toggle on/off in settings) LaTex notation elements.
+- provides full support for Commonmark (Phase 1), GFM (Phase 2) and (via toggle on/off in settings) LaTex notation elements (Phase 3).
 
 <br>
 
@@ -30,10 +30,10 @@ The main app window will consist of four main areas:
         - ‘Use template’ which should then change the focus of the sidebar to display the Templates tab so the user can select a template to use
     - Outline: Using Headings 1 to 6 in the markdown document in focus to generate a collapsable outline view of the document and allowing the user to click on elements in the outline to move the editor window to that section of the document
     - Templates: List of all the markdown templates created/available for use by the user to scaffold new markdown documents (refer to below for details of templates)
-- Editor window - The main window of the app on the right side displaying the Toast UI Editor one of the three editor window types visible at any time for the in-focus markdown document being edited/displayed:
-    - WYSYWIG: Inline editing of the in-focus markdown document with full WYSISWYG formatting toolbar provided by Toast UI
-    - Split: Plain text editing window on left with synchronous display and scrolling of ‘pretty’ (HTML) format on the right, no formatting toolbar displayed
-    - Preview: Display the in-focus document in HTML rendering with no editing
+- Editor window - The main window of the app on the right side displaying one of the three editor window types visible at any time for the in-focus markdown document being edited/displayed:
+    - WYSIWYG: Inline editing of the in-focus markdown document with full WYSIWYG formatting toolbar provided by Milkdown Crepe
+    - Split: Plain text editing window on left with synchronous display and scrolling of 'pretty' (HTML) format on the right using react-markdown, no formatting toolbar displayed
+    - Preview: Display the in-focus document in HTML rendering with no editing using react-markdown
 - Status bar at the bottom displaying:
     - left side: real-time updating of character and word count for teh in-focus markdown document, and
     - right side: last date/time the in-focus document was saved (if hte document has not yet been saved, display ‘New document not yet saved’
@@ -77,7 +77,7 @@ The Settings dialog is accessed via the Settings button in the top toolbar. It s
 ## Other considerations
 
 - Use icon.svg to generate favicons, app icons, etc
-- WYSIWYG editor to use Milkdown plus components and plugins
-- Split view to use CodeEditor for plain text editing and @uiw/react-md-editor for HTML rendering, Preview view to use @uiw/react-md-editor
+- WYSIWYG editor to use Milkdown Crepe with built-in extensible toolbar
+- Split view to use CodeMirror for plain text editing and react-markdown for HTML rendering, Preview view to use react-markdown
 - App to be built with Electron Forge for Desktop (do not use Vite) from start with Capacitor planned for Mobile
 - Use ShadCN for display components

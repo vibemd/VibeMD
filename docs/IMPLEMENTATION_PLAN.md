@@ -1373,12 +1373,10 @@ export function StatusBar() {
 
 **Duration**: 10-14 days
 
-### 7.1 Install Milkdown Dependencies
+### 7.1 Install Milkdown Crepe Dependencies
 ```bash
-npm install @milkdown/core @milkdown/ctx @milkdown/prose
-npm install @milkdown/react @milkdown/preset-commonmark
-npm install @milkdown/preset-gfm @milkdown/plugin-math
-npm install @milkdown/theme-nord
+npm install @milkdown/crepe
+npm install @milkdown/react
 npm install katex
 ```
 
@@ -1387,11 +1385,7 @@ npm install katex
 ```typescript
 // src/renderer/components/editor/WYSIWYGEditor.tsx
 import { useEffect, useRef } from 'react';
-import { Editor, rootCtx, defaultValueCtx } from '@milkdown/core';
-import { commonmark } from '@milkdown/preset-commonmark';
-import { gfm } from '@milkdown/preset-gfm';
-import { math } from '@milkdown/plugin-math';
-import { nord } from '@milkdown/theme-nord';
+import { crepe } from '@milkdown/crepe';
 import { Milkdown, MilkdownProvider, useEditor } from '@milkdown/react';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -1403,20 +1397,17 @@ export function WYSIWYGEditor() {
   const latexSupport = useSettingsStore((state) => state.settings.editor.latexSupport);
 
   const { get } = useEditor((root) => {
-    const editor = Editor.make()
-      .config((ctx) => {
-        ctx.set(rootCtx, root);
-        if (activeDocument) {
-          ctx.set(defaultValueCtx, activeDocument.content);
-        }
-      })
-      .use(nord)
-      .use(commonmark)
-      .use(gfm);
-
-    if (latexSupport) {
-      editor.use(math);
-    }
+    const editor = crepe({
+      root,
+      features: [
+        'toolbar',           // Built-in formatting toolbar
+        'commonmark',        // CommonMark support (Phase 1)
+        'code-highlight',    // Syntax highlighting
+        'image',             // Image handling
+        'link',              // Link management
+        ...(latexSupport ? ['latex'] : [])  // LaTeX support (Phase 3)
+      ]
+    });
 
     return editor;
   }, [activeDocument?.id, latexSupport]);
@@ -1571,12 +1562,50 @@ export const useUIStore = create<UIStore>((set) => ({
 ```
 
 ### 7.6 Deliverables
-- [ ] Milkdown installed and configured
-- [ ] WYSIWYG editor functional
+- [ ] Milkdown Crepe installed and configured
+- [ ] WYSIWYG editor functional with built-in toolbar
 - [ ] Mode selector implemented
 - [ ] Editor updates document store
-- [ ] LaTeX support toggle working
+- [ ] CommonMark support working (Phase 1)
 - [ ] Editor preserves formatting
+
+---
+
+## 7.5 Phase 2.5: GFM Extensions Implementation (Future)
+
+**Duration**: 5-7 days
+**Status**: Planned for Phase 2
+
+### 7.5.1 Install GFM Dependencies
+```bash
+npm install remark-gfm
+```
+
+### 7.5.2 Extend Crepe Toolbar
+- Add strikethrough button
+- Add table insertion button
+- Add task list button
+
+### 7.5.3 Update react-markdown
+- Add remark-gfm plugin
+- Configure GFM features
+
+---
+
+## 7.6 Phase 2.6: LaTeX Support Implementation (Future)
+
+**Duration**: 3-5 days
+**Status**: Planned for Phase 3
+
+### 7.6.1 Install LaTeX Dependencies
+```bash
+npm install remark-math rehype-katex katex
+```
+
+### 7.6.2 Configure LaTeX Rendering
+- Add remark-math to react-markdown
+- Add rehype-katex for rendering
+- Configure KaTeX options
 
 ---
 
@@ -1586,7 +1615,7 @@ export const useUIStore = create<UIStore>((set) => ({
 
 ### 8.1 Install Dependencies
 ```bash
-npm install @uiw/react-codemirror @uiw/react-md-editor
+npm install @uiw/react-codemirror react-markdown
 npm install @codemirror/lang-markdown
 npm install remark remark-gfm remark-math
 npm install rehype-katex rehype-sanitize

@@ -268,29 +268,28 @@ After extensive debugging and a critical Tailwind CSS v4 → v3 downgrade, all s
 - Mode selector working (UI only)
 
 **What's Needed:**
-- ❌ **WYSIWYG Editor (Milkdown) Integration**
-  - Configure Milkdown editor with proper settings
+- ❌ **WYSIWYG Editor (Milkdown Crepe) Integration**
+  - Configure Milkdown Crepe editor with built-in toolbar
   - Connect editor to document store
   - Implement content change handlers
   - Implement markdown serialization
-  - Add LaTeX/Math support toggle
-  - Configure GFM (GitHub Flavored Markdown) support
-  - Add editor plugins (clipboard, history, indent, etc.)
+  - Configure CommonMark support (Phase 1)
+  - Add LaTeX/Math support toggle (Phase 3)
   - Style editor to match application theme
 
 - ❌ **Split Editor Implementation**
   - Integrate CodeMirror for markdown editing pane
-  - Implement markdown preview pane
+  - Implement react-markdown preview pane
   - Synchronize scroll between editor and preview
   - Handle content changes from editor
   - Apply editor settings (line numbers, font size, word wrap)
   - Syntax highlighting for markdown
 
 - ❌ **Preview Editor Implementation**
-  - Implement read-only markdown rendering
+  - Implement read-only react-markdown rendering
   - Apply markdown styles (prose classes)
   - Handle code block syntax highlighting
-  - Render LaTeX/Math formulas
+  - Render LaTeX/Math formulas (Phase 3)
   - Handle images and links
 
 - ❌ **Editor Integration**

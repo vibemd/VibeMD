@@ -22,8 +22,8 @@ VibeMD is a cross-platform desktop markdown editor designed for Windows, macOS, 
 
 #### 2.1.1 WYSIWYG Mode
 - **FR-101**: Provide inline editing with visual formatting
-- **FR-102**: Display full formatting toolbar from Toast UI/Milkdown
-- **FR-103**: Support all CommonMark and GFM syntax elements
+- **FR-102**: Display full formatting toolbar from Milkdown Crepe
+- **FR-103**: Support all CommonMark syntax elements (Phase 1)
 - **FR-104**: Allow direct manipulation of formatted content
 - **FR-105**: Support real-time formatting preview
 - **FR-106**: Enable keyboard shortcuts for common formatting operations
@@ -253,19 +253,32 @@ VibeMD is a cross-platform desktop markdown editor designed for Windows, macOS, 
 - **FR-2608**: Render horizontal rules
 - **FR-2609**: Render line breaks and paragraphs
 
-#### 2.7.2 GitHub Flavored Markdown Support
+#### 2.7.2 GitHub Flavored Markdown Support (Phase 2)
 - **FR-2701**: Support GFM tables
 - **FR-2702**: Support task lists
 - **FR-2703**: Support strikethrough text
 - **FR-2704**: Support autolinks
 - **FR-2705**: Support disallowed raw HTML filtering
 
-#### 2.7.3 LaTeX Support
+#### 2.7.3 LaTeX Support (Phase 3)
 - **FR-2801**: Render LaTeX math expressions when enabled
 - **FR-2802**: Support inline math (single $)
 - **FR-2803**: Support display math (double $$)
 - **FR-2804**: Fallback gracefully when LaTeX disabled
 - **FR-2805**: Show LaTeX source when rendering fails
+
+#### 2.7.4 Phased Implementation Plan
+- **Phase 1 (MVP)**: CommonMark support only
+  - Headings, emphasis, lists, links, images, code blocks, blockquotes
+  - Milkdown Crepe WYSIWYG editor
+  - react-markdown for Split and Preview modes
+- **Phase 2 (Future)**: GFM extensions
+  - Strikethrough, tables, task lists
+  - Extend Crepe toolbar with additional buttons
+  - Add remark-gfm to react-markdown
+- **Phase 3 (Future)**: LaTeX support
+  - Math expressions via KaTeX
+  - Add remark-math + rehype-katex to react-markdown
 
 ## 3. Non-Functional Requirements
 
