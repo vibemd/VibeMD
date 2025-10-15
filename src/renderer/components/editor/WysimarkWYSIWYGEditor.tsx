@@ -9,7 +9,10 @@ export function WysimarkWYSIWYGEditor() {
   const markAsModified = useDocumentStore((state) => state.markAsModified);
   const settings = useSettingsStore((state) => state.settings);
 
-  const editor = useEditor();
+  const editor = useEditor({
+    authToken: undefined, // No auth token needed for local editing
+    height: '100%',
+  });
 
   const handleChange = (markdown: string) => {
     if (activeDocument && markdown !== activeDocument.content) {
