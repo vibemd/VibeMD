@@ -16,13 +16,17 @@ export function PreviewEditor() {
 
   return (
     <div className="flex-1">
-      <MDEditor.Markdown
-        source={activeDocument.content}
+      <MDEditor
+        value={activeDocument.content}
+        onChange={() => {}}
         data-color-mode="light"
+        height="100%"
+        visibleDragbar={false}
+        hideToolbar={true}
+        preview="preview"
         style={{
           fontSize: `${settings?.editor?.fontSize ?? 14}px`,
           fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
-          padding: '1rem',
         }}
       />
     </div>
