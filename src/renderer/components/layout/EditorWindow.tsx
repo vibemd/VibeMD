@@ -1,4 +1,3 @@
-import { ModeSelector } from '@/components/editor/ModeSelector';
 import { WysimarkWYSIWYGEditor } from '@/components/editor/WysimarkWYSIWYGEditor';
 import { SplitEditor } from '@/components/editor/SplitEditor';
 import { useUIStore } from '@/stores/uiStore';
@@ -29,7 +28,6 @@ export function EditorWindow() {
 
   return (
     <div className="flex-1 flex flex-col">
-      <ModeSelector />
       {editorMode === 'wysiwyg' && <WysimarkWYSIWYGEditor />}
       {editorMode === 'split' && <SplitEditor />}
     </div>
