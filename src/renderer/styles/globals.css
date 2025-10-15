@@ -420,4 +420,42 @@
     max-width: 50% !important;
   }
 
+  /* Hide toolbar while preserving layout space */
+  .w-md-editor .w-md-editor-toolbar {
+    display: none !important;
+  }
+
+  /* Alternative: Hide toolbar but keep its space */
+  .w-md-editor .w-md-editor-toolbar {
+    visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+  }
+
+  /* Ensure editor content takes full height when toolbar is hidden */
+  .w-md-editor .w-md-editor-content {
+    height: 100% !important;
+    flex: 1 !important;
+  }
+
+  /* Force proper flex layout for editor and preview */
+  .w-md-editor .w-md-editor-content {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .w-md-editor .w-md-editor-text-input,
+  .w-md-editor .w-md-editor-preview {
+    flex: 1 1 50% !important;
+    width: 50% !important;
+    min-width: 0 !important;
+    max-width: 50% !important;
+    height: 100% !important;
+  }
+
 }

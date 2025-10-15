@@ -48,7 +48,7 @@ export function SplitEditor() {
         visibleEditor={true}
         enablePreview={true}
         enableScroll={true}
-        showToolbar={false}
+        showToolbar={true}
         previewWidth="50%"
         data-color-mode="light"
         style={{
