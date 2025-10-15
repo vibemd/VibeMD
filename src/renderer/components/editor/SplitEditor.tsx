@@ -16,39 +16,67 @@ export function SplitEditor() {
       if (editorRef.current) {
         const editor = editorRef.current.querySelector('.w-md-editor');
         if (editor) {
+          console.log('Found editor element:', editor);
+          console.log('Editor children:', Array.from(editor.children));
+          
+          // Log all classes in the editor
+          console.log('Editor classes:', editor.className);
+          
           // Find all direct children that might be panes
           const children = Array.from(editor.children) as HTMLElement[];
           children.forEach((child, index) => {
+            console.log(`Child ${index}:`, child.className, child.tagName);
             child.style.flex = '1 1 50%';
             child.style.width = '50%';
             child.style.minWidth = '0';
             child.style.maxWidth = '50%';
+            child.style.boxSizing = 'border-box';
           });
 
-          // Also try to find nested panes
-          const textInput = editor.querySelector('[class*="text-input"], [class*="editor"]');
-          const preview = editor.querySelector('[class*="preview"], [class*="html"]');
+          // Try multiple selectors for the panes
+          const selectors = [
+            '[class*="text-input"]',
+            '[class*="editor"]', 
+            '[class*="preview"]',
+            '[class*="html"]',
+            '[class*="markdown"]',
+            '.w-md-editor-text-input',
+            '.w-md-editor-preview',
+            '.w-md-editor-text',
+            '.w-md-editor-html'
+          ];
           
-          if (textInput && preview) {
-            (textInput as HTMLElement).style.flex = '1 1 50%';
-            (textInput as HTMLElement).style.width = '50%';
-            (textInput as HTMLElement).style.minWidth = '0';
-            (textInput as HTMLElement).style.maxWidth = '50%';
-            
-            (preview as HTMLElement).style.flex = '1 1 50%';
-            (preview as HTMLElement).style.width = '50%';
-            (preview as HTMLElement).style.minWidth = '0';
-            (preview as HTMLElement).style.maxWidth = '50%';
-          }
+          selectors.forEach(selector => {
+            const elements = editor.querySelectorAll(selector);
+            elements.forEach((element, index) => {
+              console.log(`Found element with selector ${selector}:`, element.className);
+              (element as HTMLElement).style.flex = '1 1 50%';
+              (element as HTMLElement).style.width = '50%';
+              (element as HTMLElement).style.minWidth = '0';
+              (element as HTMLElement).style.maxWidth = '50%';
+              (element as HTMLElement).style.boxSizing = 'border-box';
+            });
+          });
+
+          // Force the editor container itself
+          (editor as HTMLElement).style.display = 'flex';
+          (editor as HTMLElement).style.flexDirection = 'row';
+          (editor as HTMLElement).style.width = '100%';
         }
       }
     };
 
-    // Apply immediately and after a short delay to catch dynamic content
+    // Apply immediately and after delays to catch dynamic content
     forceEqualWidth();
-    const timeoutId = setTimeout(forceEqualWidth, 100);
+    const timeoutId1 = setTimeout(forceEqualWidth, 100);
+    const timeoutId2 = setTimeout(forceEqualWidth, 500);
+    const timeoutId3 = setTimeout(forceEqualWidth, 1000);
     
-    return () => clearTimeout(timeoutId);
+    return () => {
+      clearTimeout(timeoutId1);
+      clearTimeout(timeoutId2);
+      clearTimeout(timeoutId3);
+    };
   }, [activeDocument]);
 
   const handleChange = (value: string) => {
