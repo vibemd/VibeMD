@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useLayoutEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Link } from '@tiptap/extension-link';
@@ -538,8 +538,81 @@ export function TipTapEditor() {
     }
   ];
 
-  // Simple static toolbar (no responsive behavior for now)
+  // Responsive toolbar state
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const [visibleButtons, setVisibleButtons] = useState<typeof toolbarButtons>([]);
+  const [overflowButtons, setOverflowButtons] = useState<typeof toolbarButtons>([]);
+
+  // Calculate which buttons fit in the toolbar
+  useLayoutEffect(() => {
+    const updateToolbar = () => {
+      if (!toolbarRef.current) return;
+
+      const toolbarWidth = toolbarRef.current.offsetWidth;
+      const padding = 16; // p-2 = 8px padding on each side
+      const gap = 8; // gap-2 = 8px gap between items
+      const overflowButtonWidth = 60; // Width of the "More" button
+      const availableWidth = toolbarWidth - padding;
+
+      let currentWidth = 0;
+      const newVisibleButtons: typeof toolbarButtons = [];
+      const newOverflowButtons: typeof toolbarButtons = [];
+
+      // Calculate button widths (approximate)
+      const buttonWidths = {
+        bold: 40, italic: 40, strike: 40, separator: 8,
+        headings: 140, separator2: 8,
+        bulletList: 40, orderedList: 40, separator3: 8,
+        codeBlock: 40, blockquote: 40, separator4: 8,
+        link: 40, image: 40, separator5: 8,
+        table: 40, tableActions: 160, separator6: 8,
+        taskList: 40, superscript: 40, subscript: 40
+      };
+
+      // Priority order (most important first)
+      const buttonOrder = [
+        'bold', 'italic', 'strike', 'separator',
+        'headings', 'separator2',
+        'bulletList', 'orderedList', 'separator3',
+        'codeBlock', 'blockquote', 'separator4',
+        'link', 'image', 'separator5',
+        'table', 'tableActions', 'separator6',
+        'taskList', 'superscript', 'subscript'
+      ];
+
+      for (const buttonId of buttonOrder) {
+        const button = toolbarButtons.find(b => b.id === buttonId);
+        if (!button) continue;
+
+        const buttonWidth = buttonWidths[buttonId as keyof typeof buttonWidths] || 40;
+        
+        // Check if we need to reserve space for overflow button
+        const needsOverflowButton = newOverflowButtons.length > 0 || 
+          (currentWidth + buttonWidth + gap + overflowButtonWidth > availableWidth);
+        
+        if (needsOverflowButton && currentWidth + buttonWidth + gap + overflowButtonWidth > availableWidth) {
+          newOverflowButtons.push(button);
+        } else if (currentWidth + buttonWidth + gap <= availableWidth) {
+          newVisibleButtons.push(button);
+          currentWidth += buttonWidth + gap;
+        } else {
+          newOverflowButtons.push(button);
+        }
+      }
+
+      setVisibleButtons(newVisibleButtons);
+      setOverflowButtons(newOverflowButtons);
+    };
+
+    // Initial calculation
+    updateToolbar();
+
+    // Add resize listener
+    window.addEventListener('resize', updateToolbar);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', updateToolbar);
+  }, []);
 
   // Update editor content when document changes
   React.useEffect(() => {
@@ -581,15 +654,40 @@ export function TipTapEditor() {
 
   return (
     <div className="flex-1 flex flex-col h-full">
-      {/* Simple Static Toolbar */}
+      {/* Responsive Toolbar with Overflow */}
       <TooltipProvider delayDuration={300} skipDelayDuration={100}>
-        <div ref={toolbarRef} className="border-b p-2 flex gap-2 items-center flex-wrap">
-          {/* All toolbar buttons */}
-          {toolbarButtons.map((button) => (
+        <div ref={toolbarRef} className="border-b p-2 flex gap-2 items-center">
+          {/* Visible buttons */}
+          {visibleButtons.map((button) => (
             <div key={button.id}>
               {button.component}
             </div>
           ))}
+          
+          {/* Overflow dropdown */}
+          {overflowButtons.length > 0 && (
+            <Tooltip delayDuration={300}>
+              <TooltipTrigger asChild>
+                <Select>
+                  <SelectTrigger className="w-[60px] h-8">
+                    <SelectValue placeholder="⋯" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {overflowButtons.map((button) => (
+                      <SelectItem key={button.id} value={button.id}>
+                        <div className="flex items-center gap-2">
+                          {button.component}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>More formatting options</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
       </TooltipProvider>
 
