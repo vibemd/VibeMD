@@ -13,6 +13,7 @@ import { Superscript } from '@tiptap/extension-superscript';
 import { Subscript } from '@tiptap/extension-subscript';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { useNavigationStore } from '@/services/navigationService';
 import { marked } from 'marked';
 import TurndownService from 'turndown';
 import { 
@@ -48,6 +49,7 @@ export function TipTapEditor() {
   const updateDocument = useDocumentStore((state) => state.updateDocument);
   const markAsModified = useDocumentStore((state) => state.markAsModified);
   const settings = useSettingsStore((state) => state.settings);
+  const setScrollToHeadingHandler = useNavigationStore((state) => state.setScrollToHeadingHandler);
 
   // Heading levels configuration
   const headingLevels = [
@@ -80,7 +82,20 @@ export function TipTapEditor() {
         breaks: true,
         gfm: true,
       });
-      return typeof result === 'string' ? result : String(result);
+      let html = typeof result === 'string' ? result : String(result);
+      
+      // Add IDs to headings for navigation
+      html = html.replace(/<h([1-6])>(.*?)<\/h[1-6]>/g, (match, level, content) => {
+        const id = content
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+          .replace(/\s+/g, '-') // Replace spaces with hyphens
+          .replace(/-+/g, '-') // Replace multiple hyphens with single
+          .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+        return `<h${level} id="${id}">${content}</h${level}>`;
+      });
+      
+      return html;
     } catch (error) {
       console.error('Error converting markdown to HTML:', error);
       return markdown; // Fallback to original content
@@ -613,6 +628,36 @@ export function TipTapEditor() {
     // Cleanup
     return () => window.removeEventListener('resize', updateToolbar);
   }, []);
+
+  // Set up navigation handler
+  React.useEffect(() => {
+    if (editor) {
+      const scrollToHeading = (headingId: string) => {
+        // Find the heading element in the editor
+        const headingElement = editor.view.dom.querySelector(`h1[id="${headingId}"], h2[id="${headingId}"], h3[id="${headingId}"], h4[id="${headingId}"], h5[id="${headingId}"], h6[id="${headingId}"]`);
+        
+        if (headingElement) {
+          // Scroll to the heading
+          headingElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          });
+          
+          // Focus the editor and position cursor at the heading
+          editor.commands.focus();
+          
+          // Find the position of the heading in the editor
+          const pos = editor.view.posAtDOM(headingElement, 0);
+          if (pos !== null) {
+            editor.commands.setTextSelection(pos);
+          }
+        }
+      };
+      
+      setScrollToHeadingHandler(scrollToHeading);
+    }
+  }, [editor, setScrollToHeadingHandler]);
 
   // Update editor content when document changes
   React.useEffect(() => {
