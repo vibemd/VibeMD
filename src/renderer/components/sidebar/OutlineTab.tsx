@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useDocumentStore } from '@/stores/documentStore';
 import { markdownService, OutlineNode } from '@/services/markdownService';
 import { useNavigationStore } from '@/services/navigationService';
@@ -11,6 +11,14 @@ export function OutlineTab() {
   );
   const scrollToHeading = useNavigationStore((state) => state.scrollToHeading);
   const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set());
+
+  // Debug navigation service initialization
+  React.useEffect(() => {
+    console.log('=== OUTLINE COMPONENT MOUNT ===');
+    console.log('Navigation service scrollToHeading:', scrollToHeading);
+    console.log('Navigation service type:', typeof scrollToHeading);
+    console.log('=== END OUTLINE COMPONENT MOUNT ===');
+  }, [scrollToHeading]);
 
   const outline = useMemo(() => {
     if (!activeDocument) return [];
@@ -35,6 +43,7 @@ export function OutlineTab() {
     console.log('Heading ID:', heading.id);
     console.log('Navigation service available:', !!scrollToHeading);
     console.log('Navigation service function:', scrollToHeading);
+    console.log('Navigation service type:', typeof scrollToHeading);
     
     if (heading.id) {
       console.log('Calling scrollToHeading with ID:', heading.id);

@@ -636,6 +636,7 @@ export function TipTapEditor() {
     console.log('=== TIPTAP NAVIGATION SETUP ===');
     console.log('Editor available:', !!editor);
     console.log('setScrollToHeadingHandler available:', !!setScrollToHeadingHandler);
+    console.log('Editor DOM:', editor?.view?.dom);
     
     if (editor) {
       console.log('Setting up navigation handler for editor');
