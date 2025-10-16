@@ -15,25 +15,29 @@ export function OutlineTab() {
 
   if (!activeDocument) {
     return (
-      <div style={{ padding: '1rem', textAlign: 'center', fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>
-        <p>No document open</p>
+      <div className="h-full overflow-y-auto overflow-x-hidden p-4">
+        <div style={{ textAlign: 'center', fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>
+          <p>No document open</p>
+        </div>
       </div>
     );
   }
 
   if (outline.length === 0) {
     return (
-      <div style={{ padding: '1rem', textAlign: 'center', fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>
-        <p>No headings found</p>
-        <p style={{ fontSize: '0.75rem', marginTop: '0.25rem' }}>
-          Add headings (# ## ###) to see outline
-        </p>
+      <div className="h-full overflow-y-auto overflow-x-hidden p-4">
+        <div style={{ textAlign: 'center', fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>
+          <p>No headings found</p>
+          <p style={{ fontSize: '0.75rem', marginTop: '0.25rem' }}>
+            Add headings (# ## ###) to see outline
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '0.5rem' }}>
+    <div className="h-full overflow-y-auto overflow-x-hidden p-2">
       {outline.map((heading, index) => (
         <div
           key={index}

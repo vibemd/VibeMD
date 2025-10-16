@@ -109,24 +109,26 @@ export function FilesTab() {
 
   if (documents.size === 0) {
     return (
-      <div style={{ padding: '1rem' }} className="space-y-4">
-        <div style={{ textAlign: 'center' }} className="space-y-2">
-          <FileText style={{ height: '3rem', width: '3rem', margin: '0 auto', color: 'hsl(var(--muted-foreground))' }} />
-          <p style={{ fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>No documents open</p>
-          <p style={{ fontSize: '0.75rem', color: 'hsl(var(--muted-foreground))' }}>
-            Get started by creating or opening a document
-          </p>
-        </div>
-        <div className="space-y-2">
-          <Button style={{ width: '100%' }} variant="default" onClick={handleNew}>
-            New Document
-          </Button>
-          <Button style={{ width: '100%' }} variant="outline" onClick={handleOpen}>
-            Open Document
-          </Button>
-          <Button style={{ width: '100%' }} variant="outline" onClick={handleUseTemplate}>
-            Use Template
-          </Button>
+      <div className="h-full overflow-y-auto overflow-x-hidden p-4">
+        <div className="space-y-4">
+          <div style={{ textAlign: 'center' }} className="space-y-2">
+            <FileText style={{ height: '3rem', width: '3rem', margin: '0 auto', color: 'hsl(var(--muted-foreground))' }} />
+            <p style={{ fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>No documents open</p>
+            <p style={{ fontSize: '0.75rem', color: 'hsl(var(--muted-foreground))' }}>
+              Get started by creating or opening a document
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Button style={{ width: '100%' }} variant="default" onClick={handleNew}>
+              New Document
+            </Button>
+            <Button style={{ width: '100%' }} variant="outline" onClick={handleOpen}>
+              Open Document
+            </Button>
+            <Button style={{ width: '100%' }} variant="outline" onClick={handleUseTemplate}>
+              Use Template
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -134,7 +136,7 @@ export function FilesTab() {
 
   return (
     <>
-      <div style={{ padding: '0.5rem' }}>
+      <div className="h-full overflow-y-auto overflow-x-hidden p-2">
         {Array.from(documents.values()).map((doc) => (
           <div
             key={doc.id}

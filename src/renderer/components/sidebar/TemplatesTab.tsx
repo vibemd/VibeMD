@@ -37,47 +37,53 @@ export function TemplatesTab() {
 
   if (loading) {
     return (
-      <div style={{ padding: '1rem', textAlign: 'center' }}>
-        <p style={{ fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>Loading templates...</p>
+      <div className="h-full overflow-y-auto overflow-x-hidden p-4">
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>Loading templates...</p>
+        </div>
       </div>
     );
   }
 
   if (templates.length === 0) {
     return (
-      <div style={{ padding: '1rem', textAlign: 'center' }} className="space-y-2">
-        <FileText style={{ height: '3rem', width: '3rem', margin: '0 auto', color: 'hsl(var(--muted-foreground))' }} />
-        <p style={{ fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>No templates available</p>
-        <p style={{ fontSize: '0.75rem', color: 'hsl(var(--muted-foreground))' }}>
-          Add .vibe files to your templates folder
-        </p>
+      <div className="h-full overflow-y-auto overflow-x-hidden p-4">
+        <div style={{ textAlign: 'center' }} className="space-y-2">
+          <FileText style={{ height: '3rem', width: '3rem', margin: '0 auto', color: 'hsl(var(--muted-foreground))' }} />
+          <p style={{ fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>No templates available</p>
+          <p style={{ fontSize: '0.75rem', color: 'hsl(var(--muted-foreground))' }}>
+            Add .vibe files to your templates folder
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '0.5rem' }} className="space-y-1">
-      {templates.map((template) => (
-        <div
-          key={template.id}
-          className="p-2 rounded hover:bg-accent group"
-        >
-          <div className="flex items-center gap-2">
-            <FileText style={{ height: '1rem', width: '1rem' }} />
-            <span className="flex-1 truncate text-sm">
-              {template.filename}
-            </span>
-          </div>
-          <Button
-            size="sm"
-            variant="ghost"
-            className="w-full mt-2"
-            onClick={() => handleUseTemplate(template)}
+    <div className="h-full overflow-y-auto overflow-x-hidden p-2">
+      <div className="space-y-1">
+        {templates.map((template) => (
+          <div
+            key={template.id}
+            className="p-2 rounded hover:bg-accent group"
           >
-            Use
-          </Button>
-        </div>
-      ))}
+            <div className="flex items-center gap-2">
+              <FileText style={{ height: '1rem', width: '1rem' }} />
+              <span className="flex-1 truncate text-sm">
+                {template.filename}
+              </span>
+            </div>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="w-full mt-2"
+              onClick={() => handleUseTemplate(template)}
+            >
+              Use
+            </Button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
