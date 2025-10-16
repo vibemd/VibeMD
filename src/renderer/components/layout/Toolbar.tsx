@@ -110,10 +110,10 @@ export function Toolbar() {
   const hasUnsavedChanges = activeDoc?.isModified;
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={300}>
       <div className="h-14 border-b flex items-center px-4 gap-2 bg-background">
         {/* Left side - File operations */}
-        <Tooltip>
+        <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
@@ -130,7 +130,7 @@ export function Toolbar() {
           </TooltipContent>
         </Tooltip>
 
-        <Tooltip>
+        <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
@@ -147,7 +147,7 @@ export function Toolbar() {
           </TooltipContent>
         </Tooltip>
 
-        <Tooltip>
+        <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
@@ -165,7 +165,7 @@ export function Toolbar() {
           </TooltipContent>
         </Tooltip>
 
-        <Tooltip>
+        <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
@@ -187,7 +187,7 @@ export function Toolbar() {
         <div className="flex-1" />
 
         {/* Right side - Utility actions */}
-        <Tooltip>
+        <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
@@ -207,7 +207,7 @@ export function Toolbar() {
 
         <Separator orientation="vertical" className="h-6" />
         
-        <Tooltip>
+        <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
