@@ -169,9 +169,17 @@ export function TipTapEditor() {
       BulletList,
       OrderedList,
       ListItem,
-      TaskList,
+      TaskList.configure({
+        itemTypeName: 'taskItem',
+        HTMLAttributes: {
+          class: 'task-list',
+        },
+      }),
       TaskItem.configure({
         nested: true,
+        HTMLAttributes: {
+          class: 'task-item',
+        },
       }),
       Superscript.configure({
         HTMLAttributes: {
