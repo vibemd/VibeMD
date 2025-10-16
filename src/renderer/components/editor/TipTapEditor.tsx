@@ -163,28 +163,12 @@ export function TipTapEditor() {
       BulletList,
       OrderedList,
       ListItem,
-      TaskList.configure({
-        itemTypeName: 'taskItem',
-        HTMLAttributes: {
-          class: 'task-list',
-        },
-      }),
+      TaskList,
       TaskItem.configure({
         nested: true,
-        HTMLAttributes: {
-          class: 'task-item',
-        },
       }),
-      Superscript.configure({
-        HTMLAttributes: {
-          class: 'superscript',
-        },
-      }),
-      Subscript.configure({
-        HTMLAttributes: {
-          class: 'subscript',
-        },
-      }),
+      Superscript,
+      Subscript,
       StarterKit.configure({
         // Exclude conflicting extensions
         bulletList: false,
