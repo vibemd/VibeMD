@@ -3,6 +3,14 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Link } from '@tiptap/extension-link';
 import { Image } from '@tiptap/extension-image';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableCell } from '@tiptap/extension-table-cell';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { TaskList } from '@tiptap/extension-task-list';
+import { TaskItem } from '@tiptap/extension-task-item';
+import { Superscript } from '@tiptap/extension-superscript';
+import { Subscript } from '@tiptap/extension-subscript';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { marked } from 'marked';
@@ -19,7 +27,11 @@ import {
   Code, 
   Quote,
   Link as LinkIcon,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Table as TableIcon,
+  CheckSquare,
+  Superscript as SuperscriptIcon,
+  Subscript as SubscriptIcon
 } from 'lucide-react';
 
 export function TipTapEditor() {
@@ -72,6 +84,18 @@ export function TipTapEditor() {
           class: 'max-w-full h-auto rounded',
         },
       }),
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+      }),
+      Superscript,
+      Subscript,
     ],
     content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
     onUpdate: ({ editor }) => {
@@ -245,6 +269,42 @@ export function TipTapEditor() {
           title="Insert Image"
         >
           <ImageIcon className="h-4 w-4" />
+        </button>
+        <div className="w-px bg-gray-300 mx-1" />
+        <button
+          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          className="p-2 rounded hover:bg-gray-100"
+          title="Insert Table"
+        >
+          <TableIcon className="h-4 w-4" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleTaskList().run()}
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('taskList') ? 'bg-gray-200' : ''
+          }`}
+          title="Task List"
+        >
+          <CheckSquare className="h-4 w-4" />
+        </button>
+        <div className="w-px bg-gray-300 mx-1" />
+        <button
+          onClick={() => editor.chain().focus().toggleSuperscript().run()}
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('superscript') ? 'bg-gray-200' : ''
+          }`}
+          title="Superscript"
+        >
+          <SuperscriptIcon className="h-4 w-4" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleSubscript().run()}
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('subscript') ? 'bg-gray-200' : ''
+          }`}
+          title="Subscript"
+        >
+          <SubscriptIcon className="h-4 w-4" />
         </button>
       </div>
 

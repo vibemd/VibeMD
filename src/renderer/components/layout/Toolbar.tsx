@@ -110,7 +110,7 @@ export function Toolbar() {
   const hasUnsavedChanges = activeDoc?.isModified;
 
   return (
-    <TooltipProvider delayDuration={300}>
+    <TooltipProvider delayDuration={300} skipDelayDuration={100}>
       <div className="h-14 border-b flex items-center px-4 gap-2 bg-background">
         {/* Left side - File operations */}
         <Tooltip delayDuration={300}>
