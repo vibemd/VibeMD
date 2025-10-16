@@ -420,85 +420,9 @@
     max-width: 50% !important;
   }
 
-  /* Hide toolbar by setting height to zero - Multiple selectors for maximum coverage */
-  .w-md-editor .w-md-editor-toolbar,
-  .w-md-editor-toolbar,
-  .w-md-editor > .w-md-editor-toolbar,
-  .w-md-editor [class*="toolbar"],
-  .w-md-editor [class*="Toolbar"] {
-    height: 0 !important;
-    min-height: 0 !important;
-    max-height: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: none !important;
-    overflow: hidden !important;
+  /* Simple toolbar hiding - just hide it completely */
+  .w-md-editor .w-md-editor-toolbar {
     display: none !important;
-  }
-
-  /* Hide all toolbar buttons and elements */
-  .w-md-editor .w-md-editor-toolbar *,
-  .w-md-editor-toolbar *,
-  .w-md-editor [class*="toolbar"] *,
-  .w-md-editor [class*="Toolbar"] * {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-  }
-
-  /* Ensure editor content takes full height when toolbar is hidden */
-  .w-md-editor .w-md-editor-content {
-    height: 100% !important;
-    flex: 1 !important;
-  }
-
-  /* Force proper layout for editor and preview using CSS Grid - Enhanced for showToolbar=false */
-  .w-md-editor .w-md-editor-content {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    width: 100% !important;
-    height: 100% !important;
-    gap: 0 !important;
-    flex: 1 !important;
-  }
-
-  .w-md-editor .w-md-editor-text-input,
-  .w-md-editor .w-md-editor-preview {
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    height: 100% !important;
-    grid-column: auto !important;
-  }
-
-  /* Alternative flexbox approach - Enhanced for showToolbar=false */
-  .w-md-editor .w-md-editor-content {
-    display: flex !important;
-    flex-direction: row !important;
-    width: 100% !important;
-    height: 100% !important;
-    flex: 1 !important;
-  }
-
-  .w-md-editor .w-md-editor-text-input,
-  .w-md-editor .w-md-editor-preview {
-    flex: 1 1 0 !important;
-    width: 50% !important;
-    min-width: 0 !important;
-    max-width: 50% !important;
-    height: 100% !important;
-  }
-
-  /* Force the main editor container to use full height when toolbar is hidden */
-  .w-md-editor {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
-  }
-
-  .w-md-editor .w-md-editor-content {
-    flex: 1 !important;
-    height: 100% !important;
   }
 
 }
