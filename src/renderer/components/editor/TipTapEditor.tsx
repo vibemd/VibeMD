@@ -5,6 +5,8 @@ import { Link } from '@tiptap/extension-link';
 import { Image } from '@tiptap/extension-image';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { marked } from 'marked';
+import TurndownService from 'turndown';
 import { 
   Bold, 
   Italic, 
@@ -26,6 +28,34 @@ export function TipTapEditor() {
   const markAsModified = useDocumentStore((state) => state.markAsModified);
   const settings = useSettingsStore((state) => state.settings);
 
+  // Function to convert markdown to HTML
+  const markdownToHtml = (markdown: string): string => {
+    try {
+      return marked(markdown, {
+        breaks: true,
+        gfm: true,
+      });
+    } catch (error) {
+      console.error('Error converting markdown to HTML:', error);
+      return markdown; // Fallback to original content
+    }
+  };
+
+  // Function to convert HTML to markdown
+  const htmlToMarkdown = (html: string): string => {
+    try {
+      const turndownService = new TurndownService({
+        headingStyle: 'atx',
+        bulletListMarker: '-',
+        codeBlockStyle: 'fenced',
+      });
+      return turndownService.turndown(html);
+    } catch (error) {
+      console.error('Error converting HTML to markdown:', error);
+      return html; // Fallback to original content
+    }
+  };
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -41,20 +71,26 @@ export function TipTapEditor() {
         },
       }),
     ],
-    content: activeDocument?.content || '',
+    content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      if (activeDocument && html !== activeDocument.content) {
-        updateDocument(activeDocument.id, { content: html });
-        markAsModified(activeDocument.id);
+      if (activeDocument) {
+        const markdownContent = htmlToMarkdown(html);
+        if (markdownContent !== activeDocument.content) {
+          updateDocument(activeDocument.id, { content: markdownContent });
+          markAsModified(activeDocument.id);
+        }
       }
     },
   });
 
   // Update editor content when document changes
   React.useEffect(() => {
-    if (editor && activeDocument && editor.getHTML() !== activeDocument.content) {
-      editor.commands.setContent(activeDocument.content);
+    if (editor && activeDocument) {
+      const htmlContent = markdownToHtml(activeDocument.content);
+      if (editor.getHTML() !== htmlContent) {
+        editor.commands.setContent(htmlContent);
+      }
     }
   }, [editor, activeDocument]);
 
