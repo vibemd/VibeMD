@@ -9,25 +9,14 @@
 .ProseMirror {
   outline: none;
   padding: 1rem;
-  min-height: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
 }
 
 .ProseMirror-focused {
   outline: none;
-}
-
-/* Target the custom EditorContent class */
-.tiptap-editor-content {
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-/* Target the ProseMirror editor inside EditorContent */
-.tiptap-editor-content .ProseMirror {
-  height: auto;
-  min-height: 100%;
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {
