@@ -96,6 +96,16 @@ export function TipTapEditor() {
     }
   }, [editor, activeDocument]);
 
+  // Add test content for scrolling when no document is open
+  React.useEffect(() => {
+    if (editor && !activeDocument) {
+      const testContent = Array.from({ length: 50 }, (_, i) => 
+        `<p>This is test paragraph ${i + 1} to ensure we have enough content to trigger scrolling. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>`
+      ).join('');
+      editor.commands.setContent(testContent);
+    }
+  }, [editor, activeDocument]);
+
   if (!activeDocument) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -113,7 +123,7 @@ export function TipTapEditor() {
   }
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col h-full">
       {/* Simple Toolbar */}
       <div className="border-b p-2 flex gap-2 flex-wrap">
         <button
@@ -242,8 +252,7 @@ export function TipTapEditor() {
       <div 
         className="flex-1 tiptap-scroll-container"
         style={{ 
-          height: '100%',
-          maxHeight: '100%',
+          height: 'calc(100vh - 200px)', // Fixed height calculation
           overflow: 'auto',
           position: 'relative'
         }}
@@ -255,8 +264,8 @@ export function TipTapEditor() {
         }}
       >
         <div style={{ 
-          minHeight: '100%',
-          paddingBottom: '2rem' // Add some bottom padding to ensure scrollable content
+          minHeight: 'calc(100% + 100px)', // Ensure content exceeds container
+          paddingBottom: '2rem'
         }}>
           <EditorContent
             editor={editor}
