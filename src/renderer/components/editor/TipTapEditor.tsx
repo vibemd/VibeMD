@@ -562,12 +562,28 @@ export function TipTapEditor() {
               onClick={() => {
                 console.log('=== TASK LIST BUTTON CLICKED ===');
                 console.log('Editor available:', !!editor);
-                console.log('Can toggle task list:', editor?.can().toggleTaskList());
+                console.log('Editor state:', editor?.state);
                 console.log('Current selection:', editor?.state.selection);
+                console.log('Selection empty:', editor?.state.selection.empty);
+                console.log('Selection from:', editor?.state.selection.from);
+                console.log('Selection to:', editor?.state.selection.to);
+                console.log('Can toggle task list:', editor?.can().toggleTaskList());
+                console.log('Is active task list:', editor?.isActive('taskList'));
+                console.log('Available commands:', Object.keys(editor?.commands || {}));
                 
-                // Use TipTap's proper task list command
+                // Try the command
                 const result = editor?.chain().focus().toggleTaskList().run();
                 console.log('Toggle task list result:', result);
+                
+                // Check state after command
+                console.log('After command - is active task list:', editor?.isActive('taskList'));
+                console.log('After command - HTML:', editor?.getHTML());
+                
+                // Ensure editor has focus
+                setTimeout(() => {
+                  editor?.commands.focus();
+                }, 100);
+                
                 console.log('=== END TASK LIST DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
@@ -596,11 +612,28 @@ export function TipTapEditor() {
               onClick={() => {
                 console.log('=== SUPERSCRIPT BUTTON CLICKED ===');
                 console.log('Editor available:', !!editor);
-                console.log('Can toggle superscript:', editor?.can().toggleSuperscript());
+                console.log('Editor state:', editor?.state);
                 console.log('Current selection:', editor?.state.selection);
+                console.log('Selection empty:', editor?.state.selection.empty);
+                console.log('Selection from:', editor?.state.selection.from);
+                console.log('Selection to:', editor?.state.selection.to);
+                console.log('Can toggle superscript:', editor?.can().toggleSuperscript());
+                console.log('Is active superscript:', editor?.isActive('superscript'));
+                console.log('Available commands:', Object.keys(editor?.commands || {}));
                 
-                // Use TipTap's proper superscript command
-                editor?.chain().focus().toggleSuperscript().run();
+                // Try the command
+                const result = editor?.chain().focus().toggleSuperscript().run();
+                console.log('Toggle superscript result:', result);
+                
+                // Check state after command
+                console.log('After command - is active superscript:', editor?.isActive('superscript'));
+                console.log('After command - HTML:', editor?.getHTML());
+                
+                // Ensure editor has focus
+                setTimeout(() => {
+                  editor?.commands.focus();
+                }, 100);
+                
                 console.log('=== END SUPERSCRIPT DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
@@ -625,11 +658,28 @@ export function TipTapEditor() {
               onClick={() => {
                 console.log('=== SUBSCRIPT BUTTON CLICKED ===');
                 console.log('Editor available:', !!editor);
-                console.log('Can toggle subscript:', editor?.can().toggleSubscript());
+                console.log('Editor state:', editor?.state);
                 console.log('Current selection:', editor?.state.selection);
+                console.log('Selection empty:', editor?.state.selection.empty);
+                console.log('Selection from:', editor?.state.selection.from);
+                console.log('Selection to:', editor?.state.selection.to);
+                console.log('Can toggle subscript:', editor?.can().toggleSubscript());
+                console.log('Is active subscript:', editor?.isActive('subscript'));
+                console.log('Available commands:', Object.keys(editor?.commands || {}));
                 
-                // Use TipTap's proper subscript command
-                editor?.chain().focus().toggleSubscript().run();
+                // Try the command
+                const result = editor?.chain().focus().toggleSubscript().run();
+                console.log('Toggle subscript result:', result);
+                
+                // Check state after command
+                console.log('After command - is active subscript:', editor?.isActive('subscript'));
+                console.log('After command - HTML:', editor?.getHTML());
+                
+                // Ensure editor has focus
+                setTimeout(() => {
+                  editor?.commands.focus();
+                }, 100);
+                
                 console.log('=== END SUBSCRIPT DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
