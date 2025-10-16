@@ -85,11 +85,6 @@ export function TipTapEditor() {
       });
       let html = typeof result === 'string' ? result : String(result);
       
-      console.log('=== MARKDOWN TO HTML DEBUG ===');
-      console.log('Original markdown:', markdown.slice(0, 200));
-      console.log('Generated HTML:', html.slice(0, 500));
-      console.log('HTML headings found:', html.match(/<h[1-6][^>]*>.*?<\/h[1-6]>/g));
-      
       // Add IDs to headings for navigation
       html = html.replace(/<h([1-6])>(.*?)<\/h[1-6]>/g, (match, level, content) => {
         const id = content
@@ -99,13 +94,8 @@ export function TipTapEditor() {
           .replace(/-+/g, '-') // Replace multiple hyphens with single
           .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
         
-        console.log('HTML heading ID generated:', { content, id, level });
         return `<h${level} id="${id}">${content}</h${level}>`;
       });
-      
-      console.log('Final HTML with IDs:', html.slice(0, 500));
-      console.log('Final HTML headings:', html.match(/<h[1-6][^>]*id="[^"]*"[^>]*>.*?<\/h[1-6]>/g));
-      console.log('=== END MARKDOWN TO HTML DEBUG ===');
       
       return html;
     } catch (error) {
@@ -671,25 +661,12 @@ export function TipTapEditor() {
 
   // Set up navigation handler
   React.useEffect(() => {
-    console.log('=== TIPTAP NAVIGATION SETUP ===');
-    console.log('Editor available:', !!editor);
-    console.log('setScrollToHeadingHandler available:', !!setScrollToHeadingHandler);
-    console.log('Editor DOM:', editor?.view?.dom);
-    
     if (editor) {
-      console.log('Setting up navigation handler for editor');
       const scrollToHeading = (headingId: string) => {
-        console.log('=== TIPTAP NAVIGATION HANDLER ===');
-        console.log('TipTap scrollToHeading called with ID:', headingId);
-        console.log('Editor DOM:', editor.view.dom);
-        
         // Find the heading element in the editor
         const headingElement = editor.view.dom.querySelector(`h1[id="${headingId}"], h2[id="${headingId}"], h3[id="${headingId}"], h4[id="${headingId}"], h5[id="${headingId}"], h6[id="${headingId}"]`);
         
-        console.log('Found heading element:', headingElement);
-        
         if (headingElement) {
-          console.log('Scrolling to heading element');
           // Scroll to the heading
           headingElement.scrollIntoView({ 
             behavior: 'smooth', 
@@ -702,28 +679,14 @@ export function TipTapEditor() {
           
           // Find the position of the heading in the editor
           const pos = editor.view.posAtDOM(headingElement, 0);
-          console.log('Heading position:', pos);
           if (pos !== null) {
             editor.commands.setTextSelection(pos);
           }
-        } else {
-          console.log('No heading element found with ID:', headingId);
-          // Debug: log all headings in the editor
-          const allHeadings = editor.view.dom.querySelectorAll('h1, h2, h3, h4, h5, h6');
-          console.log('All headings in editor:', Array.from(allHeadings).map(h => ({ tag: h.tagName, id: h.id, text: h.textContent?.slice(0, 50) })));
-          console.log('Looking for ID:', headingId);
-          console.log('Available IDs:', Array.from(allHeadings).map(h => h.id));
         }
-        console.log('=== END TIPTAP NAVIGATION HANDLER ===');
       };
       
-      console.log('Registering navigation handler with service');
       setScrollToHeadingHandler(scrollToHeading);
-      console.log('Navigation handler registered successfully');
-    } else {
-      console.log('Editor not available yet - skipping navigation setup');
     }
-    console.log('=== END TIPTAP NAVIGATION SETUP ===');
   }, [editor, setScrollToHeadingHandler]);
 
   // Update editor content when document changes
