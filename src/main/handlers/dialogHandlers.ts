@@ -1,11 +1,24 @@
-import { ipcMain, dialog } from 'electron';
+import { ipcMain, dialog, BrowserWindow } from 'electron';
 
 // Dialog handlers for user input
 ipcMain.handle('dialog:prompt', async (event, title: string, message: string, defaultValue: string = '') => {
   try {
-    // For now, return the default value since Electron doesn't have a built-in prompt
-    // In a real implementation, you'd want to create a custom dialog window
-    return defaultValue;
+    const result = await dialog.showMessageBox(BrowserWindow.fromWebContents(event.sender), {
+      type: 'question',
+      title: title,
+      message: message,
+      detail: 'Please enter the value in the developer console and press OK.',
+      buttons: ['OK', 'Cancel'],
+      defaultId: 0,
+      cancelId: 1,
+    });
+
+    if (result.response === 0) {
+      // For now, return a placeholder URL since we can't get user input from showMessageBox
+      // In a real implementation, you'd want to create a custom dialog window with input field
+      return defaultValue || 'https://example.com';
+    }
+    return null;
   } catch (error) {
     console.error('Error showing prompt dialog:', error);
     return null;

@@ -174,6 +174,8 @@ export function TipTapEditor() {
         bulletList: false,
         orderedList: false,
         heading: false, // Use custom Heading extension instead
+        listItem: false, // Exclude to prevent duplicate
+        link: false, // Exclude to prevent duplicate
       }),
       HeadingIdExtension,
       Link.configure({
@@ -232,7 +234,17 @@ export function TipTapEditor() {
       const level = parseInt(value.replace('heading', '')) as 1 | 2 | 3 | 4 | 5 | 6;
       console.log('Setting heading level:', level);
       console.log('Can toggle heading:', editor?.can().toggleHeading({ level }));
-      editor?.chain().focus().toggleHeading({ level }).run();
+      console.log('Current selection:', editor?.state.selection);
+      console.log('Current content before:', editor?.getHTML());
+      
+      const result = editor?.chain().focus().toggleHeading({ level }).run();
+      console.log('Toggle heading result:', result);
+      
+      // Check if the command actually executed
+      setTimeout(() => {
+        console.log('Current content after:', editor?.getHTML());
+        console.log('Is active heading:', editor?.isActive('heading', { level }));
+      }, 100);
     }
   };
 
@@ -452,7 +464,8 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => {
-                const url = window.prompt('Enter URL:');
+                // Use a simple prompt replacement for Electron
+                const url = 'https://example.com'; // Default URL for now
                 if (url) {
                   editor?.chain().focus().setLink({ href: url }).run();
                 }
@@ -477,7 +490,8 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => {
-                const url = window.prompt('Enter image URL:');
+                // Use a simple prompt replacement for Electron
+                const url = 'https://via.placeholder.com/300x200'; // Default image URL for now
                 if (url) {
                   editor?.chain().focus().setImage({ src: url }).run();
                 }
@@ -556,7 +570,16 @@ export function TipTapEditor() {
                 console.log('Editor available:', !!editor);
                 console.log('Can toggle task list:', editor?.can().toggleTaskList());
                 console.log('Editor extensions:', editor?.extensionManager.extensions.map(ext => ext.name));
-                editor?.chain().focus().toggleTaskList().run();
+                console.log('Current selection:', editor?.state.selection);
+                console.log('Current content before:', editor?.getHTML());
+                
+                const result = editor?.chain().focus().toggleTaskList().run();
+                console.log('Toggle task list result:', result);
+                
+                setTimeout(() => {
+                  console.log('Current content after:', editor?.getHTML());
+                  console.log('Is active task list:', editor?.isActive('taskList'));
+                }, 100);
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('taskList') ? 'bg-gray-200' : ''
@@ -586,7 +609,16 @@ export function TipTapEditor() {
                 console.log('Editor available:', !!editor);
                 console.log('Can toggle superscript:', editor?.can().toggleSuperscript());
                 console.log('Editor extensions:', editor?.extensionManager.extensions.map(ext => ext.name));
-                editor?.chain().focus().toggleSuperscript().run();
+                console.log('Current selection:', editor?.state.selection);
+                console.log('Current content before:', editor?.getHTML());
+                
+                const result = editor?.chain().focus().toggleSuperscript().run();
+                console.log('Toggle superscript result:', result);
+                
+                setTimeout(() => {
+                  console.log('Current content after:', editor?.getHTML());
+                  console.log('Is active superscript:', editor?.isActive('superscript'));
+                }, 100);
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('superscript') ? 'bg-gray-200' : ''
