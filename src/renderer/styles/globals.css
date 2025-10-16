@@ -412,8 +412,9 @@
     width: 100% !important;
   }
 
-  /* Force all direct children to be equal width */
-  .w-md-editor > * {
+  /* Force editor and preview panes to be equal width (but not toolbar) */
+  .w-md-editor .w-md-editor-text-input,
+  .w-md-editor .w-md-editor-preview {
     flex: 1 1 50% !important;
     width: 50% !important;
     min-width: 0 !important;
