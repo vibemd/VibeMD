@@ -194,29 +194,29 @@
 }
 
 /* Task list styling */
-.ProseMirror .task-list {
+.ProseMirror ul[data-type="taskList"] {
   list-style: none;
   padding-left: 0;
 }
 
-.ProseMirror .task-item {
+.ProseMirror ul[data-type="taskList"] li {
   display: flex;
   align-items: flex-start;
   margin: 0.25rem 0;
 }
 
-.ProseMirror .task-item input[type="checkbox"] {
+.ProseMirror ul[data-type="taskList"] li input[type="checkbox"] {
   margin-right: 0.5rem;
   margin-top: 0.125rem;
 }
 
 /* Superscript and subscript styling */
-.ProseMirror .superscript {
+.ProseMirror sup {
   vertical-align: super;
   font-size: 0.75em;
 }
 
-.ProseMirror .subscript {
+.ProseMirror sub {
   vertical-align: sub;
   font-size: 0.75em;
 }
