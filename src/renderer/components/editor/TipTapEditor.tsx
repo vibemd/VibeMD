@@ -673,6 +673,8 @@ export function TipTapEditor() {
           // Debug: log all headings in the editor
           const allHeadings = editor.view.dom.querySelectorAll('h1, h2, h3, h4, h5, h6');
           console.log('All headings in editor:', Array.from(allHeadings).map(h => ({ tag: h.tagName, id: h.id, text: h.textContent?.slice(0, 50) })));
+          console.log('Looking for ID:', headingId);
+          console.log('Available IDs:', Array.from(allHeadings).map(h => h.id));
         }
         console.log('=== END TIPTAP NAVIGATION HANDLER ===');
       };

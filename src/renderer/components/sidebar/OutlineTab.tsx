@@ -144,7 +144,9 @@ export function OutlineTab() {
           onClick={() => {
             console.log('=== MANUAL NAVIGATION TEST ===');
             console.log('Testing navigation service:', scrollToHeading);
-            scrollToHeading('test-heading');
+            console.log('Outline headings:', outline);
+            console.log('First heading ID:', outline[0]?.id);
+            scrollToHeading(outline[0]?.id || 'test-heading');
             console.log('=== END MANUAL TEST ===');
           }}
           className="px-2 py-1 bg-blue-500 text-white rounded text-xs"
