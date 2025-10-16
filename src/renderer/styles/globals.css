@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import @uiw/react-markdown-editor CSS */
-@import '@uiw/react-markdown-editor/markdown-editor.css';
+/* Import @uiw/react-md-editor CSS */
+@import '@uiw/react-md-editor/markdown-editor.css';
 
 /* Import KaTeX CSS for LaTeX math rendering */
 @import 'katex/dist/katex.css';
@@ -389,7 +389,7 @@
     min-width: 0 !important;
   }
 
-  /* Force 50/50 split for @uiw/react-markdown-editor */
+  /* Force 50/50 split for @uiw/react-md-editor */
   .w-md-editor-text-input,
   .w-md-editor-preview {
     flex: 1 1 50% !important;

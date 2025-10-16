@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import MarkdownEditor from '@uiw/react-markdown-editor';
+import MDEditor from '@uiw/react-md-editor';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 
@@ -39,17 +39,13 @@ export function SplitEditor() {
 
   return (
     <div className="flex-1">
-      {/* Single MarkdownEditor with both editor and preview */}
-      <MarkdownEditor
+      {/* MDEditor with both editor and preview */}
+      <MDEditor
         value={markdownContent}
-        onChange={handleChange}
+        onChange={(value) => handleChange(value || '')}
         height="100%"
-        visible={true}
-        visibleEditor={true}
-        enablePreview={true}
-        enableScroll={true}
-        showToolbar={false}
         data-color-mode="light"
+        hideToolbar={true}
         style={{
           fontSize: `${settings?.editor?.fontSize ?? 14}px`,
           fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
