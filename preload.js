@@ -13,6 +13,7 @@ const electronAPI = {
   loadSettings: () => ipcRenderer.invoke('settings:load'),
   saveSettings: (settings) => ipcRenderer.invoke('settings:save', settings),
   printDocument: (htmlContent) => ipcRenderer.invoke('print:document', htmlContent),
+  showPrompt: (title, message, defaultValue) => ipcRenderer.invoke('dialog:prompt', title, message, defaultValue),
 };
 
 contextBridge.exposeInMainWorld('electronAPI', electronAPI);

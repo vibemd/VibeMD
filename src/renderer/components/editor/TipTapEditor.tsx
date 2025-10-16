@@ -51,7 +51,6 @@ export function TipTapEditor() {
         breaks: true,
         gfm: true,
         pedantic: false,
-        sanitize: false,
         smartLists: true,
         smartypants: false,
       });
@@ -257,45 +256,41 @@ export function TipTapEditor() {
         <div className="w-px bg-gray-300 mx-1" />
         <button
           onClick={() => {
-            const url = window.prompt('Enter URL:');
-            if (url) {
-              editor.chain().focus().setLink({ href: url }).run();
-            }
+            // For now, insert placeholder link since Electron doesn't support prompt()
+            // TODO: Implement custom dialog for link URL input
+            editor.chain().focus().setLink({ href: 'https://example.com' }).run();
           }}
           className={`p-2 rounded hover:bg-gray-100 ${
             editor.isActive('link') ? 'bg-gray-200' : ''
           }`}
-          title="Insert Link"
+          title="Insert Link (placeholder)"
         >
           <LinkIcon className="h-4 w-4" />
         </button>
         <button
           onClick={() => {
-            const url = window.prompt('Enter image URL:');
-            if (url) {
-              editor.chain().focus().setImage({ src: url }).run();
-            }
+            // For now, insert placeholder image since Electron doesn't support prompt()
+            // TODO: Implement custom dialog for image URL input
+            editor.chain().focus().setImage({ src: 'https://via.placeholder.com/300x200' }).run();
           }}
           className="p-2 rounded hover:bg-gray-100"
-          title="Insert Image"
+          title="Insert Image (placeholder)"
         >
           <ImageIcon className="h-4 w-4" />
         </button>
         <div className="w-px bg-gray-300 mx-1" />
         <button
           onClick={() => {
-            const rows = prompt('Number of rows:', '3');
-            const cols = prompt('Number of columns:', '3');
-            if (rows && cols) {
-              editor.chain().focus().insertTable({ 
-                rows: parseInt(rows), 
-                cols: parseInt(cols), 
-                withHeaderRow: true 
-              }).run();
-            }
+            // For now, use default 3x3 table since Electron doesn't support prompt()
+            // TODO: Implement custom dialog for table dimensions
+            editor.chain().focus().insertTable({ 
+              rows: 3, 
+              cols: 3, 
+              withHeaderRow: true 
+            }).run();
           }}
           className="p-2 rounded hover:bg-gray-100"
-          title="Insert Table"
+          title="Insert Table (3x3)"
         >
           <TableIcon className="h-4 w-4" />
         </button>
