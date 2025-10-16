@@ -157,6 +157,9 @@ export function TipTapEditor() {
   const editor = useEditor({
     extensions: [
       // Core extensions first
+      Heading.configure({
+        levels: [1, 2, 3, 4, 5, 6], // Support all heading levels
+      }),
       BulletList,
       OrderedList,
       ListItem,
@@ -187,9 +190,6 @@ export function TipTapEditor() {
         bulletList: false,
         orderedList: false,
         heading: false, // Use custom Heading extension instead
-      }),
-      Heading.configure({
-        levels: [1, 2, 3, 4, 5, 6], // Support all heading levels
       }),
       HeadingIdExtension,
       Link.configure({
