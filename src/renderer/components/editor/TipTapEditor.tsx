@@ -155,32 +155,10 @@ export function TipTapEditor() {
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        // Exclude conflicting extensions
-        bulletList: false,
-        orderedList: false,
-      }),
-      HeadingIdExtension,
+      // Core extensions first
       BulletList,
       OrderedList,
       ListItem,
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-blue-600 underline hover:text-blue-800',
-        },
-      }),
-      Image.configure({
-        HTMLAttributes: {
-          class: 'max-w-full h-auto rounded',
-        },
-      }),
-      Table.configure({
-        resizable: true,
-      }),
-      TableRow,
-      TableHeader,
-      TableCell,
       TaskList.configure({
         itemTypeName: 'taskItem',
         HTMLAttributes: {
@@ -203,6 +181,29 @@ export function TipTapEditor() {
           class: 'subscript',
         },
       }),
+      StarterKit.configure({
+        // Exclude conflicting extensions
+        bulletList: false,
+        orderedList: false,
+      }),
+      HeadingIdExtension,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-blue-600 underline hover:text-blue-800',
+        },
+      }),
+      Image.configure({
+        HTMLAttributes: {
+          class: 'max-w-full h-auto rounded',
+        },
+      }),
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
     autofocus: 'start', // Auto-focus at start
