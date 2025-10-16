@@ -1,4 +1,4 @@
-import { useRef, useState, useLayoutEffect } from 'react';
+import { useRef, useState, useLayoutEffect, useMemo } from 'react';
 
 export interface ToolbarButton {
   id: string;
@@ -17,6 +17,15 @@ export const useResponsiveToolbar = (buttons: ToolbarButton[]): UseResponsiveToo
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [visibleButtons, setVisibleButtons] = useState<ToolbarButton[]>([]);
   const [overflowButtons, setOverflowButtons] = useState<ToolbarButton[]>([]);
+
+  // Memoize button configuration to prevent infinite loops
+  const buttonConfig = useMemo(() => {
+    return buttons.map(button => ({
+      id: button.id,
+      width: button.width,
+      priority: button.priority
+    }));
+  }, [buttons.map(b => `${b.id}-${b.width}-${b.priority}`).join(',')]);
 
   useLayoutEffect(() => {
     const updateToolbar = () => {
@@ -60,7 +69,7 @@ export const useResponsiveToolbar = (buttons: ToolbarButton[]): UseResponsiveToo
 
     // Cleanup
     return () => window.removeEventListener('resize', updateToolbar);
-  }, [buttons]);
+  }, [buttonConfig]);
 
   return { toolbarRef, visibleButtons, overflowButtons };
 };

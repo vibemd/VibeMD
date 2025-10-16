@@ -42,7 +42,6 @@ import {
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { useResponsiveToolbar, ToolbarButton } from '@/hooks/useResponsiveToolbar';
 
 export function TipTapEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
@@ -195,8 +194,8 @@ export function TipTapEditor() {
     }
   };
 
-  // Toolbar button configuration with priorities
-  const toolbarButtons: ToolbarButton[] = [
+  // Toolbar button configuration
+  const toolbarButtons = [
     {
       id: 'bold',
       component: (
@@ -216,8 +215,6 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 40,
-      priority: 10
     },
     {
       id: 'italic',
@@ -238,8 +235,6 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 40,
-      priority: 10
     },
     {
       id: 'strikethrough',
@@ -260,14 +255,10 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 40,
-      priority: 8
     },
     {
       id: 'separator1',
       component: <div className="w-px bg-gray-300 mx-1" />,
-      width: 8,
-      priority: 0
     },
     {
       id: 'headings',
@@ -292,14 +283,10 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 140,
-      priority: 9
     },
     {
       id: 'separator2',
       component: <div className="w-px bg-gray-300 mx-1" />,
-      width: 8,
-      priority: 0
     },
     {
       id: 'bulletList',
@@ -320,8 +307,6 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 40,
-      priority: 7
     },
     {
       id: 'orderedList',
@@ -342,14 +327,10 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 40,
-      priority: 7
     },
     {
       id: 'separator3',
       component: <div className="w-px bg-gray-300 mx-1" />,
-      width: 8,
-      priority: 0
     },
     {
       id: 'codeBlock',
@@ -370,8 +351,6 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 40,
-      priority: 6
     },
     {
       id: 'blockquote',
@@ -392,14 +371,10 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 40,
-      priority: 6
     },
     {
       id: 'separator4',
       component: <div className="w-px bg-gray-300 mx-1" />,
-      width: 8,
-      priority: 0
     },
     {
       id: 'link',
@@ -422,8 +397,6 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 40,
-      priority: 5
     },
     {
       id: 'image',
@@ -444,14 +417,10 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 40,
-      priority: 5
     },
     {
       id: 'separator5',
       component: <div className="w-px bg-gray-300 mx-1" />,
-      width: 8,
-      priority: 0
     },
     {
       id: 'table',
@@ -476,8 +445,6 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 40,
-      priority: 4
     },
     {
       id: 'tableActions',
@@ -502,8 +469,6 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 160,
-      priority: 4
     },
     {
       id: 'taskList',
@@ -524,14 +489,10 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 40,
-      priority: 4
     },
     {
       id: 'separator6',
       component: <div className="w-px bg-gray-300 mx-1" />,
-      width: 8,
-      priority: 0
     },
     {
       id: 'superscript',
@@ -552,8 +513,6 @@ export function TipTapEditor() {
           </TooltipContent>
         </Tooltip>
       ),
-      width: 40,
-      priority: 3
     },
     {
       id: 'subscript',
@@ -579,8 +538,8 @@ export function TipTapEditor() {
     }
   ];
 
-  // Use responsive toolbar hook
-  const { toolbarRef, visibleButtons, overflowButtons } = useResponsiveToolbar(toolbarButtons);
+  // Simple static toolbar (no responsive behavior for now)
+  const toolbarRef = useRef<HTMLDivElement>(null);
 
   // Update editor content when document changes
   React.useEffect(() => {
@@ -622,40 +581,15 @@ export function TipTapEditor() {
 
   return (
     <div className="flex-1 flex flex-col h-full">
-      {/* Responsive Toolbar with Overflow Handling */}
+      {/* Simple Static Toolbar */}
       <TooltipProvider delayDuration={300} skipDelayDuration={100}>
-        <div ref={toolbarRef} className="border-b p-2 flex gap-2 items-center">
-          {/* Visible buttons */}
-          {visibleButtons.map((button) => (
+        <div ref={toolbarRef} className="border-b p-2 flex gap-2 items-center flex-wrap">
+          {/* All toolbar buttons */}
+          {toolbarButtons.map((button) => (
             <div key={button.id}>
               {button.component}
             </div>
           ))}
-          
-          {/* Overflow dropdown */}
-          {overflowButtons.length > 0 && (
-            <Tooltip delayDuration={300}>
-              <TooltipTrigger asChild>
-                <Select>
-                  <SelectTrigger className="w-[60px] h-8">
-                    <SelectValue placeholder="⋯" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {overflowButtons.map((button) => (
-                      <SelectItem key={button.id} value={button.id}>
-                        <div className="flex items-center gap-2">
-                          {button.component}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>More formatting options</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
         </div>
       </TooltipProvider>
 
