@@ -193,6 +193,34 @@
   display: list-item;
 }
 
+/* Task list styling */
+.ProseMirror .task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.ProseMirror .task-item {
+  display: flex;
+  align-items: flex-start;
+  margin: 0.25rem 0;
+}
+
+.ProseMirror .task-item input[type="checkbox"] {
+  margin-right: 0.5rem;
+  margin-top: 0.125rem;
+}
+
+/* Superscript and subscript styling */
+.ProseMirror .superscript {
+  vertical-align: super;
+  font-size: 0.75em;
+}
+
+.ProseMirror .subscript {
+  vertical-align: sub;
+  font-size: 0.75em;
+}
+
 .ProseMirror blockquote {
   border-left: 4px solid #e5e7eb;
   padding-left: 1rem;
