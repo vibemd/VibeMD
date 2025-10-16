@@ -21,6 +21,8 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import { useNavigationStore } from '@/services/navigationService';
 import { marked } from 'marked';
 import TurndownService from 'turndown';
+import { LinkDialog } from '../dialogs/LinkDialog';
+import { ImageDialog } from '../dialogs/ImageDialog';
 import { 
   Bold, 
   Italic, 
@@ -55,6 +57,10 @@ export function TipTapEditor() {
   const markAsModified = useDocumentStore((state) => state.markAsModified);
   const settings = useSettingsStore((state) => state.settings);
   const setScrollToHeadingHandler = useNavigationStore((state) => state.setScrollToHeadingHandler);
+
+  // Dialog state
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [imageDialogOpen, setImageDialogOpen] = useState(false);
 
   // Heading levels configuration
   const headingLevels = [
@@ -471,13 +477,7 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => {
-                // Use a simple prompt replacement for Electron
-                const url = 'https://example.com'; // Default URL for now
-                if (url) {
-                  editor?.chain().focus().setLink({ href: url }).run();
-                }
-              }}
+              onClick={() => setLinkDialogOpen(true)}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('link') ? 'bg-gray-200' : ''
               }`}
@@ -486,7 +486,7 @@ export function TipTapEditor() {
             </button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Insert Link (placeholder)</p>
+            <p>Insert Link</p>
           </TooltipContent>
         </Tooltip>
       ),
@@ -497,20 +497,14 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => {
-                // Use a simple prompt replacement for Electron
-                const url = 'https://via.placeholder.com/300x200'; // Default image URL for now
-                if (url) {
-                  editor?.chain().focus().setImage({ src: url }).run();
-                }
-              }}
+              onClick={() => setImageDialogOpen(true)}
               className="p-2 rounded hover:bg-gray-100"
             >
               <ImageIcon className="h-4 w-4" />
             </button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Insert Image (placeholder)</p>
+            <p>Insert Image</p>
           </TooltipContent>
         </Tooltip>
       ),
@@ -889,6 +883,30 @@ export function TipTapEditor() {
           />
         </div>
       </div>
+
+      {/* Link Dialog */}
+      <LinkDialog
+        open={linkDialogOpen}
+        onClose={() => setLinkDialogOpen(false)}
+        onInsert={(url, text) => {
+          if (text) {
+            // Insert link with custom text
+            editor?.chain().focus().insertContent(`<a href="${url}">${text}</a>`).run();
+          } else {
+            // Set link on selected text
+            editor?.chain().focus().setLink({ href: url }).run();
+          }
+        }}
+      />
+
+      {/* Image Dialog */}
+      <ImageDialog
+        open={imageDialogOpen}
+        onClose={() => setImageDialogOpen(false)}
+        onInsert={(url, alt) => {
+          editor?.chain().focus().setImage({ src: url, alt }).run();
+        }}
+      />
     </div>
   );
 }
