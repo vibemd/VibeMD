@@ -237,10 +237,17 @@ export function TipTapEditor() {
 
   // Handle heading change
   const handleHeadingChange = (value: string) => {
+    console.log('Heading change requested:', value);
+    console.log('Editor available:', !!editor);
+    console.log('Editor commands:', editor?.commands);
+    
     if (value === 'paragraph') {
+      console.log('Setting paragraph');
       editor?.chain().focus().setParagraph().run();
     } else {
       const level = parseInt(value.replace('heading', '')) as 1 | 2 | 3 | 4 | 5 | 6;
+      console.log('Setting heading level:', level);
+      console.log('Can toggle heading:', editor?.can().toggleHeading({ level }));
       editor?.chain().focus().toggleHeading({ level }).run();
     }
   };
@@ -560,7 +567,13 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => editor?.chain().focus().toggleTaskList().run()}
+              onClick={() => {
+                console.log('Task list button clicked');
+                console.log('Editor available:', !!editor);
+                console.log('Can toggle task list:', editor?.can().toggleTaskList());
+                console.log('Editor extensions:', editor?.extensionManager.extensions.map(ext => ext.name));
+                editor?.chain().focus().toggleTaskList().run();
+              }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('taskList') ? 'bg-gray-200' : ''
               }`}
@@ -584,7 +597,13 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => editor?.chain().focus().toggleSuperscript().run()}
+              onClick={() => {
+                console.log('Superscript button clicked');
+                console.log('Editor available:', !!editor);
+                console.log('Can toggle superscript:', editor?.can().toggleSuperscript());
+                console.log('Editor extensions:', editor?.extensionManager.extensions.map(ext => ext.name));
+                editor?.chain().focus().toggleSuperscript().run();
+              }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('superscript') ? 'bg-gray-200' : ''
               }`}
