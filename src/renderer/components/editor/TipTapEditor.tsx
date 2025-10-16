@@ -22,6 +22,9 @@ import {
   Heading1, 
   Heading2, 
   Heading3, 
+  Heading4,
+  Heading5,
+  Heading6,
   List, 
   ListOrdered, 
   Code, 
@@ -34,14 +37,87 @@ import {
   Subscript as SubscriptIcon,
   Plus,
   Minus,
-  Trash2
+  Trash2,
+  ChevronDown
 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function TipTapEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
   const updateDocument = useDocumentStore((state) => state.updateDocument);
   const markAsModified = useDocumentStore((state) => state.markAsModified);
   const settings = useSettingsStore((state) => state.settings);
+
+  // Heading levels configuration
+  const headingLevels = [
+    { value: 'paragraph', label: 'Normal text', level: 0 },
+    { value: 'heading1', label: 'Heading 1', level: 1 },
+    { value: 'heading2', label: 'Heading 2', level: 2 },
+    { value: 'heading3', label: 'Heading 3', level: 3 },
+    { value: 'heading4', label: 'Heading 4', level: 4 },
+    { value: 'heading5', label: 'Heading 5', level: 5 },
+    { value: 'heading6', label: 'Heading 6', level: 6 },
+  ];
+
+  // Table commands configuration
+  const tableCommands = [
+    { value: 'insertRowBefore', label: 'Insert row above' },
+    { value: 'insertRowAfter', label: 'Insert row below' },
+    { value: 'insertColumnBefore', label: 'Insert column left' },
+    { value: 'insertColumnAfter', label: 'Insert column right' },
+    { value: 'deleteRow', label: 'Delete row' },
+    { value: 'deleteColumn', label: 'Delete column' },
+    { value: 'deleteTable', label: 'Delete table' },
+  ];
+
+  // Helper function to get current heading
+  const getCurrentHeading = () => {
+    if (editor?.isActive('heading', { level: 1 })) return 'heading1';
+    if (editor?.isActive('heading', { level: 2 })) return 'heading2';
+    if (editor?.isActive('heading', { level: 3 })) return 'heading3';
+    if (editor?.isActive('heading', { level: 4 })) return 'heading4';
+    if (editor?.isActive('heading', { level: 5 })) return 'heading5';
+    if (editor?.isActive('heading', { level: 6 })) return 'heading6';
+    return 'paragraph';
+  };
+
+  // Handle heading change
+  const handleHeadingChange = (value: string) => {
+    if (value === 'paragraph') {
+      editor?.chain().focus().setParagraph().run();
+    } else {
+      const level = parseInt(value.replace('heading', '')) as 1 | 2 | 3 | 4 | 5 | 6;
+      editor?.chain().focus().toggleHeading({ level }).run();
+    }
+  };
+
+  // Handle table command
+  const handleTableCommand = (command: string) => {
+    switch (command) {
+      case 'insertRowBefore':
+        editor?.chain().focus().addRowBefore().run();
+        break;
+      case 'insertRowAfter':
+        editor?.chain().focus().addRowAfter().run();
+        break;
+      case 'insertColumnBefore':
+        editor?.chain().focus().addColumnBefore().run();
+        break;
+      case 'insertColumnAfter':
+        editor?.chain().focus().addColumnAfter().run();
+        break;
+      case 'deleteRow':
+        editor?.chain().focus().deleteRow().run();
+        break;
+      case 'deleteColumn':
+        editor?.chain().focus().deleteColumn().run();
+        break;
+      case 'deleteTable':
+        editor?.chain().focus().deleteTable().run();
+        break;
+    }
+  };
 
   // Function to convert markdown to HTML
   const markdownToHtml = (markdown: string): string => {
@@ -157,220 +233,268 @@ export function TipTapEditor() {
 
   return (
     <div className="flex-1 flex flex-col h-full">
-      {/* Simple Toolbar */}
-      <div className="border-b p-2 flex gap-2 flex-wrap">
-        <button
-          onClick={() => editor?.chain().focus().toggleBold().run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('bold') ? 'bg-gray-200' : ''
-          }`}
-          title="Bold"
-        >
-          <Bold className="h-4 w-4" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().toggleItalic().run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('italic') ? 'bg-gray-200' : ''
-          }`}
-          title="Italic"
-        >
-          <Italic className="h-4 w-4" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().toggleStrike().run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('strike') ? 'bg-gray-200' : ''
-          }`}
-          title="Strikethrough"
-        >
-          <Strikethrough className="h-4 w-4" />
-        </button>
+      {/* Enhanced Toolbar with Dropdowns */}
+      <TooltipProvider delayDuration={300} skipDelayDuration={100}>
+        <div className="border-b p-2 flex gap-2 flex-wrap">
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleBold().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('bold') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <Bold className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Bold (Ctrl+B)</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleItalic().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('italic') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <Italic className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Italic (Ctrl+I)</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleStrike().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('strike') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <Strikethrough className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Strikethrough</p>
+          </TooltipContent>
+        </Tooltip>
         <div className="w-px bg-gray-300 mx-1" />
-        <button
-          onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('heading', { level: 1 }) ? 'bg-gray-200' : ''
-          }`}
-          title="Heading 1"
-        >
-          <Heading1 className="h-4 w-4" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('heading', { level: 2 }) ? 'bg-gray-200' : ''
-          }`}
-          title="Heading 2"
-        >
-          <Heading2 className="h-4 w-4" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('heading', { level: 3 }) ? 'bg-gray-200' : ''
-          }`}
-          title="Heading 3"
-        >
-          <Heading3 className="h-4 w-4" />
-        </button>
+        
+        {/* Headings Dropdown */}
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <Select value={getCurrentHeading()} onValueChange={handleHeadingChange}>
+              <SelectTrigger className="w-[140px] h-8">
+                <SelectValue placeholder="Select heading" />
+              </SelectTrigger>
+              <SelectContent>
+                {headingLevels.map((heading) => (
+                  <SelectItem key={heading.value} value={heading.value}>
+                    {heading.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Select heading level (H1-H6) or Normal text</p>
+          </TooltipContent>
+        </Tooltip>
         <div className="w-px bg-gray-300 mx-1" />
-        <button
-          onClick={() => editor?.chain().focus().toggleBulletList().run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('bulletList') ? 'bg-gray-200' : ''
-          }`}
-          title="Bullet List"
-        >
-          <List className="h-4 w-4" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('orderedList') ? 'bg-gray-200' : ''
-          }`}
-          title="Numbered List"
-        >
-          <ListOrdered className="h-4 w-4" />
-        </button>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleBulletList().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('bulletList') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <List className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Bullet List</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('orderedList') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <ListOrdered className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Numbered List</p>
+          </TooltipContent>
+        </Tooltip>
         <div className="w-px bg-gray-300 mx-1" />
-        <button
-          onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('codeBlock') ? 'bg-gray-200' : ''
-          }`}
-          title="Code Block"
-        >
-          <Code className="h-4 w-4" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().toggleBlockquote().run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('blockquote') ? 'bg-gray-200' : ''
-          }`}
-          title="Blockquote"
-        >
-          <Quote className="h-4 w-4" />
-        </button>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('codeBlock') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <Code className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Code Block</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleBlockquote().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('blockquote') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <Quote className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Blockquote</p>
+          </TooltipContent>
+        </Tooltip>
         <div className="w-px bg-gray-300 mx-1" />
-        <button
-          onClick={() => {
-            // For now, insert placeholder link since Electron doesn't support prompt()
-            // TODO: Implement custom dialog for link URL input
-            editor?.chain().focus().setLink({ href: 'https://example.com' }).run();
-          }}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('link') ? 'bg-gray-200' : ''
-          }`}
-          title="Insert Link (placeholder)"
-        >
-          <LinkIcon className="h-4 w-4" />
-        </button>
-        <button
-          onClick={() => {
-            // For now, insert placeholder image since Electron doesn't support prompt()
-            // TODO: Implement custom dialog for image URL input
-            editor?.chain().focus().setImage({ src: 'https://via.placeholder.com/300x200' }).run();
-          }}
-          className="p-2 rounded hover:bg-gray-100"
-          title="Insert Image (placeholder)"
-        >
-          <ImageIcon className="h-4 w-4" />
-        </button>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                // For now, insert placeholder link since Electron doesn't support prompt()
+                // TODO: Implement custom dialog for link URL input
+                editor?.chain().focus().setLink({ href: 'https://example.com' }).run();
+              }}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('link') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <LinkIcon className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Insert Link (placeholder)</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                // For now, insert placeholder image since Electron doesn't support prompt()
+                // TODO: Implement custom dialog for image URL input
+                editor?.chain().focus().setImage({ src: 'https://via.placeholder.com/300x200' }).run();
+              }}
+              className="p-2 rounded hover:bg-gray-100"
+            >
+              <ImageIcon className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Insert Image (placeholder)</p>
+          </TooltipContent>
+        </Tooltip>
         <div className="w-px bg-gray-300 mx-1" />
-        <button
-          onClick={() => {
-            // For now, use default 3x3 table since Electron doesn't support prompt()
-            // TODO: Implement custom dialog for table dimensions
-            editor?.chain().focus().insertTable({ 
-              rows: 3, 
-              cols: 3, 
-              withHeaderRow: true 
-            }).run();
-          }}
-          className="p-2 rounded hover:bg-gray-100"
-          title="Insert Table (3x3)"
-        >
-          <TableIcon className="h-4 w-4" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().addRowBefore().run()}
-          className="p-2 rounded hover:bg-gray-100"
-          title="Add Row Before"
-        >
-          <Plus className="h-3 w-3" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().addRowAfter().run()}
-          className="p-2 rounded hover:bg-gray-100"
-          title="Add Row After"
-        >
-          <Plus className="h-3 w-3" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().addColumnBefore().run()}
-          className="p-2 rounded hover:bg-gray-100"
-          title="Add Column Before"
-        >
-          <Plus className="h-3 w-3" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().addColumnAfter().run()}
-          className="p-2 rounded hover:bg-gray-100"
-          title="Add Column After"
-        >
-          <Plus className="h-3 w-3" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().deleteRow().run()}
-          className="p-2 rounded hover:bg-gray-100"
-          title="Delete Row"
-        >
-          <Minus className="h-3 w-3" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().deleteColumn().run()}
-          className="p-2 rounded hover:bg-gray-100"
-          title="Delete Column"
-        >
-          <Minus className="h-3 w-3" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().deleteTable().run()}
-          className="p-2 rounded hover:bg-gray-100"
-          title="Delete Table"
-        >
-          <Trash2 className="h-3 w-3" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().toggleTaskList().run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('taskList') ? 'bg-gray-200' : ''
-          }`}
-          title="Task List"
-        >
-          <CheckSquare className="h-4 w-4" />
-        </button>
+        
+        {/* Table Insert Button */}
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                // For now, use default 3x3 table since Electron doesn't support prompt()
+                // TODO: Implement custom dialog for table dimensions
+                editor?.chain().focus().insertTable({ 
+                  rows: 3, 
+                  cols: 3, 
+                  withHeaderRow: true 
+                }).run();
+              }}
+              className="p-2 rounded hover:bg-gray-100"
+            >
+              <TableIcon className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Insert Table (3x3)</p>
+          </TooltipContent>
+        </Tooltip>
+
+        {/* Table Functions Dropdown */}
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <Select onValueChange={handleTableCommand}>
+              <SelectTrigger className="w-[160px] h-8">
+                <SelectValue placeholder="Table actions" />
+              </SelectTrigger>
+              <SelectContent>
+                {tableCommands.map((command) => (
+                  <SelectItem key={command.value} value={command.value}>
+                    {command.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Table operations (insert/delete rows/columns)</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleTaskList().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('taskList') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <CheckSquare className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Task List</p>
+          </TooltipContent>
+        </Tooltip>
         <div className="w-px bg-gray-300 mx-1" />
-        <button
-          onClick={() => editor?.chain().focus().toggleSuperscript().run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('superscript') ? 'bg-gray-200' : ''
-          }`}
-          title="Superscript"
-        >
-          <SuperscriptIcon className="h-4 w-4" />
-        </button>
-        <button
-          onClick={() => editor?.chain().focus().toggleSubscript().run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor?.isActive('subscript') ? 'bg-gray-200' : ''
-          }`}
-          title="Subscript"
-        >
-          <SubscriptIcon className="h-4 w-4" />
-        </button>
-      </div>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleSuperscript().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('superscript') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <SuperscriptIcon className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Superscript</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleSubscript().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('subscript') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <SubscriptIcon className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Subscript</p>
+          </TooltipContent>
+        </Tooltip>
+        </div>
+      </TooltipProvider>
 
       {/* Editor Content */}
       <div 
