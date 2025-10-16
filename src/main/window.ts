@@ -21,6 +21,16 @@ export const createMainWindow = (): BrowserWindow => {
     show: false, // Show after ready-to-show
   });
 
+  // Set Content Security Policy to allow external images
+  mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': ["default-src 'self' 'unsafe-inline' 'unsafe-eval' data: https:; img-src 'self' data: https:;"]
+      }
+    });
+  });
+
   // Load renderer
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
