@@ -237,18 +237,17 @@ export function TipTapEditor() {
       </div>
 
       {/* Editor Content */}
-      <div className="flex-1 overflow-hidden" style={{ height: '100%' }}>
-        <EditorContent
-          editor={editor}
-          style={{
-            fontSize: `${settings?.editor?.fontSize ?? 14}px`,
-            fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
-            height: '100%',
-            maxHeight: '100%',
-            outline: 'none',
-            overflow: 'auto',
-          }}
-        />
+      <div className="flex-1 overflow-y-auto overflow-x-hidden" style={{ height: '100%' }}>
+        <div style={{ minHeight: '100%' }}>
+          <EditorContent
+            editor={editor}
+            style={{
+              fontSize: `${settings?.editor?.fontSize ?? 14}px`,
+              fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
+              outline: 'none',
+            }}
+          />
+        </div>
       </div>
     </div>
   );

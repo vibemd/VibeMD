@@ -9,20 +9,11 @@
 .ProseMirror {
   outline: none;
   padding: 1rem;
-  min-height: 100%;
-  max-height: none;
   box-sizing: border-box;
 }
 
 .ProseMirror-focused {
   outline: none;
-}
-
-/* Ensure the editor content area can scroll */
-.ProseMirror-editorContent {
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {
