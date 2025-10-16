@@ -561,8 +561,14 @@ export function TipTapEditor() {
                 console.log('Editor available:', !!editor);
                 console.log('Can toggle task list:', editor?.can().toggleTaskList());
                 console.log('Current selection:', editor?.state.selection);
-                const result = editor?.chain().focus().toggleTaskList().run();
-                console.log('Toggle task list result:', result);
+                
+                // If no text is selected, insert a task list at cursor position
+                if (editor?.state.selection.empty) {
+                  editor?.chain().focus().insertContent('<ul data-type="taskList"><li data-type="taskItem" data-checked="false"><input type="checkbox" /><p></p></li></ul>').run();
+                } else {
+                  // If text is selected, wrap it in a task list
+                  editor?.chain().focus().toggleTaskList().run();
+                }
                 console.log('=== END TASK LIST DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
@@ -593,8 +599,14 @@ export function TipTapEditor() {
                 console.log('Editor available:', !!editor);
                 console.log('Can toggle superscript:', editor?.can().toggleSuperscript());
                 console.log('Current selection:', editor?.state.selection);
-                const result = editor?.chain().focus().toggleSuperscript().run();
-                console.log('Toggle superscript result:', result);
+                
+                // If no text is selected, insert placeholder text with superscript
+                if (editor?.state.selection.empty) {
+                  editor?.chain().focus().insertContent('<sup>superscript</sup>').run();
+                } else {
+                  // If text is selected, apply superscript formatting
+                  editor?.chain().focus().toggleSuperscript().run();
+                }
                 console.log('=== END SUPERSCRIPT DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
@@ -621,8 +633,14 @@ export function TipTapEditor() {
                 console.log('Editor available:', !!editor);
                 console.log('Can toggle subscript:', editor?.can().toggleSubscript());
                 console.log('Current selection:', editor?.state.selection);
-                const result = editor?.chain().focus().toggleSubscript().run();
-                console.log('Toggle subscript result:', result);
+                
+                // If no text is selected, insert placeholder text with subscript
+                if (editor?.state.selection.empty) {
+                  editor?.chain().focus().insertContent('<sub>subscript</sub>').run();
+                } else {
+                  // If text is selected, apply subscript formatting
+                  editor?.chain().focus().toggleSubscript().run();
+                }
                 console.log('=== END SUBSCRIPT DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
@@ -851,8 +869,7 @@ export function TipTapEditor() {
           position: 'relative'
         }}
         onWheel={(e) => {
-          // Prevent default to ensure our handler works
-          e.preventDefault();
+          // Handle wheel scrolling manually
           const container = e.currentTarget;
           container.scrollTop += e.deltaY;
         }}
