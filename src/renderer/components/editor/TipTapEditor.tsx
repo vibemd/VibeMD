@@ -6,6 +6,7 @@ import { Image } from '@tiptap/extension-image';
 import { BulletList } from '@tiptap/extension-bullet-list';
 import { OrderedList } from '@tiptap/extension-ordered-list';
 import { ListItem } from '@tiptap/extension-list-item';
+import { Heading } from '@tiptap/extension-heading';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
@@ -185,6 +186,10 @@ export function TipTapEditor() {
         // Exclude conflicting extensions
         bulletList: false,
         orderedList: false,
+        heading: false, // Use custom Heading extension instead
+      }),
+      Heading.configure({
+        levels: [1, 2, 3, 4, 5, 6], // Support all heading levels
       }),
       HeadingIdExtension,
       Link.configure({
@@ -456,7 +461,10 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => {
-                editor?.chain().focus().setLink({ href: 'https://example.com' }).run();
+                const url = window.prompt('Enter URL:');
+                if (url) {
+                  editor?.chain().focus().setLink({ href: url }).run();
+                }
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('link') ? 'bg-gray-200' : ''
@@ -478,7 +486,10 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => {
-                editor?.chain().focus().setImage({ src: 'https://via.placeholder.com/300x200' }).run();
+                const url = window.prompt('Enter image URL:');
+                if (url) {
+                  editor?.chain().focus().setImage({ src: url }).run();
+                }
               }}
               className="p-2 rounded hover:bg-gray-100"
             >
@@ -549,13 +560,7 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => {
-                console.log('Task list button clicked');
-                console.log('Editor available:', !!editor);
-                console.log('Editor commands:', editor?.commands);
-                console.log('Can toggle task list:', editor?.can().toggleTaskList());
-                editor?.chain().focus().toggleTaskList().run();
-              }}
+              onClick={() => editor?.chain().focus().toggleTaskList().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('taskList') ? 'bg-gray-200' : ''
               }`}
@@ -579,12 +584,7 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => {
-                console.log('Superscript button clicked');
-                console.log('Editor available:', !!editor);
-                console.log('Can toggle superscript:', editor?.can().toggleSuperscript());
-                editor?.chain().focus().toggleSuperscript().run();
-              }}
+              onClick={() => editor?.chain().focus().toggleSuperscript().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('superscript') ? 'bg-gray-200' : ''
               }`}
