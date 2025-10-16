@@ -633,9 +633,17 @@ export function TipTapEditor() {
 
   // Set up navigation handler
   React.useEffect(() => {
+    console.log('=== TIPTAP NAVIGATION SETUP ===');
+    console.log('Editor available:', !!editor);
+    console.log('setScrollToHeadingHandler available:', !!setScrollToHeadingHandler);
+    
     if (editor) {
+      console.log('Setting up navigation handler for editor');
       const scrollToHeading = (headingId: string) => {
+        console.log('=== TIPTAP NAVIGATION HANDLER ===');
         console.log('TipTap scrollToHeading called with ID:', headingId);
+        console.log('Editor DOM:', editor.view.dom);
+        
         // Find the heading element in the editor
         const headingElement = editor.view.dom.querySelector(`h1[id="${headingId}"], h2[id="${headingId}"], h3[id="${headingId}"], h4[id="${headingId}"], h5[id="${headingId}"], h6[id="${headingId}"]`);
         
@@ -665,10 +673,16 @@ export function TipTapEditor() {
           const allHeadings = editor.view.dom.querySelectorAll('h1, h2, h3, h4, h5, h6');
           console.log('All headings in editor:', Array.from(allHeadings).map(h => ({ tag: h.tagName, id: h.id, text: h.textContent?.slice(0, 50) })));
         }
+        console.log('=== END TIPTAP NAVIGATION HANDLER ===');
       };
       
+      console.log('Registering navigation handler with service');
       setScrollToHeadingHandler(scrollToHeading);
+      console.log('Navigation handler registered successfully');
+    } else {
+      console.log('Editor not available yet - skipping navigation setup');
     }
+    console.log('=== END TIPTAP NAVIGATION SETUP ===');
   }, [editor, setScrollToHeadingHandler]);
 
   // Update editor content when document changes

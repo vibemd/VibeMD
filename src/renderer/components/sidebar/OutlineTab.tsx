@@ -30,13 +30,24 @@ export function OutlineTab() {
   };
 
   const handleHeadingClick = (heading: OutlineNode) => {
-    console.log('Outline click:', heading);
+    console.log('=== OUTLINE CLICK DEBUG ===');
+    console.log('Clicked heading:', heading);
+    console.log('Heading ID:', heading.id);
+    console.log('Navigation service available:', !!scrollToHeading);
+    console.log('Navigation service function:', scrollToHeading);
+    
     if (heading.id) {
-      console.log('Scrolling to heading ID:', heading.id);
-      scrollToHeading(heading.id);
+      console.log('Calling scrollToHeading with ID:', heading.id);
+      try {
+        scrollToHeading(heading.id);
+        console.log('scrollToHeading called successfully');
+      } catch (error) {
+        console.error('Error calling scrollToHeading:', error);
+      }
     } else {
-      console.log('No heading ID found');
+      console.log('No heading ID found - cannot navigate');
     }
+    console.log('=== END OUTLINE CLICK DEBUG ===');
   };
 
   const renderOutlineNode = (node: OutlineNode, level: number = 0) => {
@@ -118,6 +129,22 @@ export function OutlineTab() {
 
   return (
     <div className="h-full overflow-y-auto overflow-x-hidden p-2">
+      {/* Debug test button */}
+      <div className="mb-2 p-2 bg-yellow-100 rounded text-xs">
+        <button 
+          onClick={() => {
+            console.log('=== MANUAL NAVIGATION TEST ===');
+            console.log('Testing navigation service:', scrollToHeading);
+            scrollToHeading('test-heading');
+            console.log('=== END MANUAL TEST ===');
+          }}
+          className="px-2 py-1 bg-blue-500 text-white rounded text-xs"
+        >
+          Test Navigation
+        </button>
+        <span className="ml-2 text-gray-600">Click to test navigation service</span>
+      </div>
+      
       {outline.map(node => renderOutlineNode(node))}
     </div>
   );
