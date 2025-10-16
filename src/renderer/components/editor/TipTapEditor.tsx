@@ -31,7 +31,7 @@ export function TipTapEditor() {
   // Function to convert markdown to HTML
   const markdownToHtml = (markdown: string): string => {
     try {
-      return marked(markdown, {
+      return marked.parse(markdown, {
         breaks: true,
         gfm: true,
       });
@@ -237,14 +237,16 @@ export function TipTapEditor() {
       </div>
 
       {/* Editor Content */}
-      <div className="flex-1">
+      <div className="flex-1 overflow-hidden" style={{ height: '100%' }}>
         <EditorContent
           editor={editor}
           style={{
             fontSize: `${settings?.editor?.fontSize ?? 14}px`,
             fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
             height: '100%',
+            maxHeight: '100%',
             outline: 'none',
+            overflow: 'auto',
           }}
         />
       </div>
