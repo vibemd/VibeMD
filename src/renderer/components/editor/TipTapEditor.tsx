@@ -143,6 +143,7 @@ export function TipTapEditor() {
           updateDocument(activeDocument.id, { content: markdownContent });
           markAsModified(activeDocument.id);
         }
+      }
     },
   });
 

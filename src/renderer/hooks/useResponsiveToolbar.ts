@@ -8,7 +8,7 @@ export interface ToolbarButton {
 }
 
 interface UseResponsiveToolbarReturn {
-  toolbarRef: React.RefObject<HTMLDivElement>;
+  toolbarRef: React.RefObject<HTMLDivElement | null>;
   visibleButtons: ToolbarButton[];
   overflowButtons: ToolbarButton[];
 }
