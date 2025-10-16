@@ -1,11 +1,8 @@
-import { WysimarkWYSIWYGEditor } from '@/components/editor/WysimarkWYSIWYGEditor';
-import { SplitEditor } from '@/components/editor/SplitEditor';
-import { useUIStore } from '@/stores/uiStore';
+import { TipTapEditor } from '@/components/editor/TipTapEditor';
 import { useDocumentStore } from '@/stores/documentStore';
 import { FileText } from 'lucide-react';
 
 export function EditorWindow() {
-  const editorMode = useUIStore((state) => state.editorMode);
   const hasActiveDocument = useDocumentStore(
     (state) => state.activeDocumentId !== null
   );
@@ -28,8 +25,7 @@ export function EditorWindow() {
 
   return (
     <div className="flex-1 flex flex-col">
-      {editorMode === 'wysiwyg' && <WysimarkWYSIWYGEditor />}
-      {editorMode === 'split' && <SplitEditor />}
+      <TipTapEditor />
     </div>
   );
 }

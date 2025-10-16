@@ -14,7 +14,6 @@ import {
   TooltipProvider, 
   TooltipTrigger 
 } from '@/components/ui/tooltip';
-import { ModeSelector } from '@/components/editor/ModeSelector';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useUIStore } from '@/stores/uiStore';
 import { fileService } from '@/services/fileService';
@@ -183,12 +182,6 @@ export function Toolbar() {
             <p>Save Document As (Ctrl+Shift+S)</p>
           </TooltipContent>
         </Tooltip>
-
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* Center - Editor mode selector */}
-        <ModeSelector />
 
         {/* Spacer */}
         <div className="flex-1" />

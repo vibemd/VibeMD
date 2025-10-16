@@ -2,11 +2,79 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import @uiw/react-md-editor CSS */
-@import '@uiw/react-md-editor/markdown-editor.css';
-
 /* Import KaTeX CSS for LaTeX math rendering */
 @import 'katex/dist/katex.css';
+
+/* TipTap Editor Styles */
+.ProseMirror {
+  outline: none;
+  padding: 1rem;
+  min-height: 200px;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.ProseMirror h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0.75rem 0 0.5rem 0;
+}
+
+.ProseMirror h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 0.5rem 0 0.25rem 0;
+}
+
+.ProseMirror ul, .ProseMirror ol {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.ProseMirror li {
+  margin: 0.25rem 0;
+}
+
+.ProseMirror blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.ProseMirror code {
+  background-color: #f3f4f6;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+.ProseMirror pre {
+  background-color: #f3f4f6;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.ProseMirror pre code {
+  background-color: transparent;
+  padding: 0;
+}
 
 @layer base {
   :root {
@@ -387,38 +455,6 @@
     grid-column: auto !important;
     width: 100% !important;
     min-width: 0 !important;
-  }
-
-  /* Force 50/50 split for @uiw/react-md-editor */
-  .w-md-editor-text-input,
-  .w-md-editor-preview {
-    flex: 1 1 50% !important;
-    width: 50% !important;
-    min-width: 0 !important;
-    max-width: 50% !important;
-  }
-
-  /* Ensure the editor container uses flexbox */
-  .w-md-editor {
-    display: flex !important;
-    flex-direction: row !important;
-    width: 100% !important;
-  }
-
-  /* Target any nested containers */
-  .w-md-editor > div {
-    display: flex !important;
-    flex-direction: row !important;
-    width: 100% !important;
-  }
-
-  /* Force editor and preview panes to be equal width (but not toolbar) */
-  .w-md-editor .w-md-editor-text-input,
-  .w-md-editor .w-md-editor-preview {
-    flex: 1 1 50% !important;
-    width: 50% !important;
-    min-width: 0 !important;
-    max-width: 50% !important;
   }
 
 }
