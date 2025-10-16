@@ -16,6 +16,31 @@
   outline: none;
 }
 
+/* Ensure the editor container can scroll with mouse wheel */
+.tiptap-scroll-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+.tiptap-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tiptap-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tiptap-scroll-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.tiptap-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
 .ProseMirror p.is-editor-empty:first-child::before {
   color: #adb5bd;
   content: attr(data-placeholder);

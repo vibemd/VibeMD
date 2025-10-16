@@ -70,6 +70,36 @@ export function useKeyboardShortcuts() {
             event.preventDefault();
             toggleSettingsDialog();
             break;
+            
+          case 'c':
+            // Copy - let browser handle this naturally
+            // No preventDefault needed - browser handles clipboard
+            break;
+            
+          case 'x':
+            // Cut - let browser handle this naturally
+            // No preventDefault needed - browser handles clipboard
+            break;
+            
+          case 'v':
+            // Paste - let browser handle this naturally
+            // No preventDefault needed - browser handles clipboard
+            break;
+            
+          case 'a':
+            // Select All - let browser handle this naturally
+            // No preventDefault needed - browser handles selection
+            break;
+            
+          case 'z':
+            // Undo - let TipTap handle this naturally
+            // No preventDefault needed - TipTap has built-in undo
+            break;
+            
+          case 'y':
+            // Redo - let TipTap handle this naturally
+            // No preventDefault needed - TipTap has built-in redo
+            break;
         }
       }
     };
