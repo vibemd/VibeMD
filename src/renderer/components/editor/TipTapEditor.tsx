@@ -162,14 +162,16 @@ export function TipTapEditor() {
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        // Exclude conflicting extensions
-        bulletList: false,
-        orderedList: false,
-        heading: false, // Use custom Heading extension instead
-        listItem: false, // Exclude to prevent duplicate
-        link: false, // Exclude to prevent duplicate
-      }),
+    StarterKit.configure({
+      // Exclude conflicting extensions
+      bulletList: false,
+      orderedList: false,
+      heading: false, // Use custom Heading extension instead
+      listItem: false, // Exclude to prevent duplicate
+      link: false, // Exclude to prevent duplicate
+      superscript: false, // Exclude to prevent conflict
+      subscript: false, // Exclude to prevent conflict
+    }),
       Heading.configure({
         levels: [1, 2, 3, 4, 5, 6], // Support all heading levels
       }),
@@ -186,13 +188,11 @@ export function TipTapEditor() {
         HTMLAttributes: {
           class: 'text-superscript',
         },
-        excludes: 'subscript', // Exclude subscript when superscript is active
       }),
       Subscript.configure({
         HTMLAttributes: {
           class: 'text-subscript',
         },
-        excludes: 'superscript', // Exclude superscript when subscript is active
       }),
       HeadingIdExtension,
       Link.configure({
@@ -245,24 +245,27 @@ export function TipTapEditor() {
   // Update heading state when editor selection changes
   React.useEffect(() => {
     if (editor) {
+      let timeoutId: NodeJS.Timeout;
+      
       const updateHeading = () => {
-        const newHeading = getCurrentHeading();
-        console.log('Updating heading state:', newHeading);
-        setCurrentHeading(newHeading);
+        // Debounce updates to prevent infinite loops
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          const newHeading = getCurrentHeading();
+          console.log('Updating heading state:', newHeading);
+          setCurrentHeading(newHeading);
+        }, 100); // 100ms debounce
       };
 
-      // Listen to selection changes and content updates
+      // Only listen to selection changes, not every transaction
       editor.on('selectionUpdate', updateHeading);
-      editor.on('update', updateHeading);
-      editor.on('transaction', updateHeading);
       
       // Initial update
       updateHeading();
 
       return () => {
+        clearTimeout(timeoutId);
         editor.off('selectionUpdate', updateHeading);
-        editor.off('update', updateHeading);
-        editor.off('transaction', updateHeading);
       };
     }
   }, [editor]);
@@ -593,9 +596,14 @@ export function TipTapEditor() {
                 console.log('Can toggle task list:', editor?.can().toggleTaskList());
                 console.log('Current selection:', editor?.state.selection);
                 
-                // Use TipTap's proper task list command without adding new lines
-                const result = editor?.chain().focus().toggleTaskList().run();
-                console.log('Toggle task list result:', result);
+                // Check if we're already in a task list
+                if (editor?.isActive('taskList')) {
+                  // If already in task list, convert to paragraph
+                  editor?.chain().focus().setParagraph().run();
+                } else {
+                  // Convert current paragraph to task list
+                  editor?.chain().focus().toggleTaskList().run();
+                }
                 console.log('=== END TASK LIST DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
