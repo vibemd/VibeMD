@@ -3,6 +3,9 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Link } from '@tiptap/extension-link';
 import { Image } from '@tiptap/extension-image';
+import { BulletList } from '@tiptap/extension-bullet-list';
+import { OrderedList } from '@tiptap/extension-ordered-list';
+import { ListItem } from '@tiptap/extension-list-item';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
@@ -152,8 +155,15 @@ export function TipTapEditor() {
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        // Exclude conflicting extensions
+        bulletList: false,
+        orderedList: false,
+      }),
       HeadingIdExtension,
+      BulletList,
+      OrderedList,
+      ListItem,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -179,6 +189,7 @@ export function TipTapEditor() {
       Subscript,
     ],
     content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
+    autofocus: 'start', // Auto-focus at start
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       if (activeDocument) {
@@ -521,10 +532,7 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => {
-                console.log('Task list button clicked, editor:', editor);
-                editor?.chain().focus().toggleTaskList().run();
-              }}
+              onClick={() => editor?.chain().focus().toggleTaskList().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('taskList') ? 'bg-gray-200' : ''
               }`}
@@ -548,10 +556,7 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => {
-                console.log('Superscript button clicked, editor:', editor);
-                editor?.chain().focus().toggleSuperscript().run();
-              }}
+              onClick={() => editor?.chain().focus().toggleSuperscript().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('superscript') ? 'bg-gray-200' : ''
               }`}
@@ -571,10 +576,7 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => {
-                console.log('Subscript button clicked, editor:', editor);
-                editor?.chain().focus().toggleSubscript().run();
-              }}
+              onClick={() => editor?.chain().focus().toggleSubscript().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('subscript') ? 'bg-gray-200' : ''
               }`}
