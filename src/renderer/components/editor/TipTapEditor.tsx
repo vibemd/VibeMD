@@ -173,8 +173,20 @@ export function TipTapEditor() {
       TaskItem.configure({
         nested: true,
       }),
-      Superscript,
-      Subscript,
+      Superscript.configure({
+        HTMLAttributes: {
+          class: 'text-superscript',
+        },
+      }).extend({
+        excludes: 'subscript',
+      }),
+      Subscript.configure({
+        HTMLAttributes: {
+          class: 'text-subscript',
+        },
+      }).extend({
+        excludes: 'superscript',
+      }),
       StarterKit.configure({
         // Exclude conflicting extensions
         bulletList: false,

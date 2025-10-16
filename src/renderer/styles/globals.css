@@ -229,12 +229,12 @@
 }
 
 /* Superscript and subscript styling */
-.ProseMirror sup {
+.ProseMirror sup, .ProseMirror .text-superscript {
   vertical-align: super;
   font-size: 0.75em;
 }
 
-.ProseMirror sub {
+.ProseMirror sub, .ProseMirror .text-subscript {
   vertical-align: sub;
   font-size: 0.75em;
 }
