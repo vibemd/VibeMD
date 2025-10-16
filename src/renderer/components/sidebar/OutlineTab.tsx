@@ -30,8 +30,12 @@ export function OutlineTab() {
   };
 
   const handleHeadingClick = (heading: OutlineNode) => {
+    console.log('Outline click:', heading);
     if (heading.id) {
+      console.log('Scrolling to heading ID:', heading.id);
       scrollToHeading(heading.id);
+    } else {
+      console.log('No heading ID found');
     }
   };
 
@@ -45,7 +49,13 @@ export function OutlineTab() {
         <div
           className={cn(
             'flex items-center p-2 rounded hover:bg-accent cursor-pointer text-sm',
-            level > 0 && `ml-${level * 2}`
+            // Better indentation based on heading depth
+            node.depth === 1 && 'ml-0',
+            node.depth === 2 && 'ml-4',
+            node.depth === 3 && 'ml-8',
+            node.depth === 4 && 'ml-12',
+            node.depth === 5 && 'ml-16',
+            node.depth === 6 && 'ml-20'
           )}
           onClick={() => handleHeadingClick(node)}
         >
@@ -67,8 +77,9 @@ export function OutlineTab() {
           {!hasChildren && <div className="w-4" />}
           <span className={cn(
             'flex-1',
-            node.depth === 1 && 'font-semibold',
-            node.depth === 2 && 'font-medium'
+            node.depth === 1 && 'font-semibold text-base',
+            node.depth === 2 && 'font-medium text-sm',
+            node.depth >= 3 && 'text-sm text-gray-600'
           )}>
             {node.text}
           </span>

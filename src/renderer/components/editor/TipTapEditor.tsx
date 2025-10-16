@@ -92,6 +92,8 @@ export function TipTapEditor() {
           .replace(/\s+/g, '-') // Replace spaces with hyphens
           .replace(/-+/g, '-') // Replace multiple hyphens with single
           .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+        
+        console.log('HTML heading ID generated:', { content, id, level });
         return `<h${level} id="${id}">${content}</h${level}>`;
       });
       
@@ -633,10 +635,14 @@ export function TipTapEditor() {
   React.useEffect(() => {
     if (editor) {
       const scrollToHeading = (headingId: string) => {
+        console.log('TipTap scrollToHeading called with ID:', headingId);
         // Find the heading element in the editor
         const headingElement = editor.view.dom.querySelector(`h1[id="${headingId}"], h2[id="${headingId}"], h3[id="${headingId}"], h4[id="${headingId}"], h5[id="${headingId}"], h6[id="${headingId}"]`);
         
+        console.log('Found heading element:', headingElement);
+        
         if (headingElement) {
+          console.log('Scrolling to heading element');
           // Scroll to the heading
           headingElement.scrollIntoView({ 
             behavior: 'smooth', 
@@ -649,9 +655,15 @@ export function TipTapEditor() {
           
           // Find the position of the heading in the editor
           const pos = editor.view.posAtDOM(headingElement, 0);
+          console.log('Heading position:', pos);
           if (pos !== null) {
             editor.commands.setTextSelection(pos);
           }
+        } else {
+          console.log('No heading element found with ID:', headingId);
+          // Debug: log all headings in the editor
+          const allHeadings = editor.view.dom.querySelectorAll('h1, h2, h3, h4, h5, h6');
+          console.log('All headings in editor:', Array.from(allHeadings).map(h => ({ tag: h.tagName, id: h.id, text: h.textContent?.slice(0, 50) })));
         }
       };
       

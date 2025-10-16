@@ -30,6 +30,8 @@ export class MarkdownService {
         const line = node.position?.start?.line || 0;
         const id = this.generateHeadingId(text);
         
+        console.log('Generated heading:', { text, id, depth: node.depth });
+        
         headings.push({
           depth: node.depth,
           text,
