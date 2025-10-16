@@ -72,6 +72,80 @@ export function TipTapEditor() {
     { value: 'deleteTable', label: 'Delete table' },
   ];
 
+
+  // Function to convert markdown to HTML
+  const markdownToHtml = (markdown: string): string => {
+    try {
+      // Use the synchronous version of marked with GFM support
+      const result = marked(markdown, {
+        breaks: true,
+        gfm: true,
+      });
+      return typeof result === 'string' ? result : String(result);
+    } catch (error) {
+      console.error('Error converting markdown to HTML:', error);
+      return markdown; // Fallback to original content
+    }
+  };
+
+  // Function to convert HTML to markdown
+  const htmlToMarkdown = (html: string): string => {
+    try {
+      const turndownService = new TurndownService({
+        headingStyle: 'atx',
+        bulletListMarker: '-',
+        codeBlockStyle: 'fenced',
+        emDelimiter: '*',
+        strongDelimiter: '**',
+        linkStyle: 'inlined',
+        linkReferenceStyle: 'full',
+      });
+      return turndownService.turndown(html);
+    } catch (error) {
+      console.error('Error converting HTML to markdown:', error);
+      return html; // Fallback to original content
+    }
+  };
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-blue-600 underline hover:text-blue-800',
+        },
+      }),
+      Image.configure({
+        HTMLAttributes: {
+          class: 'max-w-full h-auto rounded',
+        },
+      }),
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+      }),
+      Superscript,
+      Subscript,
+    ],
+    content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      if (activeDocument) {
+        const markdownContent = htmlToMarkdown(html);
+        if (markdownContent !== activeDocument.content) {
+          updateDocument(activeDocument.id, { content: markdownContent });
+          markAsModified(activeDocument.id);
+        }
+    },
+  });
+
   // Helper function to get current heading
   const getCurrentHeading = () => {
     if (editor?.isActive('heading', { level: 1 })) return 'heading1';
@@ -506,78 +580,6 @@ export function TipTapEditor() {
 
   // Use responsive toolbar hook
   const { toolbarRef, visibleButtons, overflowButtons } = useResponsiveToolbar(toolbarButtons);
-  const markdownToHtml = (markdown: string): string => {
-    try {
-      // Use the synchronous version of marked with GFM support
-      const result = marked(markdown, {
-        breaks: true,
-        gfm: true,
-      });
-      return typeof result === 'string' ? result : String(result);
-    } catch (error) {
-      console.error('Error converting markdown to HTML:', error);
-      return markdown; // Fallback to original content
-    }
-  };
-
-  // Function to convert HTML to markdown
-  const htmlToMarkdown = (html: string): string => {
-    try {
-      const turndownService = new TurndownService({
-        headingStyle: 'atx',
-        bulletListMarker: '-',
-        codeBlockStyle: 'fenced',
-        emDelimiter: '*',
-        strongDelimiter: '**',
-        linkStyle: 'inlined',
-        linkReferenceStyle: 'full',
-      });
-      return turndownService.turndown(html);
-    } catch (error) {
-      console.error('Error converting HTML to markdown:', error);
-      return html; // Fallback to original content
-    }
-  };
-
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-blue-600 underline hover:text-blue-800',
-        },
-      }),
-      Image.configure({
-        HTMLAttributes: {
-          class: 'max-w-full h-auto rounded',
-        },
-      }),
-      Table.configure({
-        resizable: true,
-      }),
-      TableRow,
-      TableHeader,
-      TableCell,
-      TaskList,
-      TaskItem.configure({
-        nested: true,
-      }),
-      Superscript,
-      Subscript,
-    ],
-    content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      if (activeDocument) {
-        const markdownContent = htmlToMarkdown(html);
-        if (markdownContent !== activeDocument.content) {
-          updateDocument(activeDocument.id, { content: markdownContent });
-          markAsModified(activeDocument.id);
-        }
-      }
-    },
-  });
 
   // Update editor content when document changes
   React.useEffect(() => {
