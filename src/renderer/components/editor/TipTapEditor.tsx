@@ -171,29 +171,19 @@ export function TipTapEditor() {
       ListItem,
       TaskList.configure({
         itemTypeName: 'taskItem',
-        HTMLAttributes: {
-          class: 'task-list',
-        },
       }),
       TaskItem.configure({
         nested: true,
-        HTMLAttributes: {
-          class: 'task-item',
-        },
       }),
       Superscript.configure({
         HTMLAttributes: {
           class: 'text-superscript',
         },
-      }).extend({
-        excludes: 'subscript',
       }),
       Subscript.configure({
         HTMLAttributes: {
           class: 'text-subscript',
         },
-      }).extend({
-        excludes: 'superscript',
       }),
       StarterKit.configure({
         // Exclude conflicting extensions
@@ -202,6 +192,8 @@ export function TipTapEditor() {
         heading: false, // Use custom Heading extension instead
         listItem: false, // Exclude to prevent duplicate
         link: false, // Exclude to prevent duplicate
+        superscript: false, // Exclude to prevent duplicate
+        subscript: false, // Exclude to prevent duplicate
       }),
       HeadingIdExtension,
       Link.configure({
@@ -249,42 +241,17 @@ export function TipTapEditor() {
 
   // Handle heading change
   const handleHeadingChange = (value: string) => {
-    console.log('Heading change requested:', value);
-    console.log('Editor available:', !!editor);
-    console.log('Editor commands:', editor?.commands);
-    
     if (value === 'paragraph') {
-      console.log('Setting paragraph');
       editor?.chain().focus().setParagraph().run();
     } else {
       const level = parseInt(value.replace('heading', '')) as 1 | 2 | 3 | 4 | 5 | 6;
-      console.log('Setting heading level:', level);
-      console.log('Can toggle heading:', editor?.can().toggleHeading({ level }));
-      console.log('Current selection:', editor?.state.selection);
-      console.log('Current content before:', editor?.getHTML());
-      
-      // Try different approaches for different heading levels
-      let result;
-      if (level <= 3) {
-        result = editor?.chain().focus().toggleHeading({ level }).run();
-        console.log('Toggle heading result (levels 1-3):', result);
-      } else {
-        // For levels 4-6, try setHeading instead
-        result = editor?.chain().focus().setHeading({ level }).run();
-        console.log('Set heading result (levels 4-6):', result);
-      }
-      
-      // Ensure editor maintains focus after heading change
-      setTimeout(() => {
-        editor?.commands.focus();
-      }, 50);
-      
-      // Check if the command actually executed
-      setTimeout(() => {
-        console.log('Current content after:', editor?.getHTML());
-        console.log('Is active heading:', editor?.isActive('heading', { level }));
-      }, 100);
+      editor?.chain().focus().setHeading({ level }).run();
     }
+    
+    // Ensure editor maintains focus after heading change
+    setTimeout(() => {
+      editor?.commands.focus();
+    }, 50);
   };
 
   // Handle table command

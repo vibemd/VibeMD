@@ -209,6 +209,7 @@
 .ProseMirror li {
   margin: 0.25rem 0;
   display: list-item !important;
+  padding-left: 0 !important; /* Remove any additional padding from list items */
 }
 
 /* Task list styling */
