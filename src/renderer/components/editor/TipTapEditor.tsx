@@ -31,7 +31,10 @@ import {
   Table as TableIcon,
   CheckSquare,
   Superscript as SuperscriptIcon,
-  Subscript as SubscriptIcon
+  Subscript as SubscriptIcon,
+  Plus,
+  Minus,
+  Trash2
 } from 'lucide-react';
 
 export function TipTapEditor() {
@@ -43,10 +46,14 @@ export function TipTapEditor() {
   // Function to convert markdown to HTML
   const markdownToHtml = (markdown: string): string => {
     try {
-      // Use the synchronous version of marked
+      // Use the synchronous version of marked with GFM support
       const result = marked(markdown, {
         breaks: true,
         gfm: true,
+        pedantic: false,
+        sanitize: false,
+        smartLists: true,
+        smartypants: false,
       });
       return typeof result === 'string' ? result : String(result);
     } catch (error) {
@@ -62,6 +69,10 @@ export function TipTapEditor() {
         headingStyle: 'atx',
         bulletListMarker: '-',
         codeBlockStyle: 'fenced',
+        emDelimiter: '*',
+        strongDelimiter: '**',
+        linkStyle: 'inlined',
+        linkReferenceStyle: 'full',
       });
       return turndownService.turndown(html);
     } catch (error) {
@@ -272,11 +283,77 @@ export function TipTapEditor() {
         </button>
         <div className="w-px bg-gray-300 mx-1" />
         <button
-          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          onClick={() => {
+            const rows = prompt('Number of rows:', '3');
+            const cols = prompt('Number of columns:', '3');
+            if (rows && cols) {
+              editor.chain().focus().insertTable({ 
+                rows: parseInt(rows), 
+                cols: parseInt(cols), 
+                withHeaderRow: true 
+              }).run();
+            }
+          }}
           className="p-2 rounded hover:bg-gray-100"
           title="Insert Table"
         >
           <TableIcon className="h-4 w-4" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().addRowBefore().run()}
+          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          title="Add Row Before"
+          disabled={!editor.can().addRowBefore()}
+        >
+          <Plus className="h-3 w-3" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().addRowAfter().run()}
+          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          title="Add Row After"
+          disabled={!editor.can().addRowAfter()}
+        >
+          <Plus className="h-3 w-3" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().addColumnBefore().run()}
+          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          title="Add Column Before"
+          disabled={!editor.can().addColumnBefore()}
+        >
+          <Plus className="h-3 w-3" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().addColumnAfter().run()}
+          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          title="Add Column After"
+          disabled={!editor.can().addColumnAfter()}
+        >
+          <Plus className="h-3 w-3" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().deleteRow().run()}
+          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          title="Delete Row"
+          disabled={!editor.can().deleteRow()}
+        >
+          <Minus className="h-3 w-3" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().deleteColumn().run()}
+          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          title="Delete Column"
+          disabled={!editor.can().deleteColumn()}
+        >
+          <Minus className="h-3 w-3" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().deleteTable().run()}
+          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          title="Delete Table"
+          disabled={!editor.can().deleteTable()}
+        >
+          <Trash2 className="h-3 w-3" />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleTaskList().run()}
