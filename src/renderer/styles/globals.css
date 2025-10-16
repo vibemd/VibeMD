@@ -17,6 +17,19 @@
   outline: none;
 }
 
+/* Target the custom EditorContent class */
+.tiptap-editor-content {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Target the ProseMirror editor inside EditorContent */
+.tiptap-editor-content .ProseMirror {
+  height: auto;
+  min-height: 100%;
+}
+
 .ProseMirror p.is-editor-empty:first-child::before {
   color: #adb5bd;
   content: attr(data-placeholder);

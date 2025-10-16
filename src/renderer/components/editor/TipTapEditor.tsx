@@ -237,14 +237,16 @@ export function TipTapEditor() {
       </div>
 
       {/* Editor Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-hidden">
         <EditorContent
           editor={editor}
-          className="flex-1 overflow-y-auto overflow-x-hidden"
+          className="tiptap-editor-content"
           style={{
             fontSize: `${settings?.editor?.fontSize ?? 14}px`,
             fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
+            height: '100%',
             outline: 'none',
+            overflow: 'auto',
           }}
         />
       </div>
