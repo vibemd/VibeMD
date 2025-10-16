@@ -69,9 +69,6 @@ export function TipTapEditor() {
         strongDelimiter: '**',
         linkStyle: 'inlined',
         linkReferenceStyle: 'full',
-        // Add table support
-        tableCellPadding: true,
-        tableCellSeparator: '|',
       });
       return turndownService.turndown(html);
     } catch (error) {
@@ -109,17 +106,14 @@ export function TipTapEditor() {
     ],
     content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
     onUpdate: ({ editor }) => {
-      // Debounce the update to prevent constant conversion
-      setTimeout(() => {
-        const html = editor.getHTML();
-        if (activeDocument) {
-          const markdownContent = htmlToMarkdown(html);
-          if (markdownContent !== activeDocument.content) {
-            updateDocument(activeDocument.id, { content: markdownContent });
-            markAsModified(activeDocument.id);
-          }
+      const html = editor.getHTML();
+      if (activeDocument) {
+        const markdownContent = htmlToMarkdown(html);
+        if (markdownContent !== activeDocument.content) {
+          updateDocument(activeDocument.id, { content: markdownContent });
+          markAsModified(activeDocument.id);
         }
-      }, 500); // 500ms debounce
+      }
     },
   });
 
@@ -127,11 +121,13 @@ export function TipTapEditor() {
   React.useEffect(() => {
     if (editor && activeDocument) {
       const htmlContent = markdownToHtml(activeDocument.content);
-      if (editor.getHTML() !== htmlContent) {
+      const currentHtml = editor.getHTML();
+      // Only update if the content is significantly different (not just whitespace)
+      if (currentHtml.trim() !== htmlContent.trim()) {
         editor.commands.setContent(htmlContent);
       }
     }
-  }, [editor, activeDocument]);
+  }, [editor, activeDocument?.id]); // Only depend on document ID, not content
 
   // Add test content for scrolling when no document is open
   React.useEffect(() => {
