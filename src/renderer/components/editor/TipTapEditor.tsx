@@ -3,6 +3,18 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { 
+  Bold, 
+  Italic, 
+  Strikethrough, 
+  Heading1, 
+  Heading2, 
+  Heading3, 
+  List, 
+  ListOrdered, 
+  Code, 
+  Quote 
+} from 'lucide-react';
 
 export function TipTapEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
@@ -51,86 +63,96 @@ export function TipTapEditor() {
       <div className="border-b p-2 flex gap-2 flex-wrap">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`px-2 py-1 rounded text-sm ${
-            editor.isActive('bold') ? 'bg-gray-200' : 'hover:bg-gray-100'
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('bold') ? 'bg-gray-200' : ''
           }`}
+          title="Bold"
         >
-          Bold
+          <Bold className="h-4 w-4" />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`px-2 py-1 rounded text-sm ${
-            editor.isActive('italic') ? 'bg-gray-200' : 'hover:bg-gray-100'
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('italic') ? 'bg-gray-200' : ''
           }`}
+          title="Italic"
         >
-          Italic
+          <Italic className="h-4 w-4" />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          className={`px-2 py-1 rounded text-sm ${
-            editor.isActive('strike') ? 'bg-gray-200' : 'hover:bg-gray-100'
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('strike') ? 'bg-gray-200' : ''
           }`}
+          title="Strikethrough"
         >
-          Strike
+          <Strikethrough className="h-4 w-4" />
         </button>
         <div className="w-px bg-gray-300 mx-1" />
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={`px-2 py-1 rounded text-sm ${
-            editor.isActive('heading', { level: 1 }) ? 'bg-gray-200' : 'hover:bg-gray-100'
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('heading', { level: 1 }) ? 'bg-gray-200' : ''
           }`}
+          title="Heading 1"
         >
-          H1
+          <Heading1 className="h-4 w-4" />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`px-2 py-1 rounded text-sm ${
-            editor.isActive('heading', { level: 2 }) ? 'bg-gray-200' : 'hover:bg-gray-100'
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('heading', { level: 2 }) ? 'bg-gray-200' : ''
           }`}
+          title="Heading 2"
         >
-          H2
+          <Heading2 className="h-4 w-4" />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={`px-2 py-1 rounded text-sm ${
-            editor.isActive('heading', { level: 3 }) ? 'bg-gray-200' : 'hover:bg-gray-100'
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('heading', { level: 3 }) ? 'bg-gray-200' : ''
           }`}
+          title="Heading 3"
         >
-          H3
+          <Heading3 className="h-4 w-4" />
         </button>
         <div className="w-px bg-gray-300 mx-1" />
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`px-2 py-1 rounded text-sm ${
-            editor.isActive('bulletList') ? 'bg-gray-200' : 'hover:bg-gray-100'
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('bulletList') ? 'bg-gray-200' : ''
           }`}
+          title="Bullet List"
         >
-          Bullet List
+          <List className="h-4 w-4" />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`px-2 py-1 rounded text-sm ${
-            editor.isActive('orderedList') ? 'bg-gray-200' : 'hover:bg-gray-100'
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('orderedList') ? 'bg-gray-200' : ''
           }`}
+          title="Numbered List"
         >
-          Numbered List
+          <ListOrdered className="h-4 w-4" />
         </button>
         <div className="w-px bg-gray-300 mx-1" />
         <button
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={`px-2 py-1 rounded text-sm ${
-            editor.isActive('codeBlock') ? 'bg-gray-200' : 'hover:bg-gray-100'
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('codeBlock') ? 'bg-gray-200' : ''
           }`}
+          title="Code Block"
         >
-          Code Block
+          <Code className="h-4 w-4" />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`px-2 py-1 rounded text-sm ${
-            editor.isActive('blockquote') ? 'bg-gray-200' : 'hover:bg-gray-100'
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('blockquote') ? 'bg-gray-200' : ''
           }`}
+          title="Blockquote"
         >
-          Quote
+          <Quote className="h-4 w-4" />
         </button>
       </div>
 
