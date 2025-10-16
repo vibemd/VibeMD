@@ -162,7 +162,14 @@ export function TipTapEditor() {
 
   const editor = useEditor({
     extensions: [
-      // Core extensions first
+      StarterKit.configure({
+        // Exclude conflicting extensions
+        bulletList: false,
+        orderedList: false,
+        heading: false, // Use custom Heading extension instead
+        listItem: false, // Exclude to prevent duplicate
+        link: false, // Exclude to prevent duplicate
+      }),
       Heading.configure({
         levels: [1, 2, 3, 4, 5, 6], // Support all heading levels
       }),
@@ -184,16 +191,6 @@ export function TipTapEditor() {
         HTMLAttributes: {
           class: 'text-subscript',
         },
-      }),
-      StarterKit.configure({
-        // Exclude conflicting extensions
-        bulletList: false,
-        orderedList: false,
-        heading: false, // Use custom Heading extension instead
-        listItem: false, // Exclude to prevent duplicate
-        link: false, // Exclude to prevent duplicate
-        superscript: false, // Exclude to prevent duplicate
-        subscript: false, // Exclude to prevent duplicate
       }),
       HeadingIdExtension,
       Link.configure({
@@ -560,8 +557,13 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => {
-                console.log('Task list button clicked');
-                editor?.chain().focus().toggleTaskList().run();
+                console.log('=== TASK LIST BUTTON CLICKED ===');
+                console.log('Editor available:', !!editor);
+                console.log('Can toggle task list:', editor?.can().toggleTaskList());
+                console.log('Current selection:', editor?.state.selection);
+                const result = editor?.chain().focus().toggleTaskList().run();
+                console.log('Toggle task list result:', result);
+                console.log('=== END TASK LIST DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('taskList') ? 'bg-gray-200' : ''
@@ -587,8 +589,13 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => {
-                console.log('Superscript button clicked');
-                editor?.chain().focus().toggleSuperscript().run();
+                console.log('=== SUPERSCRIPT BUTTON CLICKED ===');
+                console.log('Editor available:', !!editor);
+                console.log('Can toggle superscript:', editor?.can().toggleSuperscript());
+                console.log('Current selection:', editor?.state.selection);
+                const result = editor?.chain().focus().toggleSuperscript().run();
+                console.log('Toggle superscript result:', result);
+                console.log('=== END SUPERSCRIPT DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('superscript') ? 'bg-gray-200' : ''
@@ -609,7 +616,15 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => editor?.chain().focus().toggleSubscript().run()}
+              onClick={() => {
+                console.log('=== SUBSCRIPT BUTTON CLICKED ===');
+                console.log('Editor available:', !!editor);
+                console.log('Can toggle subscript:', editor?.can().toggleSubscript());
+                console.log('Current selection:', editor?.state.selection);
+                const result = editor?.chain().focus().toggleSubscript().run();
+                console.log('Toggle subscript result:', result);
+                console.log('=== END SUBSCRIPT DEBUG ===');
+              }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('subscript') ? 'bg-gray-200' : ''
               }`}
@@ -702,6 +717,19 @@ export function TipTapEditor() {
     // Cleanup
     return () => window.removeEventListener('resize', updateToolbar);
   }, []);
+
+  // Debug: Log available commands when editor is ready
+  React.useEffect(() => {
+    if (editor) {
+      console.log('=== TIPTAP EDITOR DEBUG ===');
+      console.log('Available commands:', Object.keys(editor.commands));
+      console.log('Can toggle task list:', editor.can().toggleTaskList());
+      console.log('Can toggle superscript:', editor.can().toggleSuperscript());
+      console.log('Can toggle subscript:', editor.can().toggleSubscript());
+      console.log('Active extensions:', editor.extensionManager.extensions.map(ext => ext.name));
+      console.log('=== END DEBUG ===');
+    }
+  }, [editor]);
 
   // Set up navigation handler
   React.useEffect(() => {
