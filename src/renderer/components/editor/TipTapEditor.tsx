@@ -51,7 +51,6 @@ export function TipTapEditor() {
         breaks: true,
         gfm: true,
         pedantic: false,
-        smartLists: true,
         smartypants: false,
       });
       return typeof result === 'string' ? result : String(result);
@@ -161,27 +160,27 @@ export function TipTapEditor() {
       {/* Simple Toolbar */}
       <div className="border-b p-2 flex gap-2 flex-wrap">
         <button
-          onClick={() => editor.chain().focus().toggleBold().run()}
+          onClick={() => editor?.chain().focus().toggleBold().run()}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('bold') ? 'bg-gray-200' : ''
+            editor?.isActive('bold') ? 'bg-gray-200' : ''
           }`}
           title="Bold"
         >
           <Bold className="h-4 w-4" />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleItalic().run()}
+          onClick={() => editor?.chain().focus().toggleItalic().run()}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('italic') ? 'bg-gray-200' : ''
+            editor?.isActive('italic') ? 'bg-gray-200' : ''
           }`}
           title="Italic"
         >
           <Italic className="h-4 w-4" />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleStrike().run()}
+          onClick={() => editor?.chain().focus().toggleStrike().run()}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('strike') ? 'bg-gray-200' : ''
+            editor?.isActive('strike') ? 'bg-gray-200' : ''
           }`}
           title="Strikethrough"
         >
@@ -189,27 +188,27 @@ export function TipTapEditor() {
         </button>
         <div className="w-px bg-gray-300 mx-1" />
         <button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('heading', { level: 1 }) ? 'bg-gray-200' : ''
+            editor?.isActive('heading', { level: 1 }) ? 'bg-gray-200' : ''
           }`}
           title="Heading 1"
         >
           <Heading1 className="h-4 w-4" />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('heading', { level: 2 }) ? 'bg-gray-200' : ''
+            editor?.isActive('heading', { level: 2 }) ? 'bg-gray-200' : ''
           }`}
           title="Heading 2"
         >
           <Heading2 className="h-4 w-4" />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('heading', { level: 3 }) ? 'bg-gray-200' : ''
+            editor?.isActive('heading', { level: 3 }) ? 'bg-gray-200' : ''
           }`}
           title="Heading 3"
         >
@@ -217,18 +216,18 @@ export function TipTapEditor() {
         </button>
         <div className="w-px bg-gray-300 mx-1" />
         <button
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          onClick={() => editor?.chain().focus().toggleBulletList().run()}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('bulletList') ? 'bg-gray-200' : ''
+            editor?.isActive('bulletList') ? 'bg-gray-200' : ''
           }`}
           title="Bullet List"
         >
           <List className="h-4 w-4" />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          onClick={() => editor?.chain().focus().toggleOrderedList().run()}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('orderedList') ? 'bg-gray-200' : ''
+            editor?.isActive('orderedList') ? 'bg-gray-200' : ''
           }`}
           title="Numbered List"
         >
@@ -236,18 +235,18 @@ export function TipTapEditor() {
         </button>
         <div className="w-px bg-gray-300 mx-1" />
         <button
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('codeBlock') ? 'bg-gray-200' : ''
+            editor?.isActive('codeBlock') ? 'bg-gray-200' : ''
           }`}
           title="Code Block"
         >
           <Code className="h-4 w-4" />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          onClick={() => editor?.chain().focus().toggleBlockquote().run()}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('blockquote') ? 'bg-gray-200' : ''
+            editor?.isActive('blockquote') ? 'bg-gray-200' : ''
           }`}
           title="Blockquote"
         >
@@ -258,10 +257,10 @@ export function TipTapEditor() {
           onClick={() => {
             // For now, insert placeholder link since Electron doesn't support prompt()
             // TODO: Implement custom dialog for link URL input
-            editor.chain().focus().setLink({ href: 'https://example.com' }).run();
+            editor?.chain().focus().setLink({ href: 'https://example.com' }).run();
           }}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('link') ? 'bg-gray-200' : ''
+            editor?.isActive('link') ? 'bg-gray-200' : ''
           }`}
           title="Insert Link (placeholder)"
         >
@@ -271,7 +270,7 @@ export function TipTapEditor() {
           onClick={() => {
             // For now, insert placeholder image since Electron doesn't support prompt()
             // TODO: Implement custom dialog for image URL input
-            editor.chain().focus().setImage({ src: 'https://via.placeholder.com/300x200' }).run();
+            editor?.chain().focus().setImage({ src: 'https://via.placeholder.com/300x200' }).run();
           }}
           className="p-2 rounded hover:bg-gray-100"
           title="Insert Image (placeholder)"
@@ -283,7 +282,7 @@ export function TipTapEditor() {
           onClick={() => {
             // For now, use default 3x3 table since Electron doesn't support prompt()
             // TODO: Implement custom dialog for table dimensions
-            editor.chain().focus().insertTable({ 
+            editor?.chain().focus().insertTable({ 
               rows: 3, 
               cols: 3, 
               withHeaderRow: true 
@@ -295,65 +294,58 @@ export function TipTapEditor() {
           <TableIcon className="h-4 w-4" />
         </button>
         <button
-          onClick={() => editor.chain().focus().addRowBefore().run()}
-          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          onClick={() => editor?.chain().focus().addRowBefore().run()}
+          className="p-2 rounded hover:bg-gray-100"
           title="Add Row Before"
-          disabled={!editor.can().addRowBefore()}
         >
           <Plus className="h-3 w-3" />
         </button>
         <button
-          onClick={() => editor.chain().focus().addRowAfter().run()}
-          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          onClick={() => editor?.chain().focus().addRowAfter().run()}
+          className="p-2 rounded hover:bg-gray-100"
           title="Add Row After"
-          disabled={!editor.can().addRowAfter()}
         >
           <Plus className="h-3 w-3" />
         </button>
         <button
-          onClick={() => editor.chain().focus().addColumnBefore().run()}
-          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          onClick={() => editor?.chain().focus().addColumnBefore().run()}
+          className="p-2 rounded hover:bg-gray-100"
           title="Add Column Before"
-          disabled={!editor.can().addColumnBefore()}
         >
           <Plus className="h-3 w-3" />
         </button>
         <button
-          onClick={() => editor.chain().focus().addColumnAfter().run()}
-          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          onClick={() => editor?.chain().focus().addColumnAfter().run()}
+          className="p-2 rounded hover:bg-gray-100"
           title="Add Column After"
-          disabled={!editor.can().addColumnAfter()}
         >
           <Plus className="h-3 w-3" />
         </button>
         <button
-          onClick={() => editor.chain().focus().deleteRow().run()}
-          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          onClick={() => editor?.chain().focus().deleteRow().run()}
+          className="p-2 rounded hover:bg-gray-100"
           title="Delete Row"
-          disabled={!editor.can().deleteRow()}
         >
           <Minus className="h-3 w-3" />
         </button>
         <button
-          onClick={() => editor.chain().focus().deleteColumn().run()}
-          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          onClick={() => editor?.chain().focus().deleteColumn().run()}
+          className="p-2 rounded hover:bg-gray-100"
           title="Delete Column"
-          disabled={!editor.can().deleteColumn()}
         >
           <Minus className="h-3 w-3" />
         </button>
         <button
-          onClick={() => editor.chain().focus().deleteTable().run()}
-          className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          onClick={() => editor?.chain().focus().deleteTable().run()}
+          className="p-2 rounded hover:bg-gray-100"
           title="Delete Table"
-          disabled={!editor.can().deleteTable()}
         >
           <Trash2 className="h-3 w-3" />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleTaskList().run()}
+          onClick={() => editor?.chain().focus().toggleTaskList().run()}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('taskList') ? 'bg-gray-200' : ''
+            editor?.isActive('taskList') ? 'bg-gray-200' : ''
           }`}
           title="Task List"
         >
@@ -361,18 +353,18 @@ export function TipTapEditor() {
         </button>
         <div className="w-px bg-gray-300 mx-1" />
         <button
-          onClick={() => editor.chain().focus().toggleSuperscript().run()}
+          onClick={() => editor?.chain().focus().toggleSuperscript().run()}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('superscript') ? 'bg-gray-200' : ''
+            editor?.isActive('superscript') ? 'bg-gray-200' : ''
           }`}
           title="Superscript"
         >
           <SuperscriptIcon className="h-4 w-4" />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleSubscript().run()}
+          onClick={() => editor?.chain().focus().toggleSubscript().run()}
           className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('subscript') ? 'bg-gray-200' : ''
+            editor?.isActive('subscript') ? 'bg-gray-200' : ''
           }`}
           title="Subscript"
         >
