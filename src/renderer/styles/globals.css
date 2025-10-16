@@ -10,36 +10,37 @@
   outline: none;
   padding: 1rem;
   box-sizing: border-box;
-  min-height: 100%;
+  height: auto;
+  min-height: auto;
 }
 
 .ProseMirror-focused {
   outline: none;
 }
 
-/* Force scrollbars to be visible */
-.ProseMirror::-webkit-scrollbar {
+/* Force scrollbars to be visible on the container */
+.flex-1::-webkit-scrollbar {
   width: 12px;
   height: 12px;
 }
 
-.ProseMirror::-webkit-scrollbar-track {
+.flex-1::-webkit-scrollbar-track {
   background: #f1f5f9;
   border-radius: 6px;
 }
 
-.ProseMirror::-webkit-scrollbar-thumb {
+.flex-1::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 6px;
   border: 2px solid #f1f5f9;
 }
 
-.ProseMirror::-webkit-scrollbar-thumb:hover {
+.flex-1::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
 
 /* Ensure scrollbars are always visible */
-.ProseMirror::-webkit-scrollbar-corner {
+.flex-1::-webkit-scrollbar-corner {
   background: #f1f5f9;
 }
 

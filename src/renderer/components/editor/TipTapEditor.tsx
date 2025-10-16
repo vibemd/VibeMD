@@ -31,10 +31,12 @@ export function TipTapEditor() {
   // Function to convert markdown to HTML
   const markdownToHtml = (markdown: string): string => {
     try {
-      return marked.parse(markdown, {
+      // Use the synchronous version of marked
+      const result = marked(markdown, {
         breaks: true,
         gfm: true,
       });
+      return typeof result === 'string' ? result : String(result);
     } catch (error) {
       console.error('Error converting markdown to HTML:', error);
       return markdown; // Fallback to original content
@@ -241,8 +243,9 @@ export function TipTapEditor() {
         className="flex-1"
         style={{ 
           height: '100%',
+          maxHeight: '100%',
           overflow: 'auto',
-          border: '1px solid transparent' // Ensure container has dimensions
+          position: 'relative'
         }}
         onWheel={(e) => {
           // Prevent default to ensure our handler works
@@ -251,14 +254,16 @@ export function TipTapEditor() {
           container.scrollTop += e.deltaY;
         }}
       >
-        <div style={{ minHeight: 'calc(100% + 1px)' }}>
+        <div style={{ 
+          minHeight: '100%',
+          paddingBottom: '2rem' // Add some bottom padding to ensure scrollable content
+        }}>
           <EditorContent
             editor={editor}
             style={{
               fontSize: `${settings?.editor?.fontSize ?? 14}px`,
               fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
               outline: 'none',
-              minHeight: '100%',
             }}
           />
         </div>
