@@ -48,7 +48,7 @@ export function SplitEditor() {
         visibleEditor={true}
         enablePreview={true}
         enableScroll={true}
-        showToolbar={false}
+        showToolbar={true}
         data-color-mode="light"
         style={{
           fontSize: `${settings?.editor?.fontSize ?? 14}px`,

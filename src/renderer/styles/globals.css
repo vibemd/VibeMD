@@ -420,9 +420,4 @@
     max-width: 50% !important;
   }
 
-  /* Simple toolbar hiding - just hide it completely */
-  .w-md-editor .w-md-editor-toolbar {
-    display: none !important;
-  }
-
 }
