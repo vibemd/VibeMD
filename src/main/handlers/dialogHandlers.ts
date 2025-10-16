@@ -3,7 +3,13 @@ import { ipcMain, dialog, BrowserWindow } from 'electron';
 // Dialog handlers for user input
 ipcMain.handle('dialog:prompt', async (event, title: string, message: string, defaultValue: string = '') => {
   try {
-    const result = await dialog.showMessageBox(BrowserWindow.fromWebContents(event.sender), {
+    const browserWindow = BrowserWindow.fromWebContents(event.sender);
+    if (!browserWindow) {
+      console.error('Could not find browser window for dialog');
+      return null;
+    }
+
+    const result = await dialog.showMessageBox(browserWindow, {
       type: 'question',
       title: title,
       message: message,
