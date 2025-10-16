@@ -46,6 +46,7 @@ export function SplitEditor() {
         height="100%"
         data-color-mode="light"
         hideToolbar={true}
+        visibleDragBar={false}
         style={{
           fontSize: `${settings?.editor?.fontSize ?? 14}px`,
           fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
