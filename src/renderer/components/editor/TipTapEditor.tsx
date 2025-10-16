@@ -84,6 +84,11 @@ export function TipTapEditor() {
       });
       let html = typeof result === 'string' ? result : String(result);
       
+      console.log('=== MARKDOWN TO HTML DEBUG ===');
+      console.log('Original markdown:', markdown.slice(0, 200));
+      console.log('Generated HTML:', html.slice(0, 500));
+      console.log('HTML headings found:', html.match(/<h[1-6][^>]*>.*?<\/h[1-6]>/g));
+      
       // Add IDs to headings for navigation
       html = html.replace(/<h([1-6])>(.*?)<\/h[1-6]>/g, (match, level, content) => {
         const id = content
@@ -96,6 +101,10 @@ export function TipTapEditor() {
         console.log('HTML heading ID generated:', { content, id, level });
         return `<h${level} id="${id}">${content}</h${level}>`;
       });
+      
+      console.log('Final HTML with IDs:', html.slice(0, 500));
+      console.log('Final HTML headings:', html.match(/<h[1-6][^>]*id="[^"]*"[^>]*>.*?<\/h[1-6]>/g));
+      console.log('=== END MARKDOWN TO HTML DEBUG ===');
       
       return html;
     } catch (error) {
