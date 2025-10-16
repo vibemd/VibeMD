@@ -50,8 +50,6 @@ export function TipTapEditor() {
       const result = marked(markdown, {
         breaks: true,
         gfm: true,
-        pedantic: false,
-        smartypants: false,
       });
       return typeof result === 'string' ? result : String(result);
     } catch (error) {
@@ -71,6 +69,9 @@ export function TipTapEditor() {
         strongDelimiter: '**',
         linkStyle: 'inlined',
         linkReferenceStyle: 'full',
+        // Add table support
+        tableCellPadding: true,
+        tableCellSeparator: '|',
       });
       return turndownService.turndown(html);
     } catch (error) {
@@ -108,14 +109,17 @@ export function TipTapEditor() {
     ],
     content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      if (activeDocument) {
-        const markdownContent = htmlToMarkdown(html);
-        if (markdownContent !== activeDocument.content) {
-          updateDocument(activeDocument.id, { content: markdownContent });
-          markAsModified(activeDocument.id);
+      // Debounce the update to prevent constant conversion
+      setTimeout(() => {
+        const html = editor.getHTML();
+        if (activeDocument) {
+          const markdownContent = htmlToMarkdown(html);
+          if (markdownContent !== activeDocument.content) {
+            updateDocument(activeDocument.id, { content: markdownContent });
+            markAsModified(activeDocument.id);
+          }
         }
-      }
+      }, 500); // 500ms debounce
     },
   });
 
