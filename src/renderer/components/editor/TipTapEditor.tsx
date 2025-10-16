@@ -266,6 +266,11 @@ export function TipTapEditor() {
         console.log('Set heading result (levels 4-6):', result);
       }
       
+      // Ensure editor maintains focus after heading change
+      setTimeout(() => {
+        editor?.commands.focus();
+      }, 50);
+      
       // Check if the command actually executed
       setTimeout(() => {
         console.log('Current content after:', editor?.getHTML());
@@ -581,27 +586,7 @@ export function TipTapEditor() {
             <button
               onClick={() => {
                 console.log('Task list button clicked');
-                console.log('Editor available:', !!editor);
-                console.log('Can toggle task list:', editor?.can().toggleTaskList());
-                console.log('Editor extensions:', editor?.extensionManager.extensions.map(ext => ext.name));
-                console.log('Current selection:', editor?.state.selection);
-                console.log('Current content before:', editor?.getHTML());
-                
-                // Try different approaches for task list
-                let result;
-                if (editor?.can().toggleTaskList()) {
-                  result = editor?.chain().focus().toggleTaskList().run();
-                  console.log('Toggle task list result:', result);
-                } else {
-                  // Try wrapping current selection in task list
-                  result = editor?.chain().focus().wrapInList('taskList').run();
-                  console.log('Wrap in task list result:', result);
-                }
-                
-                setTimeout(() => {
-                  console.log('Current content after:', editor?.getHTML());
-                  console.log('Is active task list:', editor?.isActive('taskList'));
-                }, 100);
+                editor?.chain().focus().toggleTaskList().run();
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('taskList') ? 'bg-gray-200' : ''
@@ -628,19 +613,7 @@ export function TipTapEditor() {
             <button
               onClick={() => {
                 console.log('Superscript button clicked');
-                console.log('Editor available:', !!editor);
-                console.log('Can toggle superscript:', editor?.can().toggleSuperscript());
-                console.log('Editor extensions:', editor?.extensionManager.extensions.map(ext => ext.name));
-                console.log('Current selection:', editor?.state.selection);
-                console.log('Current content before:', editor?.getHTML());
-                
-                const result = editor?.chain().focus().toggleSuperscript().run();
-                console.log('Toggle superscript result:', result);
-                
-                setTimeout(() => {
-                  console.log('Current content after:', editor?.getHTML());
-                  console.log('Is active superscript:', editor?.isActive('superscript'));
-                }, 100);
+                editor?.chain().focus().toggleSuperscript().run();
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('superscript') ? 'bg-gray-200' : ''
@@ -916,7 +889,18 @@ export function TipTapEditor() {
         open={imageDialogOpen}
         onClose={() => setImageDialogOpen(false)}
         onInsert={(url, alt) => {
-          editor?.chain().focus().setImage({ src: url, alt }).run();
+          console.log('Image insertion:', { url, alt });
+          if (url && url.trim()) {
+            try {
+              // Validate URL
+              new URL(url);
+              editor?.chain().focus().setImage({ src: url.trim(), alt: alt.trim() }).run();
+            } catch (error) {
+              console.error('Invalid image URL:', url, error);
+              // Fallback to a placeholder image
+              editor?.chain().focus().setImage({ src: 'https://via.placeholder.com/300x200', alt: alt.trim() || 'Image' }).run();
+            }
+          }
         }}
       />
     </div>
