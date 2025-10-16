@@ -181,12 +181,28 @@ export function TipTapEditor() {
       TableRow,
       TableHeader,
       TableCell,
-      TaskList,
+      TaskList.configure({
+        itemTypeName: 'taskItem',
+        HTMLAttributes: {
+          class: 'task-list',
+        },
+      }),
       TaskItem.configure({
         nested: true,
+        HTMLAttributes: {
+          class: 'task-item',
+        },
       }),
-      Superscript,
-      Subscript,
+      Superscript.configure({
+        HTMLAttributes: {
+          class: 'superscript',
+        },
+      }),
+      Subscript.configure({
+        HTMLAttributes: {
+          class: 'subscript',
+        },
+      }),
     ],
     content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
     autofocus: 'start', // Auto-focus at start
@@ -532,7 +548,13 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => editor?.chain().focus().toggleTaskList().run()}
+              onClick={() => {
+                console.log('Task list button clicked');
+                console.log('Editor available:', !!editor);
+                console.log('Editor commands:', editor?.commands);
+                console.log('Can toggle task list:', editor?.can().toggleTaskList());
+                editor?.chain().focus().toggleTaskList().run();
+              }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('taskList') ? 'bg-gray-200' : ''
               }`}
@@ -556,7 +578,12 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => editor?.chain().focus().toggleSuperscript().run()}
+              onClick={() => {
+                console.log('Superscript button clicked');
+                console.log('Editor available:', !!editor);
+                console.log('Can toggle superscript:', editor?.can().toggleSuperscript());
+                editor?.chain().focus().toggleSuperscript().run();
+              }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('superscript') ? 'bg-gray-200' : ''
               }`}

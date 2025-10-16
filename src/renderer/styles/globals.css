@@ -185,6 +185,7 @@
 
 .ProseMirror ol {
   list-style-type: decimal;
+  padding-left: 1.5rem; /* Ensure consistent indentation */
 }
 
 .ProseMirror li {
