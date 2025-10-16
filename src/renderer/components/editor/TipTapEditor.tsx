@@ -11,6 +11,7 @@ import { TaskList } from '@tiptap/extension-task-list';
 import { TaskItem } from '@tiptap/extension-task-item';
 import { Superscript } from '@tiptap/extension-superscript';
 import { Subscript } from '@tiptap/extension-subscript';
+import { Extension } from '@tiptap/core';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useNavigationStore } from '@/services/navigationService';
@@ -132,9 +133,37 @@ export function TipTapEditor() {
     }
   };
 
+  // Custom extension to preserve heading IDs
+  const HeadingIdExtension = Extension.create({
+    name: 'headingId',
+    
+    addGlobalAttributes() {
+      return [
+        {
+          types: ['heading'],
+          attributes: {
+            id: {
+              default: null,
+              parseHTML: element => element.getAttribute('id'),
+              renderHTML: attributes => {
+                if (!attributes.id) {
+                  return {};
+                }
+                return {
+                  id: attributes.id,
+                };
+              },
+            },
+          },
+        },
+      ];
+    },
+  });
+
   const editor = useEditor({
     extensions: [
       StarterKit,
+      HeadingIdExtension,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
