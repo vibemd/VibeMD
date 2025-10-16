@@ -1,6 +1,8 @@
 import React from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { Link } from '@tiptap/extension-link';
+import { Image } from '@tiptap/extension-image';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { 
@@ -13,7 +15,9 @@ import {
   List, 
   ListOrdered, 
   Code, 
-  Quote 
+  Quote,
+  Link as LinkIcon,
+  Image as ImageIcon
 } from 'lucide-react';
 
 export function TipTapEditor() {
@@ -23,7 +27,20 @@ export function TipTapEditor() {
   const settings = useSettingsStore((state) => state.settings);
 
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-blue-600 underline hover:text-blue-800',
+        },
+      }),
+      Image.configure({
+        HTMLAttributes: {
+          class: 'max-w-full h-auto rounded',
+        },
+      }),
+    ],
     content: activeDocument?.content || '',
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
@@ -153,6 +170,33 @@ export function TipTapEditor() {
           title="Blockquote"
         >
           <Quote className="h-4 w-4" />
+        </button>
+        <div className="w-px bg-gray-300 mx-1" />
+        <button
+          onClick={() => {
+            const url = window.prompt('Enter URL:');
+            if (url) {
+              editor.chain().focus().setLink({ href: url }).run();
+            }
+          }}
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('link') ? 'bg-gray-200' : ''
+          }`}
+          title="Insert Link"
+        >
+          <LinkIcon className="h-4 w-4" />
+        </button>
+        <button
+          onClick={() => {
+            const url = window.prompt('Enter image URL:');
+            if (url) {
+              editor.chain().focus().setImage({ src: url }).run();
+            }
+          }}
+          className="p-2 rounded hover:bg-gray-100"
+          title="Insert Image"
+        >
+          <ImageIcon className="h-4 w-4" />
         </button>
       </div>
 

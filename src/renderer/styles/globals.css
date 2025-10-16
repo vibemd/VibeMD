@@ -76,6 +76,21 @@
   padding: 0;
 }
 
+.ProseMirror a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.ProseMirror a:hover {
+  color: #1d4ed8;
+}
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.25rem;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
