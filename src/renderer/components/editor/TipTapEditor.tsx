@@ -225,16 +225,41 @@ export function TipTapEditor() {
     },
   });
 
+  // State for current heading level
+  const [currentHeading, setCurrentHeading] = React.useState('paragraph');
+
   // Helper function to get current heading
   const getCurrentHeading = () => {
-    if (editor?.isActive('heading', { level: 1 })) return 'heading1';
-    if (editor?.isActive('heading', { level: 2 })) return 'heading2';
-    if (editor?.isActive('heading', { level: 3 })) return 'heading3';
-    if (editor?.isActive('heading', { level: 4 })) return 'heading4';
-    if (editor?.isActive('heading', { level: 5 })) return 'heading5';
-    if (editor?.isActive('heading', { level: 6 })) return 'heading6';
+    if (!editor) return 'paragraph';
+    if (editor.isActive('heading', { level: 1 })) return 'heading1';
+    if (editor.isActive('heading', { level: 2 })) return 'heading2';
+    if (editor.isActive('heading', { level: 3 })) return 'heading3';
+    if (editor.isActive('heading', { level: 4 })) return 'heading4';
+    if (editor.isActive('heading', { level: 5 })) return 'heading5';
+    if (editor.isActive('heading', { level: 6 })) return 'heading6';
     return 'paragraph';
   };
+
+  // Update heading state when editor selection changes
+  React.useEffect(() => {
+    if (editor) {
+      const updateHeading = () => {
+        const newHeading = getCurrentHeading();
+        setCurrentHeading(newHeading);
+      };
+
+      editor.on('selectionUpdate', updateHeading);
+      editor.on('update', updateHeading);
+      
+      // Initial update
+      updateHeading();
+
+      return () => {
+        editor.off('selectionUpdate', updateHeading);
+        editor.off('update', updateHeading);
+      };
+    }
+  }, [editor]);
 
   // Handle heading change
   const handleHeadingChange = (value: string) => {
@@ -349,7 +374,7 @@ export function TipTapEditor() {
       component: (
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
-            <Select value={getCurrentHeading()} onValueChange={handleHeadingChange}>
+            <Select value={currentHeading} onValueChange={handleHeadingChange}>
               <SelectTrigger className="w-[140px] h-8">
                 <SelectValue placeholder="Select heading" />
               </SelectTrigger>
@@ -562,13 +587,9 @@ export function TipTapEditor() {
                 console.log('Can toggle task list:', editor?.can().toggleTaskList());
                 console.log('Current selection:', editor?.state.selection);
                 
-                // If no text is selected, insert a task list at cursor position
-                if (editor?.state.selection.empty) {
-                  editor?.chain().focus().insertContent('<ul data-type="taskList"><li data-type="taskItem" data-checked="false"><input type="checkbox" /><p></p></li></ul>').run();
-                } else {
-                  // If text is selected, wrap it in a task list
-                  editor?.chain().focus().toggleTaskList().run();
-                }
+                // Use TipTap's proper task list command
+                const result = editor?.chain().focus().toggleTaskList().run();
+                console.log('Toggle task list result:', result);
                 console.log('=== END TASK LIST DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
@@ -600,13 +621,9 @@ export function TipTapEditor() {
                 console.log('Can toggle superscript:', editor?.can().toggleSuperscript());
                 console.log('Current selection:', editor?.state.selection);
                 
-                // If no text is selected, insert placeholder text with superscript
-                if (editor?.state.selection.empty) {
-                  editor?.chain().focus().insertContent('<sup>superscript</sup>').run();
-                } else {
-                  // If text is selected, apply superscript formatting
-                  editor?.chain().focus().toggleSuperscript().run();
-                }
+                // Use TipTap's proper superscript command
+                const result = editor?.chain().focus().toggleSuperscript().run();
+                console.log('Toggle superscript result:', result);
                 console.log('=== END SUPERSCRIPT DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
@@ -634,13 +651,9 @@ export function TipTapEditor() {
                 console.log('Can toggle subscript:', editor?.can().toggleSubscript());
                 console.log('Current selection:', editor?.state.selection);
                 
-                // If no text is selected, insert placeholder text with subscript
-                if (editor?.state.selection.empty) {
-                  editor?.chain().focus().insertContent('<sub>subscript</sub>').run();
-                } else {
-                  // If text is selected, apply subscript formatting
-                  editor?.chain().focus().toggleSubscript().run();
-                }
+                // Use TipTap's proper subscript command
+                const result = editor?.chain().focus().toggleSubscript().run();
+                console.log('Toggle subscript result:', result);
                 console.log('=== END SUBSCRIPT DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
@@ -736,7 +749,7 @@ export function TipTapEditor() {
     return () => window.removeEventListener('resize', updateToolbar);
   }, []);
 
-  // Debug: Log available commands when editor is ready
+  // Debug: Log available commands when editor is ready (only once)
   React.useEffect(() => {
     if (editor) {
       console.log('=== TIPTAP EDITOR DEBUG ===');
@@ -747,7 +760,7 @@ export function TipTapEditor() {
       console.log('Active extensions:', editor.extensionManager.extensions.map(ext => ext.name));
       console.log('=== END DEBUG ===');
     }
-  }, [editor]);
+  }, [editor?.extensionManager]); // Only log when extensions change, not on every render
 
   // Set up navigation handler
   React.useEffect(() => {
