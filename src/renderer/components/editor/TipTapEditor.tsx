@@ -521,7 +521,10 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => editor?.chain().focus().toggleTaskList().run()}
+              onClick={() => {
+                console.log('Task list button clicked, editor:', editor);
+                editor?.chain().focus().toggleTaskList().run();
+              }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('taskList') ? 'bg-gray-200' : ''
               }`}
@@ -545,7 +548,10 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => editor?.chain().focus().toggleSuperscript().run()}
+              onClick={() => {
+                console.log('Superscript button clicked, editor:', editor);
+                editor?.chain().focus().toggleSuperscript().run();
+              }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('superscript') ? 'bg-gray-200' : ''
               }`}
@@ -565,7 +571,10 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => editor?.chain().focus().toggleSubscript().run()}
+              onClick={() => {
+                console.log('Subscript button clicked, editor:', editor);
+                editor?.chain().focus().toggleSubscript().run();
+              }}
               className={`p-2 rounded hover:bg-gray-100 ${
                 editor?.isActive('subscript') ? 'bg-gray-200' : ''
               }`}
@@ -697,6 +706,10 @@ export function TipTapEditor() {
       // Only update if the content is significantly different (not just whitespace)
       if (currentHtml.trim() !== htmlContent.trim()) {
         editor.commands.setContent(htmlContent);
+        // Auto-focus the editor when content is set
+        setTimeout(() => {
+          editor.commands.focus();
+        }, 100);
       }
     }
   }, [editor, activeDocument?.id]); // Only depend on document ID, not content

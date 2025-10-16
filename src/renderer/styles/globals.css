@@ -179,8 +179,17 @@
   margin: 0.5rem 0;
 }
 
+.ProseMirror ul {
+  list-style-type: disc;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+}
+
 .ProseMirror li {
   margin: 0.25rem 0;
+  display: list-item;
 }
 
 .ProseMirror blockquote {
