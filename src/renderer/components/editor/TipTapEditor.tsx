@@ -237,8 +237,16 @@ export function TipTapEditor() {
       console.log('Current selection:', editor?.state.selection);
       console.log('Current content before:', editor?.getHTML());
       
-      const result = editor?.chain().focus().toggleHeading({ level }).run();
-      console.log('Toggle heading result:', result);
+      // Try different approaches for different heading levels
+      let result;
+      if (level <= 3) {
+        result = editor?.chain().focus().toggleHeading({ level }).run();
+        console.log('Toggle heading result (levels 1-3):', result);
+      } else {
+        // For levels 4-6, try setHeading instead
+        result = editor?.chain().focus().setHeading({ level }).run();
+        console.log('Set heading result (levels 4-6):', result);
+      }
       
       // Check if the command actually executed
       setTimeout(() => {
@@ -573,8 +581,16 @@ export function TipTapEditor() {
                 console.log('Current selection:', editor?.state.selection);
                 console.log('Current content before:', editor?.getHTML());
                 
-                const result = editor?.chain().focus().toggleTaskList().run();
-                console.log('Toggle task list result:', result);
+                // Try different approaches for task list
+                let result;
+                if (editor?.can().toggleTaskList()) {
+                  result = editor?.chain().focus().toggleTaskList().run();
+                  console.log('Toggle task list result:', result);
+                } else {
+                  // Try wrapping current selection in task list
+                  result = editor?.chain().focus().wrapInList('taskList').run();
+                  console.log('Wrap in task list result:', result);
+                }
                 
                 setTimeout(() => {
                   console.log('Current content after:', editor?.getHTML());
