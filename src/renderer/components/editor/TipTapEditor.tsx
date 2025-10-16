@@ -186,11 +186,13 @@ export function TipTapEditor() {
         HTMLAttributes: {
           class: 'text-superscript',
         },
+        excludes: 'subscript', // Exclude subscript when superscript is active
       }),
       Subscript.configure({
         HTMLAttributes: {
           class: 'text-subscript',
         },
+        excludes: 'superscript', // Exclude superscript when subscript is active
       }),
       HeadingIdExtension,
       Link.configure({
@@ -245,11 +247,14 @@ export function TipTapEditor() {
     if (editor) {
       const updateHeading = () => {
         const newHeading = getCurrentHeading();
+        console.log('Updating heading state:', newHeading);
         setCurrentHeading(newHeading);
       };
 
+      // Listen to selection changes and content updates
       editor.on('selectionUpdate', updateHeading);
       editor.on('update', updateHeading);
+      editor.on('transaction', updateHeading);
       
       // Initial update
       updateHeading();
@@ -257,6 +262,7 @@ export function TipTapEditor() {
       return () => {
         editor.off('selectionUpdate', updateHeading);
         editor.off('update', updateHeading);
+        editor.off('transaction', updateHeading);
       };
     }
   }, [editor]);
@@ -587,7 +593,7 @@ export function TipTapEditor() {
                 console.log('Can toggle task list:', editor?.can().toggleTaskList());
                 console.log('Current selection:', editor?.state.selection);
                 
-                // Use TipTap's proper task list command
+                // Use TipTap's proper task list command without adding new lines
                 const result = editor?.chain().focus().toggleTaskList().run();
                 console.log('Toggle task list result:', result);
                 console.log('=== END TASK LIST DEBUG ===');

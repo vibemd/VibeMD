@@ -64,8 +64,8 @@
 
 /* Task List Styles */
 .ProseMirror ul[data-type="taskList"] {
-  list-style: none;
-  padding: 0;
+  list-style: none !important;
+  padding: 0 !important;
   margin: 1rem 0;
 }
 
@@ -78,6 +78,7 @@
   align-items: flex-start;
   margin: 0.25rem 0;
   padding: 0.25rem 0;
+  list-style: none !important;
 }
 
 .ProseMirror ul[data-type="taskList"] li > label {
@@ -213,21 +214,6 @@
 }
 
 /* Task list styling */
-.ProseMirror ul[data-type="taskList"] {
-  list-style: none;
-  padding-left: 0;
-}
-
-.ProseMirror ul[data-type="taskList"] li {
-  display: flex;
-  align-items: flex-start;
-  margin: 0.25rem 0;
-}
-
-.ProseMirror ul[data-type="taskList"] li input[type="checkbox"] {
-  margin-right: 0.5rem;
-  margin-top: 0.125rem;
-}
 
 /* Superscript and subscript styling */
 .ProseMirror sup, .ProseMirror .text-superscript {
