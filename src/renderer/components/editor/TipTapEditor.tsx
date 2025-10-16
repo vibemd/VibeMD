@@ -227,10 +227,7 @@ export function TipTapEditor() {
     },
   });
 
-  // State for current heading level
-  const [currentHeading, setCurrentHeading] = React.useState('paragraph');
-
-  // Helper function to get current heading
+  // Helper function to get current heading - using TipTap's proper pattern
   const getCurrentHeading = () => {
     if (!editor) return 'paragraph';
     if (editor.isActive('heading', { level: 1 })) return 'heading1';
@@ -241,34 +238,6 @@ export function TipTapEditor() {
     if (editor.isActive('heading', { level: 6 })) return 'heading6';
     return 'paragraph';
   };
-
-  // Update heading state when editor selection changes
-  React.useEffect(() => {
-    if (editor) {
-      let timeoutId: NodeJS.Timeout;
-      
-      const updateHeading = () => {
-        // Debounce updates to prevent infinite loops
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          const newHeading = getCurrentHeading();
-          console.log('Updating heading state:', newHeading);
-          setCurrentHeading(newHeading);
-        }, 100); // 100ms debounce
-      };
-
-      // Only listen to selection changes, not every transaction
-      editor.on('selectionUpdate', updateHeading);
-      
-      // Initial update
-      updateHeading();
-
-      return () => {
-        clearTimeout(timeoutId);
-        editor.off('selectionUpdate', updateHeading);
-      };
-    }
-  }, [editor]);
 
   // Handle heading change
   const handleHeadingChange = (value: string) => {
@@ -383,7 +352,7 @@ export function TipTapEditor() {
       component: (
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
-            <Select value={currentHeading} onValueChange={handleHeadingChange}>
+            <Select value={getCurrentHeading()} onValueChange={handleHeadingChange}>
               <SelectTrigger className="w-[140px] h-8">
                 <SelectValue placeholder="Select heading" />
               </SelectTrigger>
@@ -596,14 +565,9 @@ export function TipTapEditor() {
                 console.log('Can toggle task list:', editor?.can().toggleTaskList());
                 console.log('Current selection:', editor?.state.selection);
                 
-                // Check if we're already in a task list
-                if (editor?.isActive('taskList')) {
-                  // If already in task list, convert to paragraph
-                  editor?.chain().focus().setParagraph().run();
-                } else {
-                  // Convert current paragraph to task list
-                  editor?.chain().focus().toggleTaskList().run();
-                }
+                // Use TipTap's proper task list command
+                const result = editor?.chain().focus().toggleTaskList().run();
+                console.log('Toggle task list result:', result);
                 console.log('=== END TASK LIST DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
@@ -636,8 +600,7 @@ export function TipTapEditor() {
                 console.log('Current selection:', editor?.state.selection);
                 
                 // Use TipTap's proper superscript command
-                const result = editor?.chain().focus().toggleSuperscript().run();
-                console.log('Toggle superscript result:', result);
+                editor?.chain().focus().toggleSuperscript().run();
                 console.log('=== END SUPERSCRIPT DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
@@ -666,8 +629,7 @@ export function TipTapEditor() {
                 console.log('Current selection:', editor?.state.selection);
                 
                 // Use TipTap's proper subscript command
-                const result = editor?.chain().focus().toggleSubscript().run();
-                console.log('Toggle subscript result:', result);
+                editor?.chain().focus().toggleSubscript().run();
                 console.log('=== END SUBSCRIPT DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
