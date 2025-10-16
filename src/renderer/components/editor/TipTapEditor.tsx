@@ -240,7 +240,7 @@ export function TipTapEditor() {
 
       {/* Editor Content */}
       <div 
-        className="flex-1"
+        className="flex-1 tiptap-scroll-container"
         style={{ 
           height: '100%',
           maxHeight: '100%',

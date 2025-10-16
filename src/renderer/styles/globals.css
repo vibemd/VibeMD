@@ -18,29 +18,29 @@
   outline: none;
 }
 
-/* Force scrollbars to be visible on the container */
-.flex-1::-webkit-scrollbar {
+/* Force scrollbars to be visible on the TipTap scroll container */
+.tiptap-scroll-container::-webkit-scrollbar {
   width: 12px;
   height: 12px;
 }
 
-.flex-1::-webkit-scrollbar-track {
+.tiptap-scroll-container::-webkit-scrollbar-track {
   background: #f1f5f9;
   border-radius: 6px;
 }
 
-.flex-1::-webkit-scrollbar-thumb {
+.tiptap-scroll-container::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 6px;
   border: 2px solid #f1f5f9;
 }
 
-.flex-1::-webkit-scrollbar-thumb:hover {
+.tiptap-scroll-container::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
 
 /* Ensure scrollbars are always visible */
-.flex-1::-webkit-scrollbar-corner {
+.tiptap-scroll-container::-webkit-scrollbar-corner {
   background: #f1f5f9;
 }
 
