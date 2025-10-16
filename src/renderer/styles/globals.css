@@ -10,35 +10,37 @@
   outline: none;
   padding: 1rem;
   box-sizing: border-box;
+  min-height: 100%;
 }
 
 .ProseMirror-focused {
   outline: none;
 }
 
-/* Ensure the editor container can scroll with mouse wheel */
-.tiptap-scroll-container {
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 100%;
-  scroll-behavior: smooth;
+/* Force scrollbars to be visible */
+.ProseMirror::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
 }
 
-.tiptap-scroll-container::-webkit-scrollbar {
-  width: 8px;
+.ProseMirror::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 6px;
 }
 
-.tiptap-scroll-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.tiptap-scroll-container::-webkit-scrollbar-thumb {
+.ProseMirror::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 4px;
+  border-radius: 6px;
+  border: 2px solid #f1f5f9;
 }
 
-.tiptap-scroll-container::-webkit-scrollbar-thumb:hover {
+.ProseMirror::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Ensure scrollbars are always visible */
+.ProseMirror::-webkit-scrollbar-corner {
+  background: #f1f5f9;
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {

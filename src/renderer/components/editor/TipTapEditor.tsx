@@ -238,19 +238,27 @@ export function TipTapEditor() {
 
       {/* Editor Content */}
       <div 
-        className="flex-1 tiptap-scroll-container"
+        className="flex-1"
+        style={{ 
+          height: '100%',
+          overflow: 'auto',
+          border: '1px solid transparent' // Ensure container has dimensions
+        }}
         onWheel={(e) => {
-          // Ensure mouse wheel events are handled by the container
-          e.currentTarget.scrollTop += e.deltaY;
+          // Prevent default to ensure our handler works
+          e.preventDefault();
+          const container = e.currentTarget;
+          container.scrollTop += e.deltaY;
         }}
       >
-        <div style={{ minHeight: '100%' }}>
+        <div style={{ minHeight: 'calc(100% + 1px)' }}>
           <EditorContent
             editor={editor}
             style={{
               fontSize: `${settings?.editor?.fontSize ?? 14}px`,
               fontFamily: settings?.editor?.fontFamily ?? 'system-ui',
               outline: 'none',
+              minHeight: '100%',
             }}
           />
         </div>
