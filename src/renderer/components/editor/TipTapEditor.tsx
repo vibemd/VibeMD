@@ -42,6 +42,7 @@ import {
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useResponsiveToolbar, ToolbarButton } from '@/hooks/useResponsiveToolbar';
 
 export function TipTapEditor() {
   const activeDocument = useDocumentStore((state) => state.getActiveDocument());
@@ -119,7 +120,392 @@ export function TipTapEditor() {
     }
   };
 
-  // Function to convert markdown to HTML
+  // Toolbar button configuration with priorities
+  const toolbarButtons: ToolbarButton[] = [
+    {
+      id: 'bold',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleBold().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('bold') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <Bold className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Bold (Ctrl+B)</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 40,
+      priority: 10
+    },
+    {
+      id: 'italic',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleItalic().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('italic') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <Italic className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Italic (Ctrl+I)</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 40,
+      priority: 10
+    },
+    {
+      id: 'strikethrough',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleStrike().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('strike') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <Strikethrough className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Strikethrough</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 40,
+      priority: 8
+    },
+    {
+      id: 'separator1',
+      component: <div className="w-px bg-gray-300 mx-1" />,
+      width: 8,
+      priority: 0
+    },
+    {
+      id: 'headings',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <Select value={getCurrentHeading()} onValueChange={handleHeadingChange}>
+              <SelectTrigger className="w-[140px] h-8">
+                <SelectValue placeholder="Select heading" />
+              </SelectTrigger>
+              <SelectContent>
+                {headingLevels.map((heading) => (
+                  <SelectItem key={heading.value} value={heading.value}>
+                    {heading.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Select heading level (H1-H6) or Normal text</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 140,
+      priority: 9
+    },
+    {
+      id: 'separator2',
+      component: <div className="w-px bg-gray-300 mx-1" />,
+      width: 8,
+      priority: 0
+    },
+    {
+      id: 'bulletList',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleBulletList().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('bulletList') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <List className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Bullet List</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 40,
+      priority: 7
+    },
+    {
+      id: 'orderedList',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('orderedList') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <ListOrdered className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Numbered List</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 40,
+      priority: 7
+    },
+    {
+      id: 'separator3',
+      component: <div className="w-px bg-gray-300 mx-1" />,
+      width: 8,
+      priority: 0
+    },
+    {
+      id: 'codeBlock',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('codeBlock') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <Code className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Code Block</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 40,
+      priority: 6
+    },
+    {
+      id: 'blockquote',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleBlockquote().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('blockquote') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <Quote className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Blockquote</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 40,
+      priority: 6
+    },
+    {
+      id: 'separator4',
+      component: <div className="w-px bg-gray-300 mx-1" />,
+      width: 8,
+      priority: 0
+    },
+    {
+      id: 'link',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                editor?.chain().focus().setLink({ href: 'https://example.com' }).run();
+              }}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('link') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <LinkIcon className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Insert Link (placeholder)</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 40,
+      priority: 5
+    },
+    {
+      id: 'image',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                editor?.chain().focus().setImage({ src: 'https://via.placeholder.com/300x200' }).run();
+              }}
+              className="p-2 rounded hover:bg-gray-100"
+            >
+              <ImageIcon className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Insert Image (placeholder)</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 40,
+      priority: 5
+    },
+    {
+      id: 'separator5',
+      component: <div className="w-px bg-gray-300 mx-1" />,
+      width: 8,
+      priority: 0
+    },
+    {
+      id: 'table',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                editor?.chain().focus().insertTable({ 
+                  rows: 3, 
+                  cols: 3, 
+                  withHeaderRow: true 
+                }).run();
+              }}
+              className="p-2 rounded hover:bg-gray-100"
+            >
+              <TableIcon className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Insert Table (3x3)</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 40,
+      priority: 4
+    },
+    {
+      id: 'tableActions',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <Select onValueChange={handleTableCommand}>
+              <SelectTrigger className="w-[160px] h-8">
+                <SelectValue placeholder="Table actions" />
+              </SelectTrigger>
+              <SelectContent>
+                {tableCommands.map((command) => (
+                  <SelectItem key={command.value} value={command.value}>
+                    {command.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Table operations (insert/delete rows/columns)</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 160,
+      priority: 4
+    },
+    {
+      id: 'taskList',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleTaskList().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('taskList') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <CheckSquare className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Task List</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 40,
+      priority: 4
+    },
+    {
+      id: 'separator6',
+      component: <div className="w-px bg-gray-300 mx-1" />,
+      width: 8,
+      priority: 0
+    },
+    {
+      id: 'superscript',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleSuperscript().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('superscript') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <SuperscriptIcon className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Superscript</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 40,
+      priority: 3
+    },
+    {
+      id: 'subscript',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().toggleSubscript().run()}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('subscript') ? 'bg-gray-200' : ''
+              }`}
+            >
+              <SubscriptIcon className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Subscript</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+      width: 40,
+      priority: 3
+    }
+  ];
+
+  // Use responsive toolbar hook
+  const { toolbarRef, visibleButtons, overflowButtons } = useResponsiveToolbar(toolbarButtons);
   const markdownToHtml = (markdown: string): string => {
     try {
       // Use the synchronous version of marked with GFM support
@@ -233,266 +619,40 @@ export function TipTapEditor() {
 
   return (
     <div className="flex-1 flex flex-col h-full">
-      {/* Enhanced Toolbar with Dropdowns */}
+      {/* Responsive Toolbar with Overflow Handling */}
       <TooltipProvider delayDuration={300} skipDelayDuration={100}>
-        <div className="border-b p-2 flex gap-2 flex-wrap">
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => editor?.chain().focus().toggleBold().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('bold') ? 'bg-gray-200' : ''
-              }`}
-            >
-              <Bold className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Bold (Ctrl+B)</p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => editor?.chain().focus().toggleItalic().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('italic') ? 'bg-gray-200' : ''
-              }`}
-            >
-              <Italic className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Italic (Ctrl+I)</p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => editor?.chain().focus().toggleStrike().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('strike') ? 'bg-gray-200' : ''
-              }`}
-            >
-              <Strikethrough className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Strikethrough</p>
-          </TooltipContent>
-        </Tooltip>
-        <div className="w-px bg-gray-300 mx-1" />
-        
-        {/* Headings Dropdown */}
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <Select value={getCurrentHeading()} onValueChange={handleHeadingChange}>
-              <SelectTrigger className="w-[140px] h-8">
-                <SelectValue placeholder="Select heading" />
-              </SelectTrigger>
-              <SelectContent>
-                {headingLevels.map((heading) => (
-                  <SelectItem key={heading.value} value={heading.value}>
-                    {heading.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Select heading level (H1-H6) or Normal text</p>
-          </TooltipContent>
-        </Tooltip>
-        <div className="w-px bg-gray-300 mx-1" />
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => editor?.chain().focus().toggleBulletList().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('bulletList') ? 'bg-gray-200' : ''
-              }`}
-            >
-              <List className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Bullet List</p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('orderedList') ? 'bg-gray-200' : ''
-              }`}
-            >
-              <ListOrdered className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Numbered List</p>
-          </TooltipContent>
-        </Tooltip>
-        <div className="w-px bg-gray-300 mx-1" />
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('codeBlock') ? 'bg-gray-200' : ''
-              }`}
-            >
-              <Code className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Code Block</p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => editor?.chain().focus().toggleBlockquote().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('blockquote') ? 'bg-gray-200' : ''
-              }`}
-            >
-              <Quote className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Blockquote</p>
-          </TooltipContent>
-        </Tooltip>
-        <div className="w-px bg-gray-300 mx-1" />
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => {
-                // For now, insert placeholder link since Electron doesn't support prompt()
-                // TODO: Implement custom dialog for link URL input
-                editor?.chain().focus().setLink({ href: 'https://example.com' }).run();
-              }}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('link') ? 'bg-gray-200' : ''
-              }`}
-            >
-              <LinkIcon className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Insert Link (placeholder)</p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => {
-                // For now, insert placeholder image since Electron doesn't support prompt()
-                // TODO: Implement custom dialog for image URL input
-                editor?.chain().focus().setImage({ src: 'https://via.placeholder.com/300x200' }).run();
-              }}
-              className="p-2 rounded hover:bg-gray-100"
-            >
-              <ImageIcon className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Insert Image (placeholder)</p>
-          </TooltipContent>
-        </Tooltip>
-        <div className="w-px bg-gray-300 mx-1" />
-        
-        {/* Table Insert Button */}
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => {
-                // For now, use default 3x3 table since Electron doesn't support prompt()
-                // TODO: Implement custom dialog for table dimensions
-                editor?.chain().focus().insertTable({ 
-                  rows: 3, 
-                  cols: 3, 
-                  withHeaderRow: true 
-                }).run();
-              }}
-              className="p-2 rounded hover:bg-gray-100"
-            >
-              <TableIcon className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Insert Table (3x3)</p>
-          </TooltipContent>
-        </Tooltip>
-
-        {/* Table Functions Dropdown */}
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <Select onValueChange={handleTableCommand}>
-              <SelectTrigger className="w-[160px] h-8">
-                <SelectValue placeholder="Table actions" />
-              </SelectTrigger>
-              <SelectContent>
-                {tableCommands.map((command) => (
-                  <SelectItem key={command.value} value={command.value}>
-                    {command.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Table operations (insert/delete rows/columns)</p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => editor?.chain().focus().toggleTaskList().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('taskList') ? 'bg-gray-200' : ''
-              }`}
-            >
-              <CheckSquare className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Task List</p>
-          </TooltipContent>
-        </Tooltip>
-        <div className="w-px bg-gray-300 mx-1" />
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => editor?.chain().focus().toggleSuperscript().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('superscript') ? 'bg-gray-200' : ''
-              }`}
-            >
-              <SuperscriptIcon className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Superscript</p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => editor?.chain().focus().toggleSubscript().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('subscript') ? 'bg-gray-200' : ''
-              }`}
-            >
-              <SubscriptIcon className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Subscript</p>
-          </TooltipContent>
-        </Tooltip>
+        <div ref={toolbarRef} className="border-b p-2 flex gap-2 items-center">
+          {/* Visible buttons */}
+          {visibleButtons.map((button) => (
+            <div key={button.id}>
+              {button.component}
+            </div>
+          ))}
+          
+          {/* Overflow dropdown */}
+          {overflowButtons.length > 0 && (
+            <Tooltip delayDuration={300}>
+              <TooltipTrigger asChild>
+                <Select>
+                  <SelectTrigger className="w-[60px] h-8">
+                    <SelectValue placeholder="⋯" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {overflowButtons.map((button) => (
+                      <SelectItem key={button.id} value={button.id}>
+                        <div className="flex items-center gap-2">
+                          {button.component}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>More formatting options</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
       </TooltipProvider>
 
