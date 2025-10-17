@@ -167,8 +167,6 @@ export function TipTapEditor() {
       heading: false, // Use custom Heading extension instead
       listItem: false, // Exclude to prevent duplicate
       link: false, // Exclude to prevent duplicate
-      superscript: false, // Exclude to prevent conflict
-      subscript: false, // Exclude to prevent conflict
     }),
       Heading.configure({
         levels: [1, 2, 3, 4, 5, 6], // Support all heading levels
@@ -176,16 +174,8 @@ export function TipTapEditor() {
       BulletList,
       OrderedList,
       ListItem,
-      Superscript.configure({
-        HTMLAttributes: {
-          class: 'text-superscript',
-        },
-      }),
-      Subscript.configure({
-        HTMLAttributes: {
-          class: 'text-subscript',
-        },
-      }),
+      Superscript,
+      Subscript,
       HeadingIdExtension,
       Link.configure({
         openOnClick: false,
