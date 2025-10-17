@@ -274,7 +274,7 @@ export function TipTapEditor() {
     if (level === 0) {
       editor.chain().focus().setParagraph().run();
     } else {
-      editor.chain().focus().setHeading({ level }).run();
+      editor.chain().focus().setHeading({ level: level as 1 | 2 | 3 | 4 | 5 | 6 }).run();
     }
     
     // Focus editor after selection
@@ -696,8 +696,8 @@ export function TipTapEditor() {
         {/* Dialogs */}
         <LinkDialog
           open={linkDialogOpen}
-          onOpenChange={setLinkDialogOpen}
-          onConfirm={(url, text) => {
+          onClose={() => setLinkDialogOpen(false)}
+          onInsert={(url: string, text: string) => {
             if (editor) {
               if (text) {
                 editor.chain().focus().insertContent(`[${text}](${url})`).run();
@@ -711,8 +711,8 @@ export function TipTapEditor() {
 
         <ImageDialog
           open={imageDialogOpen}
-          onOpenChange={setImageDialogOpen}
-          onConfirm={(url, alt) => {
+          onClose={() => setImageDialogOpen(false)}
+          onInsert={(url: string, alt: string) => {
             if (editor) {
               editor.chain().focus().setImage({ src: url, alt }).run();
             }
