@@ -314,6 +314,7 @@
   .prose {
     color: hsl(var(--foreground));
     max-width: none;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
   .prose h1 {
@@ -323,6 +324,7 @@
     line-height: 1.1111111;
     margin-top: 0;
     margin-bottom: 0.8888889em;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
   .prose h2 {
@@ -332,6 +334,7 @@
     line-height: 1.3333333;
     margin-top: 2em;
     margin-bottom: 1em;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
   .prose h3 {
@@ -341,6 +344,7 @@
     line-height: 1.6;
     margin-top: 1.6em;
     margin-bottom: 0.6em;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
   .prose h4 {
@@ -349,22 +353,26 @@
     line-height: 1.5;
     margin-top: 1.5em;
     margin-bottom: 0.5em;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
       .prose p {
         margin-top: 0.5em;
         margin-bottom: 0.5em;
+        font-family: var(--editor-font-family, Arial) !important;
       }
   
   .prose strong {
     color: hsl(var(--foreground));
     font-weight: 600;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
   .prose a {
     color: hsl(var(--primary));
     text-decoration: underline;
     font-weight: 500;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
   .prose a:hover {
@@ -378,6 +386,7 @@
     font-size: 0.875em;
     padding: 0.125em 0.25em;
     border-radius: 0.25rem;
+    font-family: 'Courier New', monospace !important; /* Keep code monospace */
   }
   
   .prose pre {
@@ -391,6 +400,7 @@
     margin-bottom: 1.7142857em;
     border-radius: 0.375rem;
     padding: 0.8571429em 1.1428571em;
+    font-family: 'Courier New', monospace !important; /* Keep code monospace */
   }
   
   .prose pre code {
@@ -415,6 +425,7 @@
     margin-top: 1.6em;
     margin-bottom: 1.6em;
     padding-left: 1em;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
   .prose ul {
@@ -422,6 +433,7 @@
     margin-top: 1.25em;
     margin-bottom: 1.25em;
     padding-left: 1.625em;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
   .prose ol {
@@ -429,11 +441,13 @@
     margin-top: 1.25em;
     margin-bottom: 1.25em;
     padding-left: 1.625em;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
   .prose li {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
   .prose table {
@@ -444,6 +458,7 @@
     margin-bottom: 2em;
     font-size: 0.875em;
     line-height: 1.7142857;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
   .prose thead {
@@ -458,6 +473,7 @@
     padding-right: 0.5714286em;
     padding-bottom: 0.5714286em;
     padding-left: 0.5714286em;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
   .prose tbody tr {
@@ -475,6 +491,7 @@
     padding-right: 0.5714286em;
     padding-bottom: 0.5714286em;
     padding-left: 0.5714286em;
+    font-family: var(--editor-font-family, Arial) !important;
   }
   
   .prose hr {
