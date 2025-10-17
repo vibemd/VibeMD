@@ -96,11 +96,16 @@
   margin: 0;
 }
 
-/* Force all content in task items to be inline */
-.ProseMirror ul[data-type="taskList"] li > div > * {
+/* Option 3: CSS-only fix - Force paragraphs to display inline */
+.ProseMirror ul[data-type="taskList"] li p {
   display: inline !important;
   margin: 0 !important;
   padding: 0 !important;
+  line-height: 1 !important;
+}
+
+.ProseMirror ul[data-type="taskList"] li p:first-child {
+  display: inline !important; /* Ensure first paragraph stays inline */
 }
 
 .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
