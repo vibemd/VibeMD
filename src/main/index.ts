@@ -19,10 +19,49 @@ app.on('ready', () => {
   mainWindow = createMainWindow();
 });
 
-// Handle window close for macOS
+// Handle app quit with unsaved changes check
+app.on('will-quit', async (event) => {
+  if (!mainWindow) return;
+
+  try {
+    // Check if there are unsaved changes
+    const hasUnsaved = await mainWindow.webContents.executeJavaScript(`
+      window.appService?.hasUnsavedChanges?.() || false
+    `);
+
+    if (hasUnsaved) {
+      // Prevent the default quit behavior
+      event.preventDefault();
+      
+      // Show confirmation dialog
+      const { dialog } = require('electron');
+      const result = await dialog.showMessageBox(mainWindow, {
+        type: 'warning',
+        title: 'Unsaved Changes',
+        message: 'Unsaved Changes',
+        detail: 'There are unsaved changes in open files. Do you wish to save these?',
+        buttons: ['No', 'Yes'],
+        defaultId: 1, // Default to "Yes" (cancel close)
+        cancelId: 0   // "No" cancels the dialog
+      });
+
+      if (result.response === 0) {
+        // User chose "No" - allow the app to close
+        // Remove the event listener to prevent infinite loop
+        app.removeAllListeners('will-quit');
+        app.quit();
+      }
+      // If user chose "Yes", do nothing - app stays open
+    }
+  } catch (error) {
+    console.error('Error checking for unsaved changes:', error);
+    // If there's an error, allow the app to close
+    app.removeAllListeners('will-quit');
+    app.quit();
+  }
+});
+
 app.on('window-all-closed', () => {
-  // Don't quit on macOS when all windows are closed
-  // Let the before-quit handler manage the quit process
   if (process.platform !== 'darwin') {
     app.quit();
   }
