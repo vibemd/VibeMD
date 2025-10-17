@@ -91,19 +91,37 @@ export function TipTapEditor() {
   // Function to convert markdown to HTML
   const markdownToHtml = (markdown: string): string => {
     try {
-      // Configure marked for GFM support
-      marked.setOptions({
+      const html = marked.parse(markdown, {
         gfm: true,
         breaks: false,
         pedantic: false,
         smartypants: false,
       });
-
-      return marked(markdown);
+      
+      // Add heading IDs for navigation
+      const htmlWithIds = html.replace(/<h([1-6])>(.*?)<\/h[1-6]>/g, (match, level, content) => {
+        // Extract text content from HTML (remove any HTML tags)
+        const textContent = content.replace(/<[^>]*>/g, '');
+        const id = generateHeadingId(textContent);
+        return `<h${level} id="${id}">${content}</h${level}>`;
+      });
+      
+      return htmlWithIds;
     } catch (error) {
       console.error('Error converting markdown to HTML:', error);
       return markdown; // Fallback to original content
     }
+  };
+
+  // Function to generate heading ID from text
+  const generateHeadingId = (text: string): string => {
+    return text
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .trim()
+      .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
   };
 
   // Function to convert HTML to markdown
