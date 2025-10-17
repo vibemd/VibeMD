@@ -177,7 +177,11 @@ export function TipTapEditor() {
       OrderedList,
       ListItem,
       TaskList,
-      TaskItem,
+      TaskItem.configure({
+        nested: true,
+      }).extend({
+        content: 'text*', // Direct text nodes only - no paragraph wrapper
+      }),
       Superscript,
       Subscript,
       HardBreak,

@@ -75,7 +75,7 @@
 
 .ProseMirror ul[data-type="taskList"] li {
   display: flex;
-  align-items: flex-start;
+  align-items: center; /* Center align checkbox and text */
   margin: 0.25rem 0;
   padding: 0.25rem 0;
   list-style: none !important;
@@ -98,6 +98,22 @@
 .ProseMirror ul[data-type="taskList"] li > div {
   flex: 1 1 auto;
   margin: 0;
+}
+
+/* Handle direct text content in task items */
+.ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  align-items: center; /* Center align checkbox and text */
+  margin: 0.25rem 0;
+  padding: 0.25rem 0;
+  list-style: none !important;
+}
+
+/* Ensure text content is inline with checkbox */
+.ProseMirror ul[data-type="taskList"] li > *:not(label) {
+  display: inline;
+  margin: 0;
+  padding: 0;
 }
 
 .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
