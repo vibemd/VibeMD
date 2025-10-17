@@ -64,17 +64,6 @@ export function EditorSettings({ settings, onChange }: EditorSettingsProps) {
           
           <div className="flex items-center space-x-2">
             <Checkbox
-              id="codeBlockWordWrap"
-              checked={settings.editor.codeBlockWordWrap}
-              onCheckedChange={(checked) => updateEditor({ codeBlockWordWrap: !!checked })}
-            />
-            <label htmlFor="codeBlockWordWrap" className="text-sm font-medium">
-              Enable word wrap in code blocks
-            </label>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Checkbox
               id="latexSupport"
               checked={settings.editor.latexSupport}
               onCheckedChange={(checked) => updateEditor({ latexSupport: !!checked })}

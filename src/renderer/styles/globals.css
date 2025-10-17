@@ -141,7 +141,6 @@
 /* Editor base styles with font family */
 .ProseMirror {
   font-family: var(--editor-font-family, Arial);
-  white-space: pre-wrap; /* Always wrap normal text */
 }
 
 .ProseMirror h1 {
@@ -233,9 +232,6 @@
   border-radius: 0.5em;
   margin: 1em 0;
   overflow-x: auto;
-  white-space: var(--code-block-word-wrap, pre);
-  max-width: 100%;
-  box-sizing: border-box;
 }
 
 .ProseMirror pre code {
@@ -319,7 +315,6 @@
     color: hsl(var(--foreground));
     max-width: none;
     font-family: var(--editor-font-family, Arial) !important;
-    white-space: pre-wrap !important; /* Always wrap normal text */
   }
   
   .prose h1 {
@@ -406,9 +401,6 @@
     border-radius: 0.375rem;
     padding: 0.8571429em 1.1428571em;
     font-family: 'Courier New', monospace !important; /* Keep code monospace */
-    white-space: var(--code-block-word-wrap, pre) !important;
-    max-width: 100%;
-    box-sizing: border-box;
   }
   
   .prose pre code {
