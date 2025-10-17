@@ -64,6 +64,10 @@ export function TipTapEditor() {
   // Dialog state
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
+  
+  // Context menu state
+  const [contextMenuOpen, setContextMenuOpen] = useState(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
   // Heading levels configuration
   const headingLevels = [
@@ -317,6 +321,27 @@ export function TipTapEditor() {
       editor.commands.focus();
     }, 100);
   };
+
+  // Handle context menu
+  const handleContextMenu = (event: React.MouseEvent) => {
+    if (!editor?.isActive('table')) return;
+    
+    event.preventDefault();
+    setContextMenuPosition({ x: event.clientX, y: event.clientY });
+    setContextMenuOpen(true);
+  };
+
+  // Close context menu when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = () => {
+      setContextMenuOpen(false);
+    };
+    
+    if (contextMenuOpen) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [contextMenuOpen]);
 
   // Toolbar button configuration - memoized to update when editor state changes
   const toolbarButtons = React.useMemo(() => [
@@ -622,6 +647,146 @@ export function TipTapEditor() {
         </Tooltip>
       ) : null,
     },
+    // Table Row Operations
+    {
+      id: 'addRowBefore',
+      component: editor?.isActive('table') ? (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().addRowBefore().run()}
+              className="p-2 rounded hover:bg-gray-100 bg-blue-100 text-blue-800"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Add Row Above</p>
+          </TooltipContent>
+        </Tooltip>
+      ) : null,
+    },
+    {
+      id: 'addRowAfter',
+      component: editor?.isActive('table') ? (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().addRowAfter().run()}
+              className="p-2 rounded hover:bg-gray-100 bg-blue-100 text-blue-800"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Add Row Below</p>
+          </TooltipContent>
+        </Tooltip>
+      ) : null,
+    },
+    {
+      id: 'deleteRow',
+      component: editor?.isActive('table') ? (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                if (confirm('Delete this row?')) {
+                  editor?.chain().focus().deleteRow().run();
+                }
+              }}
+              className="p-2 rounded hover:bg-gray-100 bg-red-100 text-red-800"
+            >
+              <Minus className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Delete Row</p>
+          </TooltipContent>
+        </Tooltip>
+      ) : null,
+    },
+    // Table Column Operations
+    {
+      id: 'addColumnBefore',
+      component: editor?.isActive('table') ? (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().addColumnBefore().run()}
+              className="p-2 rounded hover:bg-gray-100 bg-blue-100 text-blue-800"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Add Column Left</p>
+          </TooltipContent>
+        </Tooltip>
+      ) : null,
+    },
+    {
+      id: 'addColumnAfter',
+      component: editor?.isActive('table') ? (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().addColumnAfter().run()}
+              className="p-2 rounded hover:bg-gray-100 bg-blue-100 text-blue-800"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Add Column Right</p>
+          </TooltipContent>
+        </Tooltip>
+      ) : null,
+    },
+    {
+      id: 'deleteColumn',
+      component: editor?.isActive('table') ? (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                if (confirm('Delete this column?')) {
+                  editor?.chain().focus().deleteColumn().run();
+                }
+              }}
+              className="p-2 rounded hover:bg-gray-100 bg-red-100 text-red-800"
+            >
+              <Minus className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Delete Column</p>
+          </TooltipContent>
+        </Tooltip>
+      ) : null,
+    },
+    {
+      id: 'deleteTable',
+      component: editor?.isActive('table') ? (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                if (confirm('Delete entire table?')) {
+                  editor?.chain().focus().deleteTable().run();
+                }
+              }}
+              className="p-2 rounded hover:bg-gray-100 bg-red-200 text-red-900"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Delete Table</p>
+          </TooltipContent>
+        </Tooltip>
+      ) : null,
+    },
     {
       id: 'superscript',
       component: (
@@ -691,8 +856,105 @@ export function TipTapEditor() {
             onWheel={(e) => {
               // Allow scrolling without preventing default
             }}
+            onContextMenu={handleContextMenu}
           />
         </div>
+
+        {/* Context Menu */}
+        {contextMenuOpen && editor?.isActive('table') && (
+          <div
+            className="fixed bg-white border border-gray-300 rounded shadow-lg z-50"
+            style={{
+              left: `${contextMenuPosition.x}px`,
+              top: `${contextMenuPosition.y}px`,
+              minWidth: '200px',
+            }}
+          >
+            {/* Row Operations */}
+            <div className="px-4 py-2 text-xs font-bold text-gray-600 border-b">
+              Rows
+            </div>
+            <button
+              onClick={() => {
+                editor?.chain().focus().addRowBefore().run();
+                setContextMenuOpen(false);
+              }}
+              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+            >
+              Insert Row Above
+            </button>
+            <button
+              onClick={() => {
+                editor?.chain().focus().addRowAfter().run();
+                setContextMenuOpen(false);
+              }}
+              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+            >
+              Insert Row Below
+            </button>
+            <button
+              onClick={() => {
+                if (confirm('Delete this row?')) {
+                  editor?.chain().focus().deleteRow().run();
+                }
+                setContextMenuOpen(false);
+              }}
+              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer text-red-600"
+            >
+              Delete Row
+            </button>
+
+            {/* Column Operations */}
+            <div className="px-4 py-2 text-xs font-bold text-gray-600 border-b">
+              Columns
+            </div>
+            <button
+              onClick={() => {
+                editor?.chain().focus().addColumnBefore().run();
+                setContextMenuOpen(false);
+              }}
+              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+            >
+              Insert Column Left
+            </button>
+            <button
+              onClick={() => {
+                editor?.chain().focus().addColumnAfter().run();
+                setContextMenuOpen(false);
+              }}
+              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+            >
+              Insert Column Right
+            </button>
+            <button
+              onClick={() => {
+                if (confirm('Delete this column?')) {
+                  editor?.chain().focus().deleteColumn().run();
+                }
+                setContextMenuOpen(false);
+              }}
+              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer text-red-600"
+            >
+              Delete Column
+            </button>
+
+            {/* Table Operations */}
+            <div className="px-4 py-2 text-xs font-bold text-gray-600 border-b border-red-300">
+              Table
+            </div>
+            <button
+              onClick={() => {
+                if (confirm('Delete entire table?')) {
+                  editor?.chain().focus().deleteTable().run();
+                }
+                setContextMenuOpen(false);
+              }}
+              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
+            >
+              Delete Table
+            </button>
+          </div>
+        )}
 
         {/* Dialogs */}
         <LinkDialog
