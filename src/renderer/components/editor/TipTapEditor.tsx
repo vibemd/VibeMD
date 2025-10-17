@@ -637,7 +637,7 @@ export function TipTapEditor() {
                 console.log('=== END SUPERSCRIPT DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('superscript') ? 'bg-gray-200' : ''
+                editor?.isActive('superscript') ? 'bg-blue-200 text-blue-800' : ''
               }`}
             >
               <SuperscriptIcon className="h-4 w-4" />
@@ -683,7 +683,7 @@ export function TipTapEditor() {
                 console.log('=== END SUBSCRIPT DEBUG ===');
               }}
               className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('subscript') ? 'bg-gray-200' : ''
+                editor?.isActive('subscript') ? 'bg-blue-200 text-blue-800' : ''
               }`}
             >
               <SubscriptIcon className="h-4 w-4" />

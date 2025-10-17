@@ -75,7 +75,7 @@
 
 .ProseMirror ul[data-type="taskList"] li {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin: 0.25rem 0;
   padding: 0.25rem 0;
   list-style: none !important;
@@ -87,10 +87,18 @@
   user-select: none;
   display: flex;
   align-items: center;
+  margin-bottom: 0;
+}
+
+.ProseMirror ul[data-type="taskList"] li > label input[type="checkbox"] {
+  margin-right: 0.25rem;
 }
 
 .ProseMirror ul[data-type="taskList"] li > div {
   flex: 1 1 auto;
+  margin: 0;
+  display: flex;
+  align-items: center;
 }
 
 .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
