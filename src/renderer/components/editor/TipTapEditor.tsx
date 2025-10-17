@@ -165,7 +165,7 @@ export function TipTapEditor() {
         hardBreak: false, // Use custom HardBreak extension
         horizontalRule: false, // Use custom HorizontalRule extension
         // Enable strikethrough (GFM)
-        strike: true,
+        strike: {},
       }),
       
       // Custom extensions for better control
@@ -234,14 +234,15 @@ export function TipTapEditor() {
   });
 
   // State to force toolbar re-render when editor state changes
-  const [, forceUpdate] = React.useState({});
+  const [updateTrigger, setUpdateTrigger] = React.useState(0);
   
   // Update toolbar when editor state changes
   React.useEffect(() => {
     if (!editor) return;
     
     const updateToolbar = () => {
-      forceUpdate({});
+      console.log('Toolbar update triggered - Bold active:', editor.isActive('bold'));
+      setUpdateTrigger(prev => prev + 1);
     };
     
     editor.on('selectionUpdate', updateToolbar);
@@ -661,7 +662,7 @@ export function TipTapEditor() {
         </Tooltip>
       ),
     },
-  ], [editor, forceUpdate]); // Re-create when editor state changes
+  ], [editor, updateTrigger]); // Re-create when editor state changes
 
   // Filter out null components (like tableCommands when not in table)
   const visibleToolbarButtons = toolbarButtons.filter(button => button.component !== null);
