@@ -601,10 +601,10 @@ export function TipTapEditor() {
                 let result;
                 if (editor?.state.selection.empty) {
                   // Insert placeholder text and then apply formatting
+                  const currentPos = editor.state.selection.from;
                   editor?.chain().focus().insertContent('superscript').run();
-                  // Move cursor to select the inserted text
-                  const pos = editor?.state.selection.from;
-                  editor?.commands.setTextSelection({ from: pos! - 11, to: pos! });
+                  // Select the inserted text
+                  editor?.commands.setTextSelection({ from: currentPos, to: currentPos + 11 });
                   // Apply superscript formatting
                   result = editor?.chain().focus().toggleSuperscript().run();
                 } else {
@@ -658,10 +658,10 @@ export function TipTapEditor() {
                 let result;
                 if (editor?.state.selection.empty) {
                   // Insert placeholder text and then apply formatting
+                  const currentPos = editor.state.selection.from;
                   editor?.chain().focus().insertContent('subscript').run();
-                  // Move cursor to select the inserted text
-                  const pos = editor?.state.selection.from;
-                  editor?.commands.setTextSelection({ from: pos! - 9, to: pos! });
+                  // Select the inserted text
+                  editor?.commands.setTextSelection({ from: currentPos, to: currentPos + 9 });
                   // Apply subscript formatting
                   result = editor?.chain().focus().toggleSubscript().run();
                 } else {

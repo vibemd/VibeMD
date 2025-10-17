@@ -115,17 +115,19 @@
 
 /* Superscript and Subscript Styles */
 .ProseMirror sup {
-  font-size: 1em;
-  line-height: 1;
-  vertical-align: super;
+  font-size: 0.75em;
+  line-height: 0;
   position: relative;
+  vertical-align: super;
+  top: -0.5em;
 }
 
 .ProseMirror sub {
-  font-size: 1em;
-  line-height: 1;
-  vertical-align: sub;
+  font-size: 0.75em;
+  line-height: 0;
   position: relative;
+  vertical-align: sub;
+  bottom: -0.25em;
 }
 
 /* Force scrollbars to be visible on the TipTap scroll container */
