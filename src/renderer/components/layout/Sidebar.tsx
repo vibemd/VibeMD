@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { PanelLeft, PanelRight } from 'lucide-react';
 import { FilesTab } from '@/components/sidebar/FilesTab';
 import { OutlineTab } from '@/components/sidebar/OutlineTab';
 import { TemplatesTab } from '@/components/sidebar/TemplatesTab';
@@ -19,16 +19,16 @@ export function Sidebar() {
     return (
       <TooltipProvider delayDuration={300} skipDelayDuration={100}>
         <div style={{ width: '3rem', borderRight: '1px solid hsl(var(--border))' }} className="flex flex-col bg-background h-full">
-          <div className="p-2">
+          <div className="p-2 flex justify-end">
             <Tooltip delayDuration={300}>
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={toggleSidebar}
-                  className="w-full justify-center toolbar-button"
+                  className="toolbar-button"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <PanelRight className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">
@@ -44,16 +44,16 @@ export function Sidebar() {
   return (
     <TooltipProvider delayDuration={300} skipDelayDuration={100}>
       <div style={{ width: '16rem', borderRight: '1px solid hsl(var(--border))' }} className="flex flex-col bg-background h-full">
-        <div className="p-2 border-b">
+        <div className="p-2 border-b flex justify-end">
           <Tooltip delayDuration={300}>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={toggleSidebar}
-                className="w-full justify-center toolbar-button"
+                className="toolbar-button"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <PanelLeft className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right">
