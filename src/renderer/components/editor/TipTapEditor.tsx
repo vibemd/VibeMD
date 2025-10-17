@@ -545,25 +545,9 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => {
-                console.log('=== TASK LIST BUTTON CLICKED ===');
-                console.log('Editor available:', !!editor);
-                console.log('Can toggle task list:', editor?.can().toggleTaskList());
-                console.log('Is active task list:', editor?.isActive('taskList'));
-                
-                // Try the command
-                const result = editor?.chain().focus().toggleTaskList().run();
-                console.log('Toggle task list result:', result);
-                
-                // Ensure editor has focus
-                setTimeout(() => {
-                  editor?.commands.focus();
-                }, 100);
-                
-                console.log('=== END TASK LIST DEBUG ===');
-              }}
+              onClick={() => editor?.chain().focus().toggleTaskList().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('taskList') ? 'bg-blue-200 text-blue-800' : ''
+                editor?.isActive('taskList') ? 'bg-gray-200' : ''
               }`}
             >
               <CheckSquare className="h-4 w-4" />
@@ -585,46 +569,9 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => {
-                console.log('=== SUPERSCRIPT BUTTON CLICKED ===');
-                console.log('Editor available:', !!editor);
-                console.log('Editor state:', editor?.state);
-                console.log('Current selection:', editor?.state.selection);
-                console.log('Selection empty:', editor?.state.selection.empty);
-                console.log('Selection from:', editor?.state.selection.from);
-                console.log('Selection to:', editor?.state.selection.to);
-                console.log('Can toggle superscript:', editor?.can().toggleSuperscript());
-                console.log('Is active superscript:', editor?.isActive('superscript'));
-                console.log('Available commands:', Object.keys(editor?.commands || {}));
-                
-                // Try the command - if no text selected, insert placeholder text first
-                let result;
-                if (editor?.state.selection.empty) {
-                  // Insert placeholder text and then apply formatting
-                  const currentPos = editor.state.selection.from;
-                  editor?.chain().focus().insertContent('superscript').run();
-                  // Select the inserted text
-                  editor?.commands.setTextSelection({ from: currentPos, to: currentPos + 11 });
-                  // Apply superscript formatting
-                  result = editor?.chain().focus().toggleSuperscript().run();
-                } else {
-                  result = editor?.chain().focus().toggleSuperscript().run();
-                }
-                console.log('Toggle superscript result:', result);
-                
-                // Check state after command
-                console.log('After command - is active superscript:', editor?.isActive('superscript'));
-                console.log('After command - HTML:', editor?.getHTML());
-                
-                // Ensure editor has focus
-                setTimeout(() => {
-                  editor?.commands.focus();
-                }, 100);
-                
-                console.log('=== END SUPERSCRIPT DEBUG ===');
-              }}
+              onClick={() => editor?.chain().focus().toggleSuperscript().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('superscript') ? 'bg-blue-200 text-blue-800' : ''
+                editor?.isActive('superscript') ? 'bg-gray-200' : ''
               }`}
             >
               <SuperscriptIcon className="h-4 w-4" />
@@ -642,46 +589,9 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => {
-                console.log('=== SUBSCRIPT BUTTON CLICKED ===');
-                console.log('Editor available:', !!editor);
-                console.log('Editor state:', editor?.state);
-                console.log('Current selection:', editor?.state.selection);
-                console.log('Selection empty:', editor?.state.selection.empty);
-                console.log('Selection from:', editor?.state.selection.from);
-                console.log('Selection to:', editor?.state.selection.to);
-                console.log('Can toggle subscript:', editor?.can().toggleSubscript());
-                console.log('Is active subscript:', editor?.isActive('subscript'));
-                console.log('Available commands:', Object.keys(editor?.commands || {}));
-                
-                // Try the command - if no text selected, insert placeholder text first
-                let result;
-                if (editor?.state.selection.empty) {
-                  // Insert placeholder text and then apply formatting
-                  const currentPos = editor.state.selection.from;
-                  editor?.chain().focus().insertContent('subscript').run();
-                  // Select the inserted text
-                  editor?.commands.setTextSelection({ from: currentPos, to: currentPos + 9 });
-                  // Apply subscript formatting
-                  result = editor?.chain().focus().toggleSubscript().run();
-                } else {
-                  result = editor?.chain().focus().toggleSubscript().run();
-                }
-                console.log('Toggle subscript result:', result);
-                
-                // Check state after command
-                console.log('After command - is active subscript:', editor?.isActive('subscript'));
-                console.log('After command - HTML:', editor?.getHTML());
-                
-                // Ensure editor has focus
-                setTimeout(() => {
-                  editor?.commands.focus();
-                }, 100);
-                
-                console.log('=== END SUBSCRIPT DEBUG ===');
-              }}
+              onClick={() => editor?.chain().focus().toggleSubscript().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('subscript') ? 'bg-blue-200 text-blue-800' : ''
+                editor?.isActive('subscript') ? 'bg-gray-200' : ''
               }`}
             >
               <SubscriptIcon className="h-4 w-4" />
