@@ -9,8 +9,9 @@ ipcMain.handle('file:new', async () => {
   return `untitled-${Date.now()}`;
 });
 
-ipcMain.handle('file:open', async () => {
+ipcMain.handle('file:open', async (event, defaultPath?: string) => {
   const result = await dialog.showOpenDialog({
+    defaultPath: defaultPath || undefined,
     properties: ['openFile'],
     filters: [
       { name: 'Markdown Files', extensions: ['md', 'markdown'] },

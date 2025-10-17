@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useUIStore } from '@/stores/uiStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 import { fileService } from '@/services/fileService';
 import { Document } from '@shared/types';
 import { cn } from '@/lib/utils';
@@ -26,6 +27,7 @@ export function FilesTab() {
     markAsSaved
   } = useDocumentStore();
   const { setSidebarTab } = useUIStore();
+  const { settings } = useSettingsStore();
   
   const [closeDialogOpen, setCloseDialogOpen] = useState(false);
   const [documentToClose, setDocumentToClose] = useState<Document | null>(null);
@@ -45,7 +47,7 @@ export function FilesTab() {
   };
 
   const handleOpen = async () => {
-    const result = await fileService.openFile();
+    const result = await fileService.openFile(settings.files.defaultSavePath || undefined);
     if (result) {
       const doc: Document = {
         ...result,

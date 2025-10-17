@@ -35,7 +35,7 @@ export function FilesSettings({ settings, onChange }: FilesSettingsProps) {
         
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Default Save Location</label>
+            <label className="text-sm font-medium">Default location for files</label>
             <div className="flex items-center space-x-2">
               <input
                 type="text"
@@ -48,7 +48,7 @@ export function FilesSettings({ settings, onChange }: FilesSettingsProps) {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              Default location for saving markdown files
+              Default location for opening and saving files
             </p>
           </div>
 

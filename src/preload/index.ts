@@ -4,7 +4,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 const electronAPI = {
   // File operations
   fileNew: () => ipcRenderer.invoke('file:new'),
-  fileOpen: () => ipcRenderer.invoke('file:open'),
+  fileOpen: (defaultPath?: string) => ipcRenderer.invoke('file:open', defaultPath),
   fileSave: (filepath: string, content: string) => 
     ipcRenderer.invoke('file:save', filepath, content),
   fileSaveAs: (content: string, defaultPath?: string) => 

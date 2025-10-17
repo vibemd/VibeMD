@@ -23,7 +23,6 @@ const defaultSettings: Settings = {
     currentTheme: 'system',
   },
   files: {
-    defaultOpenPath: null,
     defaultSavePath: null, // This will be set to user's documents path by default
     templatesLocation: null, // This will be set to user's documents path + /VibeMD/Templates
   },

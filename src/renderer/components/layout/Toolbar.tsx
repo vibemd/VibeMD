@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/tooltip';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useUIStore } from '@/stores/uiStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 import { fileService } from '@/services/fileService';
 import { Document } from '@shared/types';
 
@@ -23,6 +24,7 @@ export function Toolbar() {
   const { addDocument, getActiveDocument, updateDocument, markAsSaved } = 
     useDocumentStore();
   const { toggleSettingsDialog } = useUIStore();
+  const { settings } = useSettingsStore();
 
   const handleNew = async () => {
     const id = await fileService.createNewFile();
@@ -39,7 +41,7 @@ export function Toolbar() {
   };
 
   const handleOpen = async () => {
-    const result = await fileService.openFile();
+    const result = await fileService.openFile(settings.files.defaultSavePath || undefined);
     if (result) {
       const doc: Document = {
         ...result,
@@ -56,7 +58,7 @@ export function Toolbar() {
 
     if (!doc.filepath) {
       // Trigger Save As
-      const filepath = await fileService.saveFileAs(doc.content);
+      const filepath = await fileService.saveFileAs(doc.content, settings.files.defaultSavePath || undefined);
       if (filepath) {
         updateDocument(doc.id, { filepath });
         await fileService.saveFile(filepath, doc.content);
@@ -72,7 +74,7 @@ export function Toolbar() {
     const doc = getActiveDocument();
     if (!doc) return;
 
-    const filepath = await fileService.saveFileAs(doc.content, doc.filepath || undefined);
+    const filepath = await fileService.saveFileAs(doc.content, settings.files.defaultSavePath || undefined);
     if (filepath) {
       updateDocument(doc.id, { filepath });
       await fileService.saveFile(filepath, doc.content);

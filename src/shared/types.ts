@@ -39,7 +39,6 @@ export interface Settings {
     currentTheme: 'light' | 'dark' | 'system';
   };
   files: {
-    defaultOpenPath: string | null;
     defaultSavePath: string | null;
     templatesLocation: string | null;
   };

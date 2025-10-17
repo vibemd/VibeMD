@@ -9,8 +9,8 @@ export class FileService {
     return this.generateId();
   }
 
-  async openFile(): Promise<Omit<Document, 'isModified' | 'lastSaved'> | null> {
-    const result = await window.electronAPI.fileOpen();
+  async openFile(defaultPath?: string): Promise<Omit<Document, 'isModified' | 'lastSaved'> | null> {
+    const result = await window.electronAPI.fileOpen(defaultPath);
     if (!result) return null;
 
     return {
