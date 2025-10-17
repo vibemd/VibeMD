@@ -876,7 +876,25 @@ export function TipTapEditor() {
           {overflowButtons.length > 0 && (
             <Tooltip delayDuration={300}>
               <TooltipTrigger asChild>
-                <Select>
+                <Select onValueChange={(value) => {
+                  // Handle overflow button clicks
+                  if (value === 'taskList') {
+                    console.log('=== OVERFLOW TASK LIST BUTTON CLICKED ===');
+                    const result = editor?.chain().focus().toggleTaskList().run();
+                    console.log('Overflow toggle task list result:', result);
+                    setTimeout(() => editor?.commands.focus(), 100);
+                  } else if (value === 'superscript') {
+                    console.log('=== OVERFLOW SUPERSCRIPT BUTTON CLICKED ===');
+                    const result = editor?.chain().focus().toggleSuperscript().run();
+                    console.log('Overflow toggle superscript result:', result);
+                    setTimeout(() => editor?.commands.focus(), 100);
+                  } else if (value === 'subscript') {
+                    console.log('=== OVERFLOW SUBSCRIPT BUTTON CLICKED ===');
+                    const result = editor?.chain().focus().toggleSubscript().run();
+                    console.log('Overflow toggle subscript result:', result);
+                    setTimeout(() => editor?.commands.focus(), 100);
+                  }
+                }}>
                   <SelectTrigger className="w-[60px] h-8">
                     <SelectValue placeholder="⋯" />
                   </SelectTrigger>
@@ -884,7 +902,14 @@ export function TipTapEditor() {
                     {overflowButtons.map((button) => (
                       <SelectItem key={button.id} value={button.id}>
                         <div className="flex items-center gap-2">
-                          {button.component}
+                          {button.id === 'taskList' && <CheckSquare className="h-4 w-4" />}
+                          {button.id === 'superscript' && <SuperscriptIcon className="h-4 w-4" />}
+                          {button.id === 'subscript' && <SubscriptIcon className="h-4 w-4" />}
+                          <span>
+                            {button.id === 'taskList' && 'Task List'}
+                            {button.id === 'superscript' && 'Superscript'}
+                            {button.id === 'subscript' && 'Subscript'}
+                          </span>
                         </div>
                       </SelectItem>
                     ))}
