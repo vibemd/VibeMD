@@ -701,8 +701,23 @@ export function TipTapEditor() {
           onInsert={(url: string, text: string) => {
             if (editor) {
               if (text) {
-                editor.chain().focus().insertContent(`[${text}](${url})`).run();
+                // Create a proper TipTap link with text and URL
+                editor.chain().focus().insertContent({
+                  type: 'text',
+                  text: text,
+                  marks: [
+                    {
+                      type: 'link',
+                      attrs: {
+                        href: url,
+                        target: '_blank',
+                        rel: 'noopener noreferrer'
+                      }
+                    }
+                  ]
+                }).run();
               } else {
+                // If no text provided, just set link on current selection
                 editor.chain().focus().setLink({ href: url }).run();
               }
             }
