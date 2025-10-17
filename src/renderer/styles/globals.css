@@ -141,6 +141,7 @@
 /* Editor base styles with font family */
 .ProseMirror {
   font-family: var(--editor-font-family, Arial);
+  white-space: var(--editor-white-space, pre-wrap);
 }
 
 .ProseMirror h1 {
