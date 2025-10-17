@@ -179,6 +179,8 @@ export function TipTapEditor() {
       TaskList,
       TaskItem.configure({
         nested: true,
+      }).extend({
+        content: '(text | hardBreak)*', // Text with optional line breaks
       }),
       Superscript,
       Subscript,

@@ -69,15 +69,9 @@
   margin: 1rem 0;
 }
 
-.ProseMirror ul[data-type="taskList"] p {
-  margin: 0;
-  display: inline; /* Force paragraphs to be inline */
-  padding: 0;
-}
-
 .ProseMirror ul[data-type="taskList"] li {
   display: flex;
-  align-items: center; /* Center align checkbox and text */
+  align-items: flex-start;
   margin: 0.25rem 0;
   padding: 0.25rem 0;
   list-style: none !important;
@@ -102,24 +96,8 @@
   margin: 0;
 }
 
-/* Handle direct text content in task items */
-.ProseMirror ul[data-type="taskList"] li {
-  display: flex;
-  align-items: center; /* Center align checkbox and text */
-  margin: 0.25rem 0;
-  padding: 0.25rem 0;
-  list-style: none !important;
-}
-
-/* Ensure text content is inline with checkbox */
-.ProseMirror ul[data-type="taskList"] li > *:not(label) {
-  display: inline;
-  margin: 0;
-  padding: 0;
-}
-
-/* Specifically target paragraphs in task items */
-.ProseMirror ul[data-type="taskList"] li p:first-child {
+/* Force all content in task items to be inline */
+.ProseMirror ul[data-type="taskList"] li > div > * {
   display: inline !important;
   margin: 0 !important;
   padding: 0 !important;
