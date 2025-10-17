@@ -76,6 +76,8 @@
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@tiptap/extension-hard-break": "^3.7.2",
+    "@tiptap/extension-horizontal-rule": "^3.7.2",
     "@tiptap/extension-image": "^3.7.1",
     "@tiptap/extension-link": "^3.7.1",
     "@tiptap/extension-subscript": "^3.7.1",
