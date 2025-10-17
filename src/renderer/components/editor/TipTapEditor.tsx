@@ -178,20 +178,8 @@ export function TipTapEditor() {
       ListItem,
       TaskList,
       TaskItem,
-      Superscript.configure({
-        HTMLAttributes: {
-          class: 'text-superscript',
-        },
-        excludes: 'subscript',
-        keepOnSplit: false,
-      }),
-      Subscript.configure({
-        HTMLAttributes: {
-          class: 'text-subscript',
-        },
-        excludes: 'superscript',
-        keepOnSplit: false,
-      }),
+      Superscript,
+      Subscript,
       HeadingIdExtension,
       Link.configure({
         openOnClick: false,
@@ -279,8 +267,8 @@ export function TipTapEditor() {
     }
   };
 
-  // Toolbar button configuration
-  const toolbarButtons = [
+  // Toolbar button configuration - memoized to update when editor state changes
+  const toolbarButtons = React.useMemo(() => [
     {
       id: 'bold',
       component: (
@@ -617,7 +605,7 @@ export function TipTapEditor() {
       width: 40,
       priority: 3
     }
-  ];
+  ], [editor]); // Re-create when editor state changes
 
   // Responsive toolbar state
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -628,7 +616,7 @@ export function TipTapEditor() {
   useLayoutEffect(() => {
     setVisibleButtons(toolbarButtons);
     setOverflowButtons([]);
-  }, []);
+  }, [toolbarButtons]);
 
   // Debug: Log available commands when editor is ready (only once)
   React.useEffect(() => {
