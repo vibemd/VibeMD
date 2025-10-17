@@ -41,6 +41,8 @@ export const createMainWindow = (): BrowserWindow => {
 
   // Handle close with unsaved changes check
   mainWindow.on('close', async (event) => {
+    if (!mainWindow) return;
+    
     try {
       // Check if there are unsaved changes
       const hasUnsaved = await mainWindow.webContents.executeJavaScript(`
