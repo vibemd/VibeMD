@@ -257,7 +257,7 @@ const editor = useEditor({
     }),
     HeadingIdExtension, // Custom extension for navigation
   ],
-  content: '',
+      content: '',
   autofocus: 'start',
   onUpdate: ({ editor }) => {
     // Handle content updates
