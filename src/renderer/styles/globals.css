@@ -63,63 +63,7 @@
 }
 
 /* Task List Styles */
-.ProseMirror ul[data-type="taskList"] {
-  list-style: none !important;
-  padding: 0 !important;
-  margin: 1rem 0;
-}
-
-.ProseMirror ul[data-type="taskList"] li {
-  display: flex;
-  align-items: flex-start;
-  margin: 0.25rem 0;
-  padding: 0.25rem 0;
-  list-style: none !important;
-}
-
-.ProseMirror ul[data-type="taskList"] li > label {
-  flex: 0 0 auto;
-  margin-right: 0.5rem;
-  user-select: none;
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 0;
-}
-
-.ProseMirror ul[data-type="taskList"] li > label input[type="checkbox"] {
-  margin-right: 0.25rem;
-  margin-top: 0.125rem;
-}
-
-.ProseMirror ul[data-type="taskList"] li > div {
-  flex: 1 1 auto;
-  margin: 0;
-}
-
-/* Option 3: CSS-only fix - Force paragraphs to display inline */
-.ProseMirror ul[data-type="taskList"] li p {
-  display: inline !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  line-height: 1 !important;
-}
-
-.ProseMirror ul[data-type="taskList"] li p:first-child {
-  display: inline !important; /* Ensure first paragraph stays inline */
-}
-
-.ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
-  cursor: pointer;
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  accent-color: #3b82f6;
-}
-
-.ProseMirror ul[data-type="taskList"] ul[data-type="taskList"] {
-  margin: 0;
-  padding-left: 1rem;
-}
+/* TipTap OOTB Task List Styling - No custom modifications */
 
 /* Superscript and Subscript Styles */
 .ProseMirror sup {
