@@ -557,8 +557,13 @@ export function TipTapEditor() {
                 console.log('Is active superscript:', editor?.isActive('superscript'));
                 console.log('Available commands:', Object.keys(editor?.commands || {}));
                 
-                // Try the command
-                const result = editor?.chain().focus().toggleSuperscript().run();
+                // Try the command - if no text selected, insert placeholder
+                let result;
+                if (editor?.state.selection.empty) {
+                  result = editor?.chain().focus().insertContent('<sup>superscript</sup>').run();
+                } else {
+                  result = editor?.chain().focus().toggleSuperscript().run();
+                }
                 console.log('Toggle superscript result:', result);
                 
                 // Check state after command
@@ -603,8 +608,13 @@ export function TipTapEditor() {
                 console.log('Is active subscript:', editor?.isActive('subscript'));
                 console.log('Available commands:', Object.keys(editor?.commands || {}));
                 
-                // Try the command
-                const result = editor?.chain().focus().toggleSubscript().run();
+                // Try the command - if no text selected, insert placeholder
+                let result;
+                if (editor?.state.selection.empty) {
+                  result = editor?.chain().focus().insertContent('<sub>subscript</sub>').run();
+                } else {
+                  result = editor?.chain().focus().toggleSubscript().run();
+                }
                 console.log('Toggle subscript result:', result);
                 
                 // Check state after command
