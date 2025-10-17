@@ -1,11 +1,15 @@
 import { useEffect } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { useTheme } from '@/hooks/useTheme';
 import './styles/globals.css';
 
 function App() {
   const loadSettings = useSettingsStore((state) => state.loadSettings);
   const loading = useSettingsStore((state) => state.loading);
+  
+  // Apply theme changes
+  useTheme();
   
   useEffect(() => {
     loadSettings();

@@ -493,4 +493,14 @@
     font-size: 0.9em;
   }
 
+  /* Dark theme toolbar button fixes */
+  .dark .toolbar-button {
+    color: hsl(var(--foreground));
+  }
+  
+  .dark .toolbar-button:hover {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+
 }

@@ -22,23 +22,25 @@ export function EditorSettings({ settings, onChange }: EditorSettingsProps) {
         
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Font Size</label>
+            <label className="text-sm font-medium">Default Font Size</label>
             <Select
-              value={settings.editor.fontSize?.toString() || '16'}
+              value={settings.editor.fontSize?.toString() || '12'}
               onValueChange={(value) => updateEditor({ fontSize: parseInt(value) })}
             >
               <SelectTrigger className="w-48">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="8">8px</SelectItem>
+                <SelectItem value="10">10px</SelectItem>
                 <SelectItem value="12">12px</SelectItem>
                 <SelectItem value="14">14px</SelectItem>
                 <SelectItem value="16">16px</SelectItem>
-                <SelectItem value="18">18px</SelectItem>
-                <SelectItem value="20">20px</SelectItem>
-                <SelectItem value="24">24px</SelectItem>
               </SelectContent>
             </Select>
+            <p className="text-xs text-muted-foreground">
+              Sets the base font size for normal text. All other formatting scales from this value.
+            </p>
           </div>
           
           <div className="flex items-center space-x-2">
@@ -49,17 +51,6 @@ export function EditorSettings({ settings, onChange }: EditorSettingsProps) {
             />
             <label htmlFor="wordWrap" className="text-sm font-medium">
               Enable word wrap
-            </label>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="lineNumbers"
-              checked={settings.editor.lineNumbers}
-              onCheckedChange={(checked) => updateEditor({ lineNumbers: !!checked })}
-            />
-            <label htmlFor="lineNumbers" className="text-sm font-medium">
-              Show line numbers
             </label>
           </div>
           

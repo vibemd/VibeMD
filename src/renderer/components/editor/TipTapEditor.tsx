@@ -387,8 +387,8 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => editor?.chain().focus().toggleBold().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('bold') ? 'bg-blue-200 text-blue-800' : ''
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive('bold') ? 'bg-accent text-accent-foreground' : ''
               }`}
             >
               <Bold className="h-4 w-4" />
@@ -407,8 +407,8 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => editor?.chain().focus().toggleItalic().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('italic') ? 'bg-blue-200 text-blue-800' : ''
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive('italic') ? 'bg-accent text-accent-foreground' : ''
               }`}
             >
               <Italic className="h-4 w-4" />
@@ -427,8 +427,8 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => editor?.chain().focus().toggleStrike().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('strike') ? 'bg-blue-200 text-blue-800' : ''
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive('strike') ? 'bg-accent text-accent-foreground' : ''
               }`}
             >
               <Strikethrough className="h-4 w-4" />
@@ -447,8 +447,8 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => editor?.chain().focus().toggleCode().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('code') ? 'bg-blue-200 text-blue-800' : ''
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive('code') ? 'bg-accent text-accent-foreground' : ''
               }`}
             >
               <Code className="h-4 w-4" />
@@ -491,8 +491,8 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => editor?.chain().focus().toggleBulletList().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('bulletList') ? 'bg-blue-200 text-blue-800' : ''
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive('bulletList') ? 'bg-accent text-accent-foreground' : ''
               }`}
             >
               <List className="h-4 w-4" />
@@ -511,8 +511,8 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('orderedList') ? 'bg-blue-200 text-blue-800' : ''
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive('orderedList') ? 'bg-accent text-accent-foreground' : ''
               }`}
             >
               <ListOrdered className="h-4 w-4" />
@@ -552,8 +552,8 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => editor?.chain().focus().toggleBlockquote().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('blockquote') ? 'bg-blue-200 text-blue-800' : ''
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive('blockquote') ? 'bg-accent text-accent-foreground' : ''
               }`}
             >
               <Quote className="h-4 w-4" />
@@ -572,8 +572,8 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('codeBlock') ? 'bg-blue-200 text-blue-800' : ''
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive('codeBlock') ? 'bg-accent text-accent-foreground' : ''
               }`}
             >
               <Code className="h-4 w-4" />
@@ -610,8 +610,8 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => setLinkDialogOpen(true)}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('link') ? 'bg-blue-200 text-blue-800' : ''
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive('link') ? 'bg-accent text-accent-foreground' : ''
               }`}
             >
               <LinkIcon className="h-4 w-4" />
@@ -630,7 +630,7 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => setImageDialogOpen(true)}
-              className="p-2 rounded hover:bg-gray-100"
+              className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
             >
               <ImageIcon className="h-4 w-4" />
             </button>
@@ -648,7 +648,7 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
-              className="p-2 rounded hover:bg-gray-100"
+              className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
             >
               <TableIcon className="h-4 w-4" />
             </button>
@@ -690,8 +690,8 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => editor?.chain().focus().toggleSuperscript().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('superscript') ? 'bg-blue-200 text-blue-800' : ''
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive('superscript') ? 'bg-accent text-accent-foreground' : ''
               }`}
             >
               <SuperscriptIcon className="h-4 w-4" />
@@ -710,8 +710,8 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => editor?.chain().focus().toggleSubscript().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('subscript') ? 'bg-blue-200 text-blue-800' : ''
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive('subscript') ? 'bg-accent text-accent-foreground' : ''
               }`}
             >
               <SubscriptIcon className="h-4 w-4" />
@@ -736,7 +736,7 @@ export function TipTapEditor() {
     <TooltipProvider>
       <div className="flex flex-col h-full">
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-1 p-2 border-b bg-white">
+        <div className="flex flex-wrap items-center gap-1 p-2 border-b bg-background">
           {visibleToolbarButtons.map((button) => (
             <React.Fragment key={button.id}>
               {button.component}

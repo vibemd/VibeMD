@@ -119,7 +119,7 @@ export function Toolbar() {
               variant="ghost"
               size="sm"
               onClick={handleNew}
-              className="gap-2"
+              className="gap-2 toolbar-button"
             >
               <FileText className="h-4 w-4" />
               New
@@ -136,7 +136,7 @@ export function Toolbar() {
               variant="ghost"
               size="sm"
               onClick={handleOpen}
-              className="gap-2"
+              className="gap-2 toolbar-button"
             >
               <FolderOpen className="h-4 w-4" />
               Open
@@ -153,7 +153,7 @@ export function Toolbar() {
               variant="ghost"
               size="sm"
               onClick={handleSave}
-              className="gap-2"
+              className="gap-2 toolbar-button"
               disabled={!hasUnsavedChanges}
             >
               <Save className="h-4 w-4" />
@@ -171,7 +171,7 @@ export function Toolbar() {
               variant="ghost"
               size="sm"
               onClick={handleSaveAs}
-              className="gap-2"
+              className="gap-2 toolbar-button"
               disabled={!activeDoc}
             >
               <Download className="h-4 w-4" />
@@ -193,7 +193,7 @@ export function Toolbar() {
               variant="ghost"
               size="sm"
               onClick={handlePrint}
-              className="gap-2"
+              className="gap-2 toolbar-button"
               disabled={!activeDoc}
             >
               <Printer className="h-4 w-4" />
@@ -213,7 +213,7 @@ export function Toolbar() {
               variant="ghost"
               size="sm"
               onClick={handleSettings}
-              className="gap-2"
+              className="gap-2 toolbar-button"
             >
               <Settings className="h-4 w-4" />
               Settings

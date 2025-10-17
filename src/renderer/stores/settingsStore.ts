@@ -24,13 +24,13 @@ const defaultSettings: Settings = {
   },
   files: {
     defaultOpenPath: null,
-    defaultSavePath: null,
+    defaultSavePath: null, // This will be set to user's documents path by default
     templatesLocation: null, // This will be set to user's documents path + /VibeMD/Templates
   },
   editor: {
-    fontSize: 16,
+    fontSize: 12, // Changed default from 16 to 12
     fontFamily: 'monospace',
-    lineNumbers: true,
+    lineNumbers: false, // Removed line numbers by default
     wordWrap: true,
     latexSupport: false,
   },
@@ -50,17 +50,16 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     if (loadedSettings) {
       set({ settings: { ...defaultSettings, ...loadedSettings } });
     } else {
-      // If no settings found, initialize templatesLocation
+      // If no settings found, initialize default paths to user's documents root
       const userDocsPath = await window.electronAPI.getUserDocumentsPath();
-      const vibeMDPath = userDocsPath ? `${userDocsPath}/VibeMD` : null;
-      const defaultTemplatesLocation = vibeMDPath ? `${vibeMDPath}/Templates` : null;
 
       set((state) => ({
         settings: {
           ...state.settings,
           files: {
             ...state.settings.files,
-            templatesLocation: defaultTemplatesLocation,
+            defaultSavePath: userDocsPath, // Set default save path to user's documents root
+            templatesLocation: userDocsPath, // Set templates location to user's documents root
           },
         },
       }));
