@@ -179,8 +179,6 @@ export function TipTapEditor() {
       TaskList,
       TaskItem.configure({
         nested: true,
-      }).extend({
-        content: 'text*', // Direct text nodes only - no paragraph wrapper
       }),
       Superscript,
       Subscript,

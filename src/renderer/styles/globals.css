@@ -71,6 +71,8 @@
 
 .ProseMirror ul[data-type="taskList"] p {
   margin: 0;
+  display: inline; /* Force paragraphs to be inline */
+  padding: 0;
 }
 
 .ProseMirror ul[data-type="taskList"] li {
@@ -114,6 +116,13 @@
   display: inline;
   margin: 0;
   padding: 0;
+}
+
+/* Specifically target paragraphs in task items */
+.ProseMirror ul[data-type="taskList"] li p:first-child {
+  display: inline !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
