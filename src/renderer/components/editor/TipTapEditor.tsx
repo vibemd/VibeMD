@@ -267,6 +267,26 @@ export function TipTapEditor() {
     }
   };
 
+  // State to force toolbar re-render when editor state changes
+  const [, forceUpdate] = React.useState({});
+  
+  // Update toolbar when editor state changes
+  React.useEffect(() => {
+    if (!editor) return;
+    
+    const updateToolbar = () => {
+      forceUpdate({});
+    };
+    
+    editor.on('selectionUpdate', updateToolbar);
+    editor.on('transaction', updateToolbar);
+    
+    return () => {
+      editor.off('selectionUpdate', updateToolbar);
+      editor.off('transaction', updateToolbar);
+    };
+  }, [editor]);
+
   // Toolbar button configuration - memoized to update when editor state changes
   const toolbarButtons = React.useMemo(() => [
     {
@@ -605,7 +625,7 @@ export function TipTapEditor() {
       width: 40,
       priority: 3
     }
-  ], [editor]); // Re-create when editor state changes
+  ], [editor, forceUpdate]); // Re-create when editor state changes
 
   // Responsive toolbar state
   const toolbarRef = useRef<HTMLDivElement>(null);
