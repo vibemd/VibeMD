@@ -220,17 +220,8 @@ export function TipTapEditor() {
       }
     },
     onSelectionUpdate: ({ editor }) => {
-      // Update heading state for navigation
-      const { from } = editor.state.selection;
-      const $from = editor.state.doc.resolve(from);
-      const headingNode = $from.node($from.depth);
-      
-      if (headingNode && headingNode.type.name === 'heading') {
-        const headingId = headingNode.attrs.id;
-        if (headingId) {
-          setScrollToHeadingHandler(headingId);
-        }
-      }
+      // Update toolbar state when selection changes
+      setUpdateTrigger(prev => prev + 1);
     },
   });
 
@@ -254,6 +245,36 @@ export function TipTapEditor() {
       editor.off('transaction', updateToolbar);
     };
   }, [editor]);
+
+  // Set up navigation handler for outline-to-editor navigation
+  React.useEffect(() => {
+    if (editor) {
+      const scrollToHeading = (headingId: string) => {
+        // Find the heading element in the editor
+        const headingElement = editor.view.dom.querySelector(`h1[id="${headingId}"], h2[id="${headingId}"], h3[id="${headingId}"], h4[id="${headingId}"], h5[id="${headingId}"], h6[id="${headingId}"]`);
+        
+        if (headingElement) {
+          // Scroll to the heading
+          headingElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          });
+          
+          // Focus the editor and position cursor at the heading
+          editor.commands.focus();
+          
+          // Find the position of the heading in the editor
+          const pos = editor.view.posAtDOM(headingElement, 0);
+          if (pos !== null) {
+            editor.commands.setTextSelection(pos);
+          }
+        }
+      };
+      
+      setScrollToHeadingHandler(scrollToHeading);
+    }
+  }, [editor, setScrollToHeadingHandler]);
 
   // Get current heading level for dropdown
   const getCurrentHeading = () => {
