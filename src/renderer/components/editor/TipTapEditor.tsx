@@ -277,7 +277,7 @@ export function TipTapEditor() {
             <button
               onClick={() => editor?.chain().focus().toggleBold().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('bold') ? 'bg-gray-200' : ''
+                editor?.isActive('bold') ? 'bg-blue-200 text-blue-800' : ''
               }`}
             >
               <Bold className="h-4 w-4" />
@@ -297,7 +297,7 @@ export function TipTapEditor() {
             <button
               onClick={() => editor?.chain().focus().toggleItalic().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('italic') ? 'bg-gray-200' : ''
+                editor?.isActive('italic') ? 'bg-blue-200 text-blue-800' : ''
               }`}
             >
               <Italic className="h-4 w-4" />
@@ -317,7 +317,7 @@ export function TipTapEditor() {
             <button
               onClick={() => editor?.chain().focus().toggleStrike().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('strike') ? 'bg-gray-200' : ''
+                editor?.isActive('strike') ? 'bg-blue-200 text-blue-800' : ''
               }`}
             >
               <Strikethrough className="h-4 w-4" />
@@ -457,7 +457,7 @@ export function TipTapEditor() {
             <button
               onClick={() => setLinkDialogOpen(true)}
               className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('link') ? 'bg-gray-200' : ''
+                editor?.isActive('link') ? 'bg-blue-200 text-blue-800' : ''
               }`}
             >
               <LinkIcon className="h-4 w-4" />
@@ -547,7 +547,7 @@ export function TipTapEditor() {
             <button
               onClick={() => editor?.chain().focus().toggleTaskList().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('taskList') ? 'bg-gray-200' : ''
+                editor?.isActive('taskList') ? 'bg-blue-200 text-blue-800' : ''
               }`}
             >
               <CheckSquare className="h-4 w-4" />
@@ -571,7 +571,7 @@ export function TipTapEditor() {
             <button
               onClick={() => editor?.chain().focus().toggleSuperscript().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('superscript') ? 'bg-gray-200' : ''
+                editor?.isActive('superscript') ? 'bg-blue-200 text-blue-800' : ''
               }`}
             >
               <SuperscriptIcon className="h-4 w-4" />
@@ -591,7 +591,7 @@ export function TipTapEditor() {
             <button
               onClick={() => editor?.chain().focus().toggleSubscript().run()}
               className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('subscript') ? 'bg-gray-200' : ''
+                editor?.isActive('subscript') ? 'bg-blue-200 text-blue-800' : ''
               }`}
             >
               <SubscriptIcon className="h-4 w-4" />
