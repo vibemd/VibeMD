@@ -178,8 +178,20 @@ export function TipTapEditor() {
       ListItem,
       TaskList,
       TaskItem,
-      Superscript,
-      Subscript,
+      Superscript.configure({
+        HTMLAttributes: {
+          class: 'text-superscript',
+        },
+        excludes: 'subscript',
+        keepOnSplit: false,
+      }),
+      Subscript.configure({
+        HTMLAttributes: {
+          class: 'text-subscript',
+        },
+        excludes: 'superscript',
+        keepOnSplit: false,
+      }),
       HeadingIdExtension,
       Link.configure({
         openOnClick: false,
