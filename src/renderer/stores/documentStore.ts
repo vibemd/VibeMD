@@ -12,6 +12,7 @@ interface DocumentStore {
   getActiveDocument: () => Document | null;
   markAsModified: (id: string) => void;
   markAsSaved: (id: string) => void;
+  hasUnsavedChanges: () => boolean;
 }
 
 export const useDocumentStore = create<DocumentStore>((set, get) => ({
@@ -87,6 +88,11 @@ export const useDocumentStore = create<DocumentStore>((set, get) => ({
       });
       return { documents: newDocs };
     }),
+
+  hasUnsavedChanges: () => {
+    const state = get();
+    return Array.from(state.documents.values()).some(doc => doc.isModified);
+  },
 }));
 
 

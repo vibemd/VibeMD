@@ -10,6 +10,8 @@ export interface ElectronAPI {
   loadSettings: () => Promise<Settings | null>;
   saveSettings: (settings: Settings) => Promise<boolean>;
   printDocument: (htmlContent: string) => Promise<void>;
+  checkUnsavedChanges: () => Promise<boolean>;
+  showCloseConfirmation: () => Promise<boolean>;
 }
 
 export interface Document {

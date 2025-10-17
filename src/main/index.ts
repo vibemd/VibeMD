@@ -13,8 +13,49 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+let mainWindow: BrowserWindow | null = null;
+
 app.on('ready', () => {
-  createMainWindow();
+  mainWindow = createMainWindow();
+});
+
+// Handle app close with unsaved changes check
+app.on('before-quit', async (event) => {
+  if (!mainWindow) return;
+
+  try {
+    // Check if there are unsaved changes
+    const hasUnsaved = await mainWindow.webContents.executeJavaScript(`
+      window.appService?.hasUnsavedChanges?.() || false
+    `);
+
+    if (hasUnsaved) {
+      // Prevent the default quit behavior
+      event.preventDefault();
+      
+      // Show confirmation dialog
+      const { dialog } = require('electron');
+      const result = await dialog.showMessageBox(mainWindow, {
+        type: 'warning',
+        title: 'Unsaved Changes',
+        message: 'Unsaved Changes',
+        detail: 'There are unsaved changes in open files. Do you wish to save these?',
+        buttons: ['No', 'Yes'],
+        defaultId: 1, // Default to "Yes" (cancel close)
+        cancelId: 0   // "No" cancels the dialog
+      });
+
+      if (result.response === 0) {
+        // User chose "No" - allow the app to close
+        app.quit();
+      }
+      // If user chose "Yes", do nothing - app stays open
+    }
+  } catch (error) {
+    console.error('Error checking for unsaved changes:', error);
+    // If there's an error, allow the app to close
+    app.quit();
+  }
 });
 
 app.on('window-all-closed', () => {
@@ -25,6 +66,6 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createMainWindow();
+    mainWindow = createMainWindow();
   }
 });

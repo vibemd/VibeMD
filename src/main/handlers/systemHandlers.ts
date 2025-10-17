@@ -1,4 +1,4 @@
-import { ipcMain, dialog } from 'electron';
+import { ipcMain, dialog, BrowserWindow } from 'electron';
 import { readdir, stat } from 'fs/promises';
 import { join, extname } from 'path';
 
@@ -36,5 +36,32 @@ ipcMain.handle('dir:readTemplates', async (event, dirPath: string) => {
     console.error('Error reading templates directory:', error);
     return [];
   }
+});
+
+// App close confirmation
+ipcMain.handle('app:checkUnsavedChanges', async () => {
+  const mainWindow = BrowserWindow.getFocusedWindow();
+  if (!mainWindow) return false;
+
+  // Send message to renderer to check for unsaved changes
+  const hasUnsaved = await mainWindow.webContents.executeJavaScript(`
+    window.appService?.hasUnsavedChanges?.() || false
+  `);
+  
+  return hasUnsaved;
+});
+
+ipcMain.handle('app:showCloseConfirmation', async () => {
+  const result = await dialog.showMessageBox({
+    type: 'warning',
+    title: 'Unsaved Changes',
+    message: 'Unsaved Changes',
+    detail: 'There are unsaved changes in open files. Do you wish to save these?',
+    buttons: ['No', 'Yes'],
+    defaultId: 1, // Default to "Yes" (cancel close)
+    cancelId: 0   // "No" cancels the dialog
+  });
+
+  return result.response === 0; // 0 = No (allow close), 1 = Yes (cancel close)
 });
 

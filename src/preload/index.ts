@@ -29,6 +29,10 @@ const electronAPI = {
   // Print operations
   printDocument: (htmlContent: string) => 
     ipcRenderer.invoke('print:document', htmlContent),
+  
+  // App operations
+  checkUnsavedChanges: () => ipcRenderer.invoke('app:checkUnsavedChanges'),
+  showCloseConfirmation: () => ipcRenderer.invoke('app:showCloseConfirmation'),
 };
 
 // Expose the API to the renderer process
