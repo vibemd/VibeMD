@@ -1,6 +1,6 @@
 export interface ElectronAPI {
   fileNew: () => Promise<string>;
-  fileOpen: () => Promise<{ filepath: string; filename: string; content: string; isTemplate: boolean } | null>;
+  fileOpen: (defaultPath?: string) => Promise<{ filepath: string; filename: string; content: string; isTemplate: boolean } | null>;
   fileSave: (filepath: string, content: string) => Promise<boolean>;
   fileSaveAs: (content: string, defaultPath?: string) => Promise<string | null>;
   fileRead: (filepath: string) => Promise<string | null>;
