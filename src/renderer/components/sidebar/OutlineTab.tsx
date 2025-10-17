@@ -30,18 +30,9 @@ export function OutlineTab() {
   };
 
   const handleHeadingClick = (heading: OutlineNode) => {
-    console.log('=== OUTLINE HEADING CLICKED ===');
-    console.log('Heading:', heading);
-    console.log('Heading ID:', heading.id);
-    console.log('ScrollToHeading function:', scrollToHeading);
-    
     if (heading.id) {
-      console.log('Calling scrollToHeading with ID:', heading.id);
       scrollToHeading(heading.id);
-    } else {
-      console.log('No heading ID found!');
     }
-    console.log('=== END OUTLINE CLICK ===');
   };
 
   const renderOutlineNode = (node: OutlineNode, level: number = 0) => {

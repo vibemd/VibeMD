@@ -95,11 +95,10 @@ export function TipTapEditor() {
         gfm: true,
         breaks: false,
         pedantic: false,
-        smartypants: false,
-      });
+      }) as string;
       
       // Add heading IDs for navigation
-      const htmlWithIds = html.replace(/<h([1-6])>(.*?)<\/h[1-6]>/g, (match, level, content) => {
+      const htmlWithIds = html.replace(/<h([1-6])>(.*?)<\/h[1-6]>/g, (match: string, level: string, content: string) => {
         // Extract text content from HTML (remove any HTML tags)
         const textContent = content.replace(/<[^>]*>/g, '');
         const id = generateHeadingId(textContent);
