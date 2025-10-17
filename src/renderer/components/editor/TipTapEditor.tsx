@@ -210,20 +210,6 @@ export function TipTapEditor() {
     ],
     content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
     autofocus: 'start', // Auto-focus at start
-    onKeyDown: ({ event }) => {
-      // Escape key: clear all formatting
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        editor
-          ?.chain()
-          .focus()
-          .clearNodes()
-          .clearMarks()
-          .setParagraph()
-          .run();
-        return true;
-      }
-    },
     onUpdate: ({ editor }) => {
       if (activeDocument) {
         const html = editor.getHTML();
@@ -671,50 +657,6 @@ export function TipTapEditor() {
           </TooltipTrigger>
           <TooltipContent>
             <p>Subscript (click again to exit)</p>
-          </TooltipContent>
-        </Tooltip>
-      ),
-    },
-    {
-      id: 'clearFormatting',
-      component: (
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => editor?.chain().focus().clearMarks().run()}
-              className="p-2 rounded hover:bg-gray-100 bg-yellow-100 text-yellow-800"
-            >
-              <span className="text-xs font-semibold">Clear</span>
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Clear all inline formatting</p>
-          </TooltipContent>
-        </Tooltip>
-      ),
-    },
-    {
-      id: 'normalText',
-      component: (
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => 
-                editor
-                  ?.chain()
-                  .focus()
-                  .clearNodes()
-                  .clearMarks()
-                  .setParagraph()
-                  .run()
-              }
-              className="p-2 rounded hover:bg-gray-100 bg-green-100 text-green-800"
-            >
-              <span className="text-xs font-semibold">Normal</span>
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Reset to normal paragraph text</p>
           </TooltipContent>
         </Tooltip>
       ),
