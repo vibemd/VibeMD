@@ -12,6 +12,8 @@ export const createMainWindow = (): BrowserWindow => {
     height: 800,
     minWidth: 1250,
     minHeight: 768,
+    title: 'VibeMD',
+    titleBarStyle: 'default',
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
