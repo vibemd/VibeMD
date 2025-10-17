@@ -19,7 +19,7 @@ export function Sidebar() {
     return (
       <TooltipProvider delayDuration={300} skipDelayDuration={100}>
         <div style={{ width: '3rem', borderRight: '1px solid hsl(var(--border))' }} className="flex flex-col bg-background h-full">
-          <div className="p-1 flex justify-end">
+          <div className="flex justify-end" style={{ padding: '2px' }}>
             <Tooltip delayDuration={300}>
               <TooltipTrigger asChild>
                 <Button
@@ -44,7 +44,7 @@ export function Sidebar() {
   return (
     <TooltipProvider delayDuration={300} skipDelayDuration={100}>
       <div style={{ width: '16rem', borderRight: '1px solid hsl(var(--border))' }} className="flex flex-col bg-background h-full">
-        <div className="p-1 border-b flex justify-end">
+        <div className="border-b flex justify-end" style={{ padding: '2px' }}>
           <Tooltip delayDuration={300}>
             <TooltipTrigger asChild>
               <Button
