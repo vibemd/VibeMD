@@ -486,26 +486,27 @@ export function TipTapEditor() {
         </Tooltip>
       ),
     },
-    {
-      id: 'taskList',
-      component: (
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => editor?.chain().focus().toggleTaskList().run()}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('taskList') ? 'bg-blue-200 text-blue-800' : ''
-              }`}
-            >
-              <CheckSquare className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Task List</p>
-          </TooltipContent>
-        </Tooltip>
-      ),
-    },
+    // Task List button temporarily hidden - will address implementation later
+    // {
+    //   id: 'taskList',
+    //   component: (
+    //     <Tooltip delayDuration={300}>
+    //       <TooltipTrigger asChild>
+    //         <button
+    //           onClick={() => editor?.chain().focus().toggleTaskList().run()}
+    //           className={`p-2 rounded hover:bg-gray-100 ${
+    //             editor?.isActive('taskList') ? 'bg-blue-200 text-blue-800' : ''
+    //           }`}
+    //         >
+    //           <CheckSquare className="h-4 w-4" />
+    //         </button>
+    //       </TooltipTrigger>
+    //       <TooltipContent>
+    //         <p>Task List</p>
+    //       </TooltipContent>
+    //     </Tooltip>
+    //   ),
+    // },
     {
       id: 'blockquote',
       component: (
