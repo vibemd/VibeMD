@@ -11,6 +11,8 @@ import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
+import { TaskList } from '@tiptap/extension-task-list';
+import { TaskItem } from '@tiptap/extension-task-item';
 import { Superscript } from '@tiptap/extension-superscript';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Extension } from '@tiptap/core';
@@ -174,6 +176,8 @@ export function TipTapEditor() {
       BulletList,
       OrderedList,
       ListItem,
+      TaskList,
+      TaskItem,
       Superscript,
       Subscript,
       HeadingIdExtension,
@@ -536,6 +540,42 @@ export function TipTapEditor() {
       ),
     },
     {
+      id: 'taskList',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                console.log('=== TASK LIST BUTTON CLICKED ===');
+                console.log('Editor available:', !!editor);
+                console.log('Can toggle task list:', editor?.can().toggleTaskList());
+                console.log('Is active task list:', editor?.isActive('taskList'));
+                
+                // Try the command
+                const result = editor?.chain().focus().toggleTaskList().run();
+                console.log('Toggle task list result:', result);
+                
+                // Ensure editor has focus
+                setTimeout(() => {
+                  editor?.commands.focus();
+                }, 100);
+                
+                console.log('=== END TASK LIST DEBUG ===');
+              }}
+              className={`p-2 rounded hover:bg-gray-100 ${
+                editor?.isActive('taskList') ? 'bg-blue-200 text-blue-800' : ''
+              }`}
+            >
+              <CheckSquare className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Task List</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
+    {
       id: 'separator6',
       component: <div className="w-px bg-gray-300 mx-1" />,
     },
@@ -557,10 +597,16 @@ export function TipTapEditor() {
                 console.log('Is active superscript:', editor?.isActive('superscript'));
                 console.log('Available commands:', Object.keys(editor?.commands || {}));
                 
-                // Try the command - if no text selected, insert placeholder
+                // Try the command - if no text selected, insert placeholder text first
                 let result;
                 if (editor?.state.selection.empty) {
-                  result = editor?.chain().focus().insertContent('<sup>superscript</sup>').run();
+                  // Insert placeholder text and then apply formatting
+                  editor?.chain().focus().insertContent('superscript').run();
+                  // Move cursor to select the inserted text
+                  const pos = editor?.state.selection.from;
+                  editor?.commands.setTextSelection({ from: pos! - 11, to: pos! });
+                  // Apply superscript formatting
+                  result = editor?.chain().focus().toggleSuperscript().run();
                 } else {
                   result = editor?.chain().focus().toggleSuperscript().run();
                 }
@@ -608,10 +654,16 @@ export function TipTapEditor() {
                 console.log('Is active subscript:', editor?.isActive('subscript'));
                 console.log('Available commands:', Object.keys(editor?.commands || {}));
                 
-                // Try the command - if no text selected, insert placeholder
+                // Try the command - if no text selected, insert placeholder text first
                 let result;
                 if (editor?.state.selection.empty) {
-                  result = editor?.chain().focus().insertContent('<sub>subscript</sub>').run();
+                  // Insert placeholder text and then apply formatting
+                  editor?.chain().focus().insertContent('subscript').run();
+                  // Move cursor to select the inserted text
+                  const pos = editor?.state.selection.from;
+                  editor?.commands.setTextSelection({ from: pos! - 9, to: pos! });
+                  // Apply subscript formatting
+                  result = editor?.chain().focus().toggleSubscript().run();
                 } else {
                   result = editor?.chain().focus().toggleSubscript().run();
                 }
@@ -661,6 +713,7 @@ export function TipTapEditor() {
     if (editor) {
       console.log('=== TIPTAP EDITOR DEBUG ===');
       console.log('Available commands:', Object.keys(editor.commands));
+      console.log('Can toggle task list:', editor.can().toggleTaskList());
       console.log('Can toggle superscript:', editor.can().toggleSuperscript());
       console.log('Can toggle subscript:', editor.can().toggleSubscript());
       console.log('Active extensions:', editor.extensionManager.extensions.map(ext => ext.name));

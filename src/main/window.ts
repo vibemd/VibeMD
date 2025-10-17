@@ -10,7 +10,7 @@ export const createMainWindow = (): BrowserWindow => {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    minWidth: 1200,
+    minWidth: 1250,
     minHeight: 768,
     webPreferences: {
       contextIsolation: true,
