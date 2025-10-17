@@ -29,7 +29,7 @@ const defaultSettings: Settings = {
   },
   editor: {
     fontSize: 12, // Changed default from 16 to 12
-    fontFamily: 'monospace',
+    fontFamily: 'Arial', // Set default font family
     lineNumbers: false, // Removed line numbers by default
     wordWrap: true,
     latexSupport: false,

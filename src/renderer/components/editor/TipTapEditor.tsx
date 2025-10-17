@@ -751,7 +751,9 @@ export function TipTapEditor() {
             className="h-full p-4 prose prose-sm max-w-none focus:outline-none"
             style={{ 
               '--editor-base-font-size': `${settings.editor.fontSize}px`,
-              fontSize: `${settings.editor.fontSize}px`
+              '--editor-font-family': settings.editor.fontFamily || 'Arial',
+              fontSize: `${settings.editor.fontSize}px`,
+              fontFamily: settings.editor.fontFamily || 'Arial'
             } as React.CSSProperties}
             onWheel={(e) => {
               // Allow scrolling without preventing default

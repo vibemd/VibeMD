@@ -85,13 +85,14 @@
   flex: 1 1 auto;
 }
 
-/* Superscript and Subscript Styles */
+/* Superscript and Subscript Styles - inherit font family */
 .ProseMirror sup {
   font-size: 0.75em;
   line-height: 0;
   position: relative;
   vertical-align: super;
   top: -0.4em;
+  font-family: var(--editor-font-family, Arial);
 }
 
 .ProseMirror sub {
@@ -100,6 +101,7 @@
   position: relative;
   vertical-align: sub;
   bottom: -0.4em;
+  font-family: var(--editor-font-family, Arial);
 }
 
 /* Force scrollbars to be visible on the TipTap scroll container */
@@ -136,39 +138,50 @@
   pointer-events: none;
 }
 
+/* Editor base styles with font family */
+.ProseMirror {
+  font-family: var(--editor-font-family, Arial);
+}
+
 .ProseMirror h1 {
   font-size: 2em;
   font-weight: bold;
+  font-family: var(--editor-font-family, Arial);
   margin: 1em 0 0.5em 0;
 }
 
 .ProseMirror h2 {
   font-size: 1.5em;
   font-weight: bold;
+  font-family: var(--editor-font-family, Arial);
   margin: 0.75em 0 0.5em 0;
 }
 
 .ProseMirror h3 {
   font-size: 1.25em;
   font-weight: bold;
+  font-family: var(--editor-font-family, Arial);
   margin: 0.5em 0 0.25em 0;
 }
 
 .ProseMirror h4 {
   font-size: 1.125em;
   font-weight: bold;
+  font-family: var(--editor-font-family, Arial);
   margin: 0.5em 0 0.25em 0;
 }
 
 .ProseMirror h5 {
   font-size: 1em;
   font-weight: bold;
+  font-family: var(--editor-font-family, Arial);
   margin: 0.5em 0 0.25em 0;
 }
 
 .ProseMirror h6 {
   font-size: 0.875em;
   font-weight: bold;
+  font-family: var(--editor-font-family, Arial);
   margin: 0.5em 0 0.25em 0;
 }
 
@@ -201,6 +214,7 @@
   padding-left: 1em;
   margin: 1em 0;
   font-style: italic;
+  font-family: var(--editor-font-family, Arial);
   color: #6b7280;
 }
 

@@ -22,6 +22,27 @@ export function EditorSettings({ settings, onChange }: EditorSettingsProps) {
         
         <div className="space-y-4">
           <div className="space-y-2">
+            <label className="text-sm font-medium">Font Family</label>
+            <Select
+              value={settings.editor.fontFamily || 'Arial'}
+              onValueChange={(value) => updateEditor({ fontFamily: value })}
+            >
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Arial">Arial</SelectItem>
+                <SelectItem value="Calibri">Calibri</SelectItem>
+                <SelectItem value="Open Sans">Open Sans</SelectItem>
+                <SelectItem value="Courier New">Courier New</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Font family for all text formatting. Code blocks retain their system font.
+            </p>
+          </div>
+
+          <div className="space-y-2">
             <label className="text-sm font-medium">Default Font Size</label>
             <Select
               value={settings.editor.fontSize?.toString() || '12'}
