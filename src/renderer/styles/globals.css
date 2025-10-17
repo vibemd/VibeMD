@@ -86,19 +86,18 @@
   margin-right: 0.5rem;
   user-select: none;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 0;
 }
 
 .ProseMirror ul[data-type="taskList"] li > label input[type="checkbox"] {
   margin-right: 0.25rem;
+  margin-top: 0.125rem;
 }
 
 .ProseMirror ul[data-type="taskList"] li > div {
   flex: 1 1 auto;
   margin: 0;
-  display: flex;
-  align-items: center;
 }
 
 .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
@@ -116,19 +115,17 @@
 
 /* Superscript and Subscript Styles */
 .ProseMirror sup {
-  font-size: 0.75em;
-  line-height: 0;
+  font-size: 1em;
+  line-height: 1;
+  vertical-align: super;
   position: relative;
-  vertical-align: baseline;
-  top: -0.5em;
 }
 
 .ProseMirror sub {
-  font-size: 0.75em;
-  line-height: 0;
+  font-size: 1em;
+  line-height: 1;
+  vertical-align: sub;
   position: relative;
-  vertical-align: baseline;
-  bottom: -0.25em;
 }
 
 /* Force scrollbars to be visible on the TipTap scroll container */
@@ -224,15 +221,6 @@
 /* Task list styling */
 
 /* Superscript and subscript styling */
-.ProseMirror sup, .ProseMirror .text-superscript {
-  vertical-align: super;
-  font-size: 0.75em;
-}
-
-.ProseMirror sub, .ProseMirror .text-subscript {
-  vertical-align: sub;
-  font-size: 0.75em;
-}
 
 .ProseMirror blockquote {
   border-left: 4px solid #e5e7eb;
