@@ -47,7 +47,7 @@ export interface Settings {
     fontSize: number;
     fontFamily: string;
     lineNumbers: boolean;
-    wordWrap: boolean;
+    codeBlockWordWrap: boolean;
     latexSupport: boolean;
   };
   about: {

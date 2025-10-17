@@ -64,12 +64,12 @@ export function EditorSettings({ settings, onChange }: EditorSettingsProps) {
           
           <div className="flex items-center space-x-2">
             <Checkbox
-              id="wordWrap"
-              checked={settings.editor.wordWrap}
-              onCheckedChange={(checked) => updateEditor({ wordWrap: !!checked })}
+              id="codeBlockWordWrap"
+              checked={settings.editor.codeBlockWordWrap}
+              onCheckedChange={(checked) => updateEditor({ codeBlockWordWrap: !!checked })}
             />
-            <label htmlFor="wordWrap" className="text-sm font-medium">
-              Enable word wrap
+            <label htmlFor="codeBlockWordWrap" className="text-sm font-medium">
+              Enable word wrap in code blocks
             </label>
           </div>
           
