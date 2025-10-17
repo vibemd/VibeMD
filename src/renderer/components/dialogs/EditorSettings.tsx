@@ -32,8 +32,6 @@ export function EditorSettings({ settings, onChange }: EditorSettingsProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Arial">Arial</SelectItem>
-                <SelectItem value="Calibri">Calibri</SelectItem>
-                <SelectItem value="Open Sans">Open Sans</SelectItem>
                 <SelectItem value="Courier New">Courier New</SelectItem>
               </SelectContent>
             </Select>
