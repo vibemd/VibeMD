@@ -11,8 +11,6 @@ import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
-import { TaskList } from '@tiptap/extension-task-list';
-import { TaskItem } from '@tiptap/extension-task-item';
 import { Superscript } from '@tiptap/extension-superscript';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Extension } from '@tiptap/core';
@@ -178,12 +176,6 @@ export function TipTapEditor() {
       BulletList,
       OrderedList,
       ListItem,
-      TaskList.configure({
-        itemTypeName: 'taskItem',
-      }),
-      TaskItem.configure({
-        nested: true,
-      }),
       Superscript.configure({
         HTMLAttributes: {
           class: 'text-superscript',
@@ -554,52 +546,6 @@ export function TipTapEditor() {
       ),
     },
     {
-      id: 'taskList',
-      component: (
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => {
-                console.log('=== TASK LIST BUTTON CLICKED ===');
-                console.log('Editor available:', !!editor);
-                console.log('Editor state:', editor?.state);
-                console.log('Current selection:', editor?.state.selection);
-                console.log('Selection empty:', editor?.state.selection.empty);
-                console.log('Selection from:', editor?.state.selection.from);
-                console.log('Selection to:', editor?.state.selection.to);
-                console.log('Can toggle task list:', editor?.can().toggleTaskList());
-                console.log('Is active task list:', editor?.isActive('taskList'));
-                console.log('Available commands:', Object.keys(editor?.commands || {}));
-                
-                // Try the command
-                const result = editor?.chain().focus().toggleTaskList().run();
-                console.log('Toggle task list result:', result);
-                
-                // Check state after command
-                console.log('After command - is active task list:', editor?.isActive('taskList'));
-                console.log('After command - HTML:', editor?.getHTML());
-                
-                // Ensure editor has focus
-                setTimeout(() => {
-                  editor?.commands.focus();
-                }, 100);
-                
-                console.log('=== END TASK LIST DEBUG ===');
-              }}
-              className={`p-2 rounded hover:bg-gray-100 ${
-                editor?.isActive('taskList') ? 'bg-gray-200' : ''
-              }`}
-            >
-              <CheckSquare className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Task List</p>
-          </TooltipContent>
-        </Tooltip>
-      ),
-    },
-    {
       id: 'separator6',
       component: <div className="w-px bg-gray-300 mx-1" />,
     },
@@ -704,75 +650,10 @@ export function TipTapEditor() {
   const [visibleButtons, setVisibleButtons] = useState<typeof toolbarButtons>([]);
   const [overflowButtons, setOverflowButtons] = useState<typeof toolbarButtons>([]);
 
-  // Calculate which buttons fit in the toolbar
+  // Disable responsive toolbar - show all buttons
   useLayoutEffect(() => {
-    const updateToolbar = () => {
-      if (!toolbarRef.current) return;
-
-      const toolbarWidth = toolbarRef.current.offsetWidth;
-      const padding = 16; // p-2 = 8px padding on each side
-      const gap = 8; // gap-2 = 8px gap between items
-      const overflowButtonWidth = 60; // Width of the "More" button
-      const availableWidth = toolbarWidth - padding;
-
-      let currentWidth = 0;
-      const newVisibleButtons: typeof toolbarButtons = [];
-      const newOverflowButtons: typeof toolbarButtons = [];
-
-      // Calculate button widths (approximate)
-      const buttonWidths = {
-        bold: 40, italic: 40, strike: 40, separator: 8,
-        headings: 140, separator2: 8,
-        bulletList: 40, orderedList: 40, separator3: 8,
-        codeBlock: 40, blockquote: 40, separator4: 8,
-        link: 40, image: 40, separator5: 8,
-        table: 40, tableActions: 160, separator6: 8,
-        taskList: 40, superscript: 40, subscript: 40
-      };
-
-      // Priority order (most important first)
-      const buttonOrder = [
-        'bold', 'italic', 'strike', 'separator',
-        'headings', 'separator2',
-        'bulletList', 'orderedList', 'separator3',
-        'codeBlock', 'blockquote', 'separator4',
-        'link', 'image', 'separator5',
-        'table', 'tableActions', 'separator6',
-        'taskList', 'superscript', 'subscript'
-      ];
-
-      for (const buttonId of buttonOrder) {
-        const button = toolbarButtons.find(b => b.id === buttonId);
-        if (!button) continue;
-
-        const buttonWidth = buttonWidths[buttonId as keyof typeof buttonWidths] || 40;
-        
-        // Check if we need to reserve space for overflow button
-        const needsOverflowButton = newOverflowButtons.length > 0 || 
-          (currentWidth + buttonWidth + gap + overflowButtonWidth > availableWidth);
-        
-        if (needsOverflowButton && currentWidth + buttonWidth + gap + overflowButtonWidth > availableWidth) {
-          newOverflowButtons.push(button);
-        } else if (currentWidth + buttonWidth + gap <= availableWidth) {
-          newVisibleButtons.push(button);
-          currentWidth += buttonWidth + gap;
-        } else {
-          newOverflowButtons.push(button);
-        }
-      }
-
-      setVisibleButtons(newVisibleButtons);
-      setOverflowButtons(newOverflowButtons);
-    };
-
-    // Initial calculation
-    updateToolbar();
-
-    // Add resize listener
-    window.addEventListener('resize', updateToolbar);
-
-    // Cleanup
-    return () => window.removeEventListener('resize', updateToolbar);
+    setVisibleButtons(toolbarButtons);
+    setOverflowButtons([]);
   }, []);
 
   // Debug: Log available commands when editor is ready (only once)
@@ -780,7 +661,6 @@ export function TipTapEditor() {
     if (editor) {
       console.log('=== TIPTAP EDITOR DEBUG ===');
       console.log('Available commands:', Object.keys(editor.commands));
-      console.log('Can toggle task list:', editor.can().toggleTaskList());
       console.log('Can toggle superscript:', editor.can().toggleSuperscript());
       console.log('Can toggle subscript:', editor.can().toggleSubscript());
       console.log('Active extensions:', editor.extensionManager.extensions.map(ext => ext.name));
@@ -872,55 +752,6 @@ export function TipTapEditor() {
             </div>
           ))}
           
-          {/* Overflow dropdown */}
-          {overflowButtons.length > 0 && (
-            <Tooltip delayDuration={300}>
-              <TooltipTrigger asChild>
-                <Select onValueChange={(value) => {
-                  // Handle overflow button clicks
-                  if (value === 'taskList') {
-                    console.log('=== OVERFLOW TASK LIST BUTTON CLICKED ===');
-                    const result = editor?.chain().focus().toggleTaskList().run();
-                    console.log('Overflow toggle task list result:', result);
-                    setTimeout(() => editor?.commands.focus(), 100);
-                  } else if (value === 'superscript') {
-                    console.log('=== OVERFLOW SUPERSCRIPT BUTTON CLICKED ===');
-                    const result = editor?.chain().focus().toggleSuperscript().run();
-                    console.log('Overflow toggle superscript result:', result);
-                    setTimeout(() => editor?.commands.focus(), 100);
-                  } else if (value === 'subscript') {
-                    console.log('=== OVERFLOW SUBSCRIPT BUTTON CLICKED ===');
-                    const result = editor?.chain().focus().toggleSubscript().run();
-                    console.log('Overflow toggle subscript result:', result);
-                    setTimeout(() => editor?.commands.focus(), 100);
-                  }
-                }}>
-                  <SelectTrigger className="w-[60px] h-8">
-                    <SelectValue placeholder="⋯" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {overflowButtons.map((button) => (
-                      <SelectItem key={button.id} value={button.id}>
-                        <div className="flex items-center gap-2">
-                          {button.id === 'taskList' && <CheckSquare className="h-4 w-4" />}
-                          {button.id === 'superscript' && <SuperscriptIcon className="h-4 w-4" />}
-                          {button.id === 'subscript' && <SubscriptIcon className="h-4 w-4" />}
-                          <span>
-                            {button.id === 'taskList' && 'Task List'}
-                            {button.id === 'superscript' && 'Superscript'}
-                            {button.id === 'subscript' && 'Subscript'}
-                          </span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>More formatting options</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
         </div>
       </TooltipProvider>
 
