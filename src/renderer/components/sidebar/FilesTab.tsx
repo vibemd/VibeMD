@@ -62,9 +62,11 @@ export function FilesTab() {
 
     if (data.saveAsTemplate) {
       addTemplate(newDoc);
+      setActiveDocument(id); // Set the new template as active
       setSidebarTab('templates'); // Switch to templates tab
     } else {
       addDocument(newDoc);
+      setActiveDocument(id); // Set the new file as active
     }
   };
 
@@ -170,8 +172,8 @@ export function FilesTab() {
               <div
                 key={doc.id}
                 className={cn(
-                  'p-2 rounded hover:bg-accent cursor-pointer group',
-                  doc.id === activeDocumentId && 'bg-accent'
+                  'p-2 rounded cursor-pointer group',
+                  doc.id === activeDocumentId ? 'bg-accent' : 'bg-secondary/30 hover:bg-accent'
                 )}
                 onClick={() => setActiveDocument(doc.id)}
               >
@@ -191,15 +193,14 @@ export function FilesTab() {
 
                   <Button
                     variant="ghost"
-                    size="icon"
-                    style={{ height: '1.5rem', width: '1.5rem', opacity: 0.7 }}
-                    className="hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
+                    size="sm"
+                    className="h-7 w-7 p-0 opacity-70 hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleCloseFile(doc);
                     }}
                   >
-                    <X style={{ height: '0.75rem', width: '0.75rem' }} />
+                    <X className="h-3 w-3" />
                   </Button>
                 </div>
               </div>

@@ -24,7 +24,7 @@ import { NewDocumentDialog } from '@/components/dialogs/NewDocumentDialog';
 import { NewDocumentDialogData } from '@shared/types';
 
 export function Toolbar() {
-  const { addDocument, addTemplate, getActiveDocument, updateDocument, markAsSaved, isActiveDocumentTemplate } = 
+  const { addDocument, addTemplate, getActiveDocument, setActiveDocument, updateDocument, markAsSaved, isActiveDocumentTemplate } =
     useDocumentStore();
   const { toggleSettingsDialog, setSidebarTab } = useUIStore();
   const { settings } = useSettingsStore();
@@ -37,10 +37,10 @@ export function Toolbar() {
 
   const handleNewDocumentConfirm = async (data: NewDocumentDialogData) => {
     const id = await fileService.createNewFile();
-    const filename = data.saveAsTemplate 
+    const filename = data.saveAsTemplate
       ? (data.filename.endsWith('.vibe') ? data.filename : `${data.filename}.vibe`)
       : (data.filename.endsWith('.md') ? data.filename : `${data.filename}.md`);
-    
+
     const newDoc: Document = {
       id,
       filename,
@@ -53,9 +53,11 @@ export function Toolbar() {
 
     if (data.saveAsTemplate) {
       addTemplate(newDoc);
+      setActiveDocument(id); // Set the new template as active
       setSidebarTab('templates'); // Switch to templates tab
     } else {
       addDocument(newDoc);
+      setActiveDocument(id); // Set the new file as active
     }
   };
 
