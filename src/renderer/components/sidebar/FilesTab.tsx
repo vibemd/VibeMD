@@ -62,8 +62,11 @@ export function FilesTab() {
 
     if (data.saveAsTemplate) {
       addTemplate(newDoc);
-      setActiveDocument(id); // Set the new template as active
-      setSidebarTab('templates'); // Switch to templates tab
+      // Use setTimeout to ensure state updates complete before switching tabs
+      setTimeout(() => {
+        setActiveDocument(id); // Set the new template as active
+        setSidebarTab('templates'); // Switch to templates tab
+      }, 0);
     } else {
       addDocument(newDoc);
       setActiveDocument(id); // Set the new file as active
