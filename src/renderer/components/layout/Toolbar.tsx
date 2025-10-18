@@ -19,25 +19,44 @@ import { useUIStore } from '@/stores/uiStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { fileService } from '@/services/fileService';
 import { Document } from '@shared/types';
+import { useState } from 'react';
+import { NewDocumentDialog } from '@/components/dialogs/NewDocumentDialog';
+import { NewDocumentDialogData } from '@shared/types';
 
 export function Toolbar() {
-  const { addDocument, getActiveDocument, updateDocument, markAsSaved } = 
+  const { addDocument, addTemplate, getActiveDocument, updateDocument, markAsSaved, isActiveDocumentTemplate } = 
     useDocumentStore();
-  const { toggleSettingsDialog } = useUIStore();
+  const { toggleSettingsDialog, setSidebarTab } = useUIStore();
   const { settings } = useSettingsStore();
+  
+  const [newDocumentDialogOpen, setNewDocumentDialogOpen] = useState(false);
 
-  const handleNew = async () => {
+  const handleNew = () => {
+    setNewDocumentDialogOpen(true);
+  };
+
+  const handleNewDocumentConfirm = async (data: NewDocumentDialogData) => {
     const id = await fileService.createNewFile();
+    const filename = data.saveAsTemplate 
+      ? (data.filename.endsWith('.vibe') ? data.filename : `${data.filename}.vibe`)
+      : (data.filename.endsWith('.md') ? data.filename : `${data.filename}.md`);
+    
     const newDoc: Document = {
       id,
-      filename: 'Untitled.md',
+      filename,
       filepath: null,
       content: '',
-      isModified: false,
+      isModified: true, // New documents start as modified
       lastSaved: null,
-      isTemplate: false,
+      isTemplate: data.saveAsTemplate,
     };
-    addDocument(newDoc);
+
+    if (data.saveAsTemplate) {
+      addTemplate(newDoc);
+      setSidebarTab('templates'); // Switch to templates tab
+    } else {
+      addDocument(newDoc);
+    }
   };
 
   const handleOpen = async () => {
@@ -58,11 +77,26 @@ export function Toolbar() {
 
     if (!doc.filepath) {
       // Trigger Save As
-      const filepath = await fileService.saveFileAs(doc.content, settings.files.defaultSavePath || undefined);
-      if (filepath) {
-        updateDocument(doc.id, { filepath });
-        await fileService.saveFile(filepath, doc.content);
-        markAsSaved(doc.id);
+      if (doc.isTemplate) {
+        // Templates save to templates location
+        const templatesLocation = settings.files.templatesLocation;
+        if (!templatesLocation) {
+          console.error('Templates location not set');
+          return;
+        }
+        const filepath = await fileService.saveTemplate(templatesLocation, doc.filename, doc.content);
+        if (filepath) {
+          updateDocument(doc.id, { filepath });
+          markAsSaved(doc.id);
+        }
+      } else {
+        // Regular files use Save As dialog
+        const filepath = await fileService.saveFileAs(doc.content, settings.files.defaultSavePath || undefined);
+        if (filepath) {
+          updateDocument(doc.id, { filepath });
+          await fileService.saveFile(filepath, doc.content);
+          markAsSaved(doc.id);
+        }
       }
     } else {
       await fileService.saveFile(doc.filepath, doc.content);
@@ -73,6 +107,9 @@ export function Toolbar() {
   const handleSaveAs = async () => {
     const doc = getActiveDocument();
     if (!doc) return;
+
+    // Save As is only available for regular files, not templates
+    if (doc.isTemplate) return;
 
     const filepath = await fileService.saveFileAs(doc.content, settings.files.defaultSavePath || undefined);
     if (filepath) {
@@ -110,6 +147,7 @@ export function Toolbar() {
 
   const activeDoc = getActiveDocument();
   const hasUnsavedChanges = activeDoc?.isModified;
+  const isTemplate = isActiveDocumentTemplate();
 
   return (
     <TooltipProvider delayDuration={300} skipDelayDuration={100}>
@@ -174,14 +212,14 @@ export function Toolbar() {
               size="sm"
               onClick={handleSaveAs}
               className="gap-2 toolbar-button"
-              disabled={!activeDoc}
+              disabled={!activeDoc || isTemplate}
             >
               <Download className="h-4 w-4" />
               Save As
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Save Document As (Ctrl+Shift+S)</p>
+            <p>{isTemplate ? 'Save As not available for templates' : 'Save Document As (Ctrl+Shift+S)'}</p>
           </TooltipContent>
         </Tooltip>
 
@@ -226,6 +264,13 @@ export function Toolbar() {
           </TooltipContent>
         </Tooltip>
       </div>
+      
+      {/* New document dialog */}
+      <NewDocumentDialog
+        open={newDocumentDialogOpen}
+        onOpenChange={setNewDocumentDialogOpen}
+        onConfirm={handleNewDocumentConfirm}
+      />
     </TooltipProvider>
   );
 }
