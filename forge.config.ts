@@ -15,6 +15,9 @@ import { preloadConfig } from './webpack.preload.config';
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    name: 'VibeMD',
+    executableName: 'VibeMD',
+    icon: './build/icons/icon',
   },
   rebuildConfig: {},
   makers: [
