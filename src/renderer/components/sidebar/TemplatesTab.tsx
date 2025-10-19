@@ -37,7 +37,8 @@ export function TemplatesTab() {
   const documentsArray = Array.from(documents.values());
   
   // Helper function to remove file extensions from display names
-  const getDisplayName = (filename: string) => {
+  const getDisplayName = (filename: string | undefined | null) => {
+    if (!filename) return '';
     return filename.replace(/\.(md|vibe)$/, '');
   };
   

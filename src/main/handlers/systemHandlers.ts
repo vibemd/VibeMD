@@ -17,17 +17,26 @@ ipcMain.handle('dir:selectFolder', async () => {
 ipcMain.handle('dir:readTemplates', async (event, dirPath: string) => {
   try {
     const files = await readdir(dirPath);
+    const { readFile } = require('fs/promises');
     const templates = [];
 
     for (const file of files) {
       const filePath = join(dirPath, file);
       const stats = await stat(filePath);
-      
+
       if (stats.isFile() && extname(file) === '.vibe') {
-        templates.push({
-          name: file.replace('.vibe', ''),
-          path: filePath
-        });
+        try {
+          const content = await readFile(filePath, 'utf-8');
+          templates.push({
+            id: filePath, // Use filepath as unique ID
+            filename: file,
+            filepath: filePath,
+            content: content
+          });
+        } catch (readError) {
+          console.error(`Error reading template file ${file}:`, readError);
+          // Skip this template if we can't read it
+        }
       }
     }
 
