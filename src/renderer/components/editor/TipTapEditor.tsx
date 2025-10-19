@@ -191,6 +191,9 @@ export function TipTapEditor() {
       TaskList,
       TaskItem.configure({
         nested: true,
+        HTMLAttributes: {
+          class: 'task-item-content',
+        },
       }),
       Superscript,
       Subscript,
@@ -550,27 +553,34 @@ export function TipTapEditor() {
         </Tooltip>
       ),
     },
-    // Task List button temporarily hidden - will address implementation later
-    // {
-    //   id: 'taskList',
-    //   component: (
-    //     <Tooltip delayDuration={300}>
-    //       <TooltipTrigger asChild>
-    //         <button
-    //           onClick={() => editor?.chain().focus().toggleTaskList().run()}
-    //           className={`p-2 rounded hover:bg-gray-100 ${
-    //             editor?.isActive('taskList') ? 'bg-blue-200 text-blue-800' : ''
-    //           }`}
-    //         >
-    //           <CheckSquare className="h-4 w-4" />
-    //         </button>
-    //       </TooltipTrigger>
-    //       <TooltipContent>
-    //         <p>Task List</p>
-    //       </TooltipContent>
-    //     </Tooltip>
-    //   ),
-    // },
+    {
+      id: 'taskList',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                console.log('[TaskList] Toggling task list');
+                console.log('[TaskList] Before toggle - isActive:', editor?.isActive('taskList'));
+                console.log('[TaskList] Current selection:', editor?.state.selection);
+                const result = editor?.chain().focus().toggleTaskList().run();
+                console.log('[TaskList] Toggle result:', result);
+                console.log('[TaskList] After toggle - isActive:', editor?.isActive('taskList'));
+                console.log('[TaskList] HTML after toggle:', editor?.getHTML());
+              }}
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive('taskList') ? 'bg-accent text-accent-foreground' : ''
+              }`}
+            >
+              <CheckSquare className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Task List</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
     {
       id: 'blockquote',
       component: (

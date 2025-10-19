@@ -83,6 +83,16 @@
 
 .ProseMirror ul[data-type="taskList"] li > div {
   flex: 1 1 auto;
+  display: inline-flex;
+  align-items: baseline;
+}
+
+/* Force any paragraphs inside task items to display inline */
+.ProseMirror ul[data-type="taskList"] li p,
+.ProseMirror ul[data-type="taskList"] li > div > p {
+  display: inline !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Superscript and Subscript Styles - inherit font family */
