@@ -54,10 +54,13 @@ export function TipTapEditor() {
   // Dialog state
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
-  
+
   // Context menu state
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+
+  // Flag to prevent circular updates
+  const isUpdatingFromEditor = React.useRef(false);
 
   // Heading levels configuration
   const headingLevels = [
@@ -174,7 +177,7 @@ export function TipTapEditor() {
         listItem: false, // Exclude to prevent duplicate
         link: false, // Exclude to prevent duplicate
         horizontalRule: false, // Use custom HorizontalRule extension
-        // Keep hardBreak enabled in StarterKit (don't exclude it)
+        hardBreak: false, // Disable hardBreak to prevent line break issues
         // Keep strikethrough, code, and codeBlock with default configurations
       }),
 
@@ -214,34 +217,30 @@ export function TipTapEditor() {
       
       Table.configure({
         resizable: true,
+        allowTableNodeSelection: true,
         HTMLAttributes: {
           class: 'border-collapse table-auto w-full',
         },
       }),
-      TableRow.configure({
-        HTMLAttributes: {
-          class: 'border',
-        },
-      }),
-      TableHeader.configure({
-        HTMLAttributes: {
-          class: 'border border-gray-300 px-4 py-2 bg-gray-100 font-bold',
-        },
-      }),
-      TableCell.configure({
-        HTMLAttributes: {
-          class: 'border border-gray-300 px-4 py-2',
-        },
-      }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
     autofocus: 'start', // Auto-focus at start
     onUpdate: ({ editor }) => {
       if (activeDocument) {
+        isUpdatingFromEditor.current = true;
         const html = editor.getHTML();
+        console.log('[TipTap onUpdate] HTML:', html);
         const markdown = htmlToMarkdown(html);
+        console.log('[TipTap onUpdate] Markdown:', markdown);
         updateDocument(activeDocument.id, { content: markdown });
         markAsModified(activeDocument.id);
+        // Reset flag after a short delay to allow the update to propagate
+        setTimeout(() => {
+          isUpdatingFromEditor.current = false;
+        }, 50);
       }
     },
     onSelectionUpdate: ({ editor }) => {
@@ -257,11 +256,18 @@ export function TipTapEditor() {
   React.useEffect(() => {
     if (!editor || !activeDocument) return;
 
+    // Skip if the update came from the editor itself to prevent circular updates
+    if (isUpdatingFromEditor.current) {
+      console.log('[TipTap setContent] Skipping - update from editor');
+      return;
+    }
+
     const currentContent = editor.getHTML();
     const newContent = markdownToHtml(activeDocument.content);
 
     // Only update if content has actually changed to avoid unnecessary updates
     if (currentContent !== newContent) {
+      console.log('[TipTap setContent] Setting new content:', newContent);
       editor.commands.setContent(newContent, { emitUpdate: false });
     }
   }, [editor, activeDocument?.id, activeDocument?.content]);
@@ -591,7 +597,11 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
+              onClick={() => {
+                console.log('[CodeBlock] Toggling code block');
+                editor?.chain().focus().toggleCodeBlock().run();
+                console.log('[CodeBlock] After toggle, isActive:', editor?.isActive('codeBlock'));
+              }}
               className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
                 editor?.isActive('codeBlock') ? 'bg-accent text-accent-foreground' : ''
               }`}
@@ -667,7 +677,11 @@ export function TipTapEditor() {
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+              onClick={() => {
+                console.log('[Table] Inserting table');
+                editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+                console.log('[Table] After insert, isActive:', editor?.isActive('table'));
+              }}
               className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
             >
               <TableIcon className="h-4 w-4" />
@@ -768,7 +782,7 @@ export function TipTapEditor() {
         <div className="flex-1 overflow-auto">
           <EditorContent
             editor={editor}
-            className="h-full p-4 prose prose-sm max-w-none focus:outline-none"
+            className="h-full p-4 max-w-none focus:outline-none"
             style={{ 
               '--editor-base-font-size': `${settings.editor.fontSize}px`,
               '--editor-font-family': settings.editor.fontFamily || 'Arial',

@@ -232,11 +232,14 @@
   border-radius: 0.5em;
   margin: 1em 0;
   overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .ProseMirror pre code {
   background-color: transparent;
   padding: 0;
+  white-space: pre-wrap;
 }
 
 .ProseMirror a {
