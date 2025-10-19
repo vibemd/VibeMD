@@ -1,7 +1,7 @@
 import { ipcMain, dialog, BrowserWindow } from 'electron';
 
 // Dialog handlers for user input
-ipcMain.handle('dialog:prompt', async (event, title: string, message: string, defaultValue: string = '') => {
+ipcMain.handle('dialog:prompt', async (event, title: string, message: string, defaultValue = '') => {
   try {
     const browserWindow = BrowserWindow.fromWebContents(event.sender);
     if (!browserWindow) {

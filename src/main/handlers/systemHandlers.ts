@@ -1,5 +1,5 @@
 import { ipcMain, dialog, BrowserWindow } from 'electron';
-import { readdir, stat } from 'fs/promises';
+import { readdir, stat, readFile } from 'fs/promises';
 import { join, extname } from 'path';
 
 // Directory operations
@@ -17,7 +17,6 @@ ipcMain.handle('dir:selectFolder', async () => {
 ipcMain.handle('dir:readTemplates', async (event, dirPath: string) => {
   try {
     const files = await readdir(dirPath);
-    const { readFile } = require('fs/promises');
     const templates = [];
 
     for (const file of files) {
