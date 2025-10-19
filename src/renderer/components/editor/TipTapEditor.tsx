@@ -244,13 +244,25 @@ export function TipTapEditor() {
 
   // State to force toolbar re-render when editor state changes
   const [updateTrigger, setUpdateTrigger] = React.useState(0);
-  
+
+  // Update editor content when active document changes
+  React.useEffect(() => {
+    if (!editor || !activeDocument) return;
+
+    const currentContent = editor.getHTML();
+    const newContent = markdownToHtml(activeDocument.content);
+
+    // Only update if content has actually changed to avoid unnecessary updates
+    if (currentContent !== newContent) {
+      editor.commands.setContent(newContent, false);
+    }
+  }, [editor, activeDocument?.id, activeDocument?.content]);
+
   // Update toolbar when editor state changes
   React.useEffect(() => {
     if (!editor) return;
     
     const updateToolbar = () => {
-      console.log('Toolbar update triggered - Bold active:', editor.isActive('bold'));
       setUpdateTrigger(prev => prev + 1);
     };
     
