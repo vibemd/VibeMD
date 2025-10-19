@@ -57,7 +57,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
           files: {
             ...state.settings.files,
             defaultSavePath: userDocsPath, // Set default save path to user's documents root
-            templatesLocation: userDocsPath, // Set templates location to user's documents root
+            templatesLocation: null, // Don't set templates location - user must explicitly choose
           },
         },
       }));
