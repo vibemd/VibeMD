@@ -25,19 +25,13 @@ import { marked } from 'marked';
 import TurndownService from 'turndown';
 import { LinkDialog } from '../dialogs/LinkDialog';
 import { ImageDialog } from '../dialogs/ImageDialog';
-import { 
-  Bold, 
-  Italic, 
-  Strikethrough, 
-  Heading1, 
-  Heading2, 
-  Heading3, 
-  Heading4,
-  Heading5,
-  Heading6,
-  List, 
-  ListOrdered, 
-  Code, 
+import {
+  Bold,
+  Italic,
+  Strikethrough,
+  List,
+  ListOrdered,
+  Code,
   Quote,
   Link as LinkIcon,
   Image as ImageIcon,
