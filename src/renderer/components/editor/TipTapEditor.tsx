@@ -177,7 +177,10 @@ export function TipTapEditor() {
         hardBreak: false, // Use custom HardBreak extension
         horizontalRule: false, // Use custom HorizontalRule extension
         // Enable strikethrough (GFM)
-        strike: {},
+        strike: true,
+        // Keep code and codeBlock enabled
+        code: true,
+        codeBlock: true,
       }),
       
       // Custom extensions for better control
@@ -188,9 +191,15 @@ export function TipTapEditor() {
       OrderedList,
       ListItem,
       TaskList,
-      TaskItem,
-      Superscript,
-      Subscript,
+      TaskItem.configure({
+        nested: true,
+      }),
+      Superscript.configure({
+        excludeNodes: ['subscript'],
+      }),
+      Subscript.configure({
+        excludeNodes: ['superscript'],
+      }),
       HardBreak,
       HorizontalRule,
       HeadingIdExtension,
@@ -215,10 +224,25 @@ export function TipTapEditor() {
       
       Table.configure({
         resizable: true,
+        HTMLAttributes: {
+          class: 'border-collapse table-auto w-full',
+        },
       }),
-      TableRow,
-      TableHeader,
-      TableCell,
+      TableRow.configure({
+        HTMLAttributes: {
+          class: 'border',
+        },
+      }),
+      TableHeader.configure({
+        HTMLAttributes: {
+          class: 'border border-gray-300 px-4 py-2 bg-gray-100 font-bold',
+        },
+      }),
+      TableCell.configure({
+        HTMLAttributes: {
+          class: 'border border-gray-300 px-4 py-2',
+        },
+      }),
     ],
     content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
     autofocus: 'start', // Auto-focus at start
