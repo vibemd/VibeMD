@@ -33,6 +33,12 @@ export class FileService {
   async readFile(filepath: string): Promise<string | null> {
     return await window.electronAPI.fileRead(filepath);
   }
+
+  async saveTemplate(templatesLocation: string, filename: string, content: string): Promise<string | null> {
+    const filepath = `${templatesLocation}/${filename}`;
+    const success = await this.saveFile(filepath, content);
+    return success ? filepath : null;
+  }
 }
 
 export const fileService = new FileService();

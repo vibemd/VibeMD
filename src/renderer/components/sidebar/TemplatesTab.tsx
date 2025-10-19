@@ -98,7 +98,6 @@ export function TemplatesTab() {
       isModified: true, // New documents start as modified
       lastSaved: null,
       isTemplate: data.createNewTemplate,
-      templateId: selectedTemplate.id,
     };
 
     if (data.createNewTemplate) {

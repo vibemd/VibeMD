@@ -6,13 +6,16 @@ interface DocumentStore {
   activeDocumentId: string | null;
   
   addDocument: (doc: Document) => void;
+  addTemplate: (doc: Document) => void;
   removeDocument: (id: string) => void;
+  removeTemplate: (id: string) => void;
   updateDocument: (id: string, updates: Partial<Document>) => void;
   setActiveDocument: (id: string) => void;
   getActiveDocument: () => Document | null;
   markAsModified: (id: string) => void;
   markAsSaved: (id: string) => void;
   hasUnsavedChanges: () => boolean;
+  isActiveDocumentTemplate: () => boolean;
 }
 
 export const useDocumentStore = create<DocumentStore>((set, get) => ({
@@ -93,6 +96,39 @@ export const useDocumentStore = create<DocumentStore>((set, get) => ({
     const state = get();
     return Array.from(state.documents.values()).some(doc => doc.isModified);
   },
+
+  isActiveDocumentTemplate: () => {
+    const state = get();
+    const activeDoc = state.activeDocumentId ? state.documents.get(state.activeDocumentId) : null;
+    return activeDoc ? activeDoc.isTemplate : false;
+  },
+
+  addTemplate: (doc) =>
+    set((state) => {
+      const newDocs = new Map(state.documents);
+      newDocs.set(doc.id, doc);
+      return { 
+        documents: newDocs,
+        activeDocumentId: doc.id 
+      };
+    }),
+
+  removeTemplate: (id) =>
+    set((state) => {
+      const newDocs = new Map(state.documents);
+      newDocs.delete(id);
+      
+      let newActiveId = state.activeDocumentId;
+      if (state.activeDocumentId === id) {
+        const remaining = Array.from(newDocs.keys());
+        newActiveId = remaining.length > 0 ? remaining[0] : null;
+      }
+      
+      return { 
+        documents: newDocs,
+        activeDocumentId: newActiveId 
+      };
+    }),
 }));
 
 

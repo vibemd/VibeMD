@@ -1,3 +1,13 @@
+export interface NewDocumentDialogData {
+  filename: string;
+  saveAsTemplate: boolean;
+}
+
+export interface NewFileFromTemplateDialogData {
+  filename: string;
+  createNewTemplate: boolean;
+}
+
 export interface ElectronAPI {
   fileNew: () => Promise<string>;
   fileOpen: (defaultPath?: string) => Promise<{ filepath: string; filename: string; content: string; isTemplate: boolean } | null>;
