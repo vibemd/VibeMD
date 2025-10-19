@@ -248,7 +248,7 @@ export function TipTapEditor() {
 
     // Only update if content has actually changed to avoid unnecessary updates
     if (currentContent !== newContent) {
-      editor.commands.setContent(newContent, false);
+      editor.commands.setContent(newContent, { emitUpdate: false });
     }
   }, [editor, activeDocument?.id, activeDocument?.content]);
 
