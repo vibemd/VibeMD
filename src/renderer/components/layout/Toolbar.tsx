@@ -87,12 +87,17 @@ export function Toolbar() {
         const templatesLocation = settings.files.templatesLocation;
         if (!templatesLocation) {
           console.error('Templates location not set');
+          alert('Please set a templates location in Settings > Files before saving templates.');
           return;
         }
         const filepath = await fileService.saveTemplate(templatesLocation, doc.filename, doc.content);
         if (filepath) {
           updateDocument(doc.id, { filepath });
           markAsSaved(doc.id);
+          console.log('Template saved successfully to:', filepath);
+        } else {
+          console.error('Failed to save template');
+          alert('Failed to save template. Please check the templates location setting.');
         }
       } else {
         // Regular files use Save As dialog

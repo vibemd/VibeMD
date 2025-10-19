@@ -132,6 +132,39 @@ export function TipTapEditor() {
         linkReferenceStyle: 'full',
       });
 
+      // Add table support
+      turndownService.addRule('table', {
+        filter: 'table',
+        replacement: function (content, node) {
+          const table = node as HTMLTableElement;
+          const rows = Array.from(table.querySelectorAll('tr'));
+          if (rows.length === 0) return '';
+          
+          let markdown = '\n';
+          
+          // Process each row
+          rows.forEach((row, rowIndex) => {
+            const cells = Array.from(row.querySelectorAll('td, th'));
+            if (cells.length === 0) return;
+            
+            const cellContents = cells.map(cell => {
+              const cellText = cell.textContent || '';
+              return cellText.replace(/\|/g, '\\|').trim();
+            });
+            
+            markdown += '| ' + cellContents.join(' | ') + ' |\n';
+            
+            // Add separator row after header row
+            if (rowIndex === 0) {
+              const separator = cells.map(() => '---').join(' | ');
+              markdown += '| ' + separator + ' |\n';
+            }
+          });
+          
+          return markdown + '\n';
+        }
+      });
+
       return turndownService.turndown(html);
     } catch (error) {
       console.error('Error converting HTML to markdown:', error);
@@ -257,7 +290,14 @@ export function TipTapEditor() {
 
   // Update editor content when active document changes
   React.useEffect(() => {
-    if (!editor || !activeDocument) return;
+    if (!editor) return;
+
+    // If no active document, clear the editor
+    if (!activeDocument) {
+      console.log('[TipTap setContent] No active document, clearing editor');
+      editor.commands.clearContent();
+      return;
+    }
 
     // Skip if the update came from the editor itself to prevent circular updates
     if (isUpdatingFromEditor.current) {
