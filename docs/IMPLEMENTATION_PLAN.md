@@ -9,6 +9,8 @@
 - **Review**: End-of-phase review and adjustment
 
 ### 1.2 Development Phases
+
+**v1.0 Release Phases:**
 1. **Phase 0**: Project Setup and Infrastructure ✅
 2. **Phase 1**: Core Application Structure ✅
 3. **Phase 2**: File Management System ✅
@@ -18,8 +20,14 @@
 7. **Phase 6**: UI Polish and Theming ✅
 8. **Phase 7**: Testing and Bug Fixes ✅
 9. **Phase 8**: Documentation and Release Preparation ✅
-10. **Phase 9**: Enhanced Features (Planned)
-11. **Phase 10**: LaTeX Support (Future)
+10. **Phase 9**: Code Cleanup & Documentation 🔄 (Current)
+11. **Phase 10**: Testing & QA (Planned)
+12. **Phase 11**: Build & Distribution (Planned)
+13. **Phase 12**: Release Preparation (Planned)
+
+**Future Release Phases (v1.1+):**
+14. **Phase 13**: Enhanced Features - Split View (Future)
+15. **Phase 14**: LaTeX Support (Future)
 
 ## 2. Completed Phases
 
@@ -140,17 +148,131 @@
 - **Keyboard Shortcuts**: Standard editor shortcuts
 - **Status Bar**: Document statistics and save status
 
-### 🔄 In Progress
-- **Task List Functionality**: Final testing and refinement
-- **Super/Subscript Functionality**: Final testing and refinement
+### ✅ Phase 1 Complete - No Items In Progress
 
-## 4. Planned Phases
+All Phase 1 features are complete and working.
 
-### Phase 9: Enhanced Features (Planned)
+## 4. v1.0 Release Phases
+
+### Phase 9: Code Cleanup & Documentation 🔄
+**Duration**: 1 week
+**Status**: In Progress
+
+#### 9.1 Code Cleanup
+- ✅ Remove unused components (toggle.tsx, toggle-group.tsx)
+- ✅ Remove unused services (templateService.ts)
+- ✅ Remove duplicate documentation files
+- ✅ Clean up debug logging statements
+- ⏳ Code review and final polish
+
+#### 9.2 Documentation Updates
+- ✅ Update implementation status documentation
+- ⏳ Update README with Phase 1 completion
+- ⏳ Create TipTap implementation documentation
+- ⏳ Reorganize reference documentation
+- ⏳ Create user guide
+
+#### 9.3 Repository Organization
+- ⏳ Update CHANGELOG.md
+- ⏳ Review and update all markdown documentation
+- ⏳ Ensure consistent documentation formatting
+
+### Phase 10: Testing & QA (Planned)
+**Duration**: 1-2 weeks
+**Status**: Planned
+
+#### 10.1 Manual Testing
+- Test all file operations (new, open, save, save as)
+- Test template system thoroughly
+- Test all editor features (formatting, links, images, tables)
+- Test settings persistence
+- Test keyboard shortcuts
+- Test theme switching
+- Test multi-document support
+
+#### 10.2 Cross-Platform Testing
+- macOS testing (primary platform)
+- Windows testing
+- Linux testing
+- Test file dialogs on all platforms
+- Test print functionality on all platforms
+
+#### 10.3 Edge Case Testing
+- Large document handling (10,000+ lines)
+- Special characters in filenames
+- Network drive file operations
+- Concurrent document editing
+- Rapid save operations
+
+#### 10.4 Bug Fixes
+- Address discovered issues
+- Performance optimization
+- UI/UX refinements
+
+### Phase 11: Build & Distribution (Planned)
+**Duration**: 1 week
+**Status**: Planned
+
+#### 11.1 Production Build Configuration
+- Configure Electron Forge for production
+- Optimize webpack configuration
+- Configure CSP for production
+- Set up environment variables
+
+#### 11.2 Code Signing
+- Obtain macOS Developer ID certificate
+- Set up Windows code signing certificate
+- Configure signing in Electron Forge
+- Test signed builds
+
+#### 11.3 Installers
+- Create macOS .dmg installer
+- Create Windows .exe installer
+- Create Linux .AppImage/.deb packages
+- Test installation process on all platforms
+
+#### 11.4 Update Mechanism
+- Implement auto-update functionality
+- Set up update server/CDN
+- Test update process
+- Document update rollback procedure
+
+### Phase 12: Release Preparation (Planned)
+**Duration**: 1 week
+**Status**: Planned
+
+#### 12.1 Final Documentation
+- Complete user guide
+- Create quick start guide
+- Document keyboard shortcuts
+- Create troubleshooting guide
+- Write release notes
+
+#### 12.2 GitHub Release
+- Create v1.0.0 release tag
+- Upload installers to GitHub Releases
+- Write comprehensive changelog
+- Create release announcement
+
+#### 12.3 Website Updates
+- Update www.vibemd.app
+- Add download links
+- Add documentation section
+- Add feature showcase
+
+#### 12.4 Launch Activities
+- Announce on relevant platforms
+- Create demo videos
+- Write blog post
+- Monitor for issues
+
+## 5. Future Phases (v1.1+)
+
+### Phase 13: Enhanced Features (Future)
 **Duration**: 2-3 weeks
 **Status**: Planned
 
-#### 9.1 Split View Editor
+#### 13.1 Split View Editor
 - **Objective**: Implement CodeMirror + preview pane
 - **Tasks**:
   - Install and configure CodeMirror 6
@@ -160,7 +282,7 @@
   - Add integrated toolbar
   - Maintain cursor position mapping
 
-#### 9.2 Preview Mode
+#### 13.2 Preview Mode
 - **Objective**: Standalone preview mode
 - **Tasks**:
   - Implement preview-only mode
@@ -168,7 +290,7 @@
   - Implement print functionality
   - Add export options
 
-#### 9.3 Enhanced Table Management
+#### 13.3 Enhanced Table Management
 - **Objective**: Advanced table operations
 - **Tasks**:
   - Add table formatting options
@@ -176,7 +298,7 @@
   - Add table styling options
   - Implement table import/export
 
-#### 9.4 Advanced Task List Features
+#### 13.4 Advanced Task List Features
 - **Objective**: Enhanced task list functionality
 - **Tasks**:
   - Add task list templates
@@ -184,7 +306,7 @@
   - Add task list statistics
   - Implement task list export
 
-#### 9.5 Template Management UI
+#### 13.5 Template Management UI
 - **Objective**: Enhanced template system
 - **Tasks**:
   - Add template creation UI
@@ -192,11 +314,11 @@
   - Add template categories
   - Implement template sharing
 
-### Phase 10: LaTeX Support (Future)
+### Phase 14: LaTeX Support (Future)
 **Duration**: 2-3 weeks
 **Status**: Future
 
-#### 10.1 Math Expression Support
+#### 14.1 Math Expression Support
 - **Objective**: LaTeX math rendering
 - **Tasks**:
   - Install and configure KaTeX
@@ -205,7 +327,7 @@
   - Add math toolbar integration
   - Implement math syntax highlighting
 
-#### 10.2 Math Editor Features
+#### 14.2 Math Editor Features
 - **Objective**: Enhanced math editing
 - **Tasks**:
   - Add math equation editor

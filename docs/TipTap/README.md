@@ -1,6 +1,12 @@
 # Tiptap Markdown Editor - Complete Implementation Guide
 
-This package contains two complete, production-ready implementations of Tiptap with full CommonMark and GitHub Flavored Markdown (GFM) support.
+⚠️ **IMPORTANT: These are REFERENCE MATERIALS, not VibeMD's actual implementation.**
+
+For VibeMD's actual TipTap implementation, see [VIBEMD_IMPLEMENTATION.md](./VIBEMD_IMPLEMENTATION.md).
+
+---
+
+This package contains two complete, production-ready implementations of Tiptap with full CommonMark and GitHub Flavored Markdown (GFM) support. These are standalone reference examples preserved for learning and future development.
 
 ## 📦 What's Included
 
