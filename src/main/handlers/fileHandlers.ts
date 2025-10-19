@@ -50,9 +50,18 @@ ipcMain.handle('file:save', async (event, filepath: string, content: string) => 
   }
 });
 
-ipcMain.handle('file:saveAs', async (event, content: string, defaultPath?: string) => {
+ipcMain.handle('file:saveAs', async (event, content: string, defaultPath?: string, suggestedFilename?: string) => {
+  console.log('[FileHandler] saveAs called with suggestedFilename:', suggestedFilename);
+  const defaultFilename = suggestedFilename || 'untitled.md';
+  console.log('[FileHandler] Using filename:', defaultFilename);
+  
+  // Construct the full default path
+  const documentsPath = app.getPath('documents');
+  const fullDefaultPath = defaultPath ? join(defaultPath, defaultFilename) : join(documentsPath, defaultFilename);
+  console.log('[FileHandler] Full default path:', fullDefaultPath);
+  
   const result = await dialog.showSaveDialog({
-    defaultPath: defaultPath || join(app.getPath('documents'), 'untitled.md'),
+    defaultPath: fullDefaultPath,
     filters: [
       { name: 'Markdown Files', extensions: ['md', 'markdown'] },
       { name: 'All Files', extensions: ['*'] }

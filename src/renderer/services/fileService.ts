@@ -26,8 +26,9 @@ export class FileService {
     return await window.electronAPI.fileSave(filepath, content);
   }
 
-  async saveFileAs(content: string, defaultPath?: string): Promise<string | null> {
-    return await window.electronAPI.fileSaveAs(content, defaultPath);
+  async saveFileAs(content: string, defaultPath?: string, suggestedFilename?: string): Promise<string | null> {
+    console.log('[FileService] saveFileAs called with suggestedFilename:', suggestedFilename);
+    return await window.electronAPI.fileSaveAs(content, defaultPath, suggestedFilename);
   }
 
   async readFile(filepath: string): Promise<string | null> {

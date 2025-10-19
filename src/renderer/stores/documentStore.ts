@@ -97,20 +97,6 @@ export const useDocumentStore = create<DocumentStore>((set, get) => ({
     return Array.from(state.documents.values()).some(doc => doc.isModified);
   },
 
-  markAsSaved: (id) =>
-    set((state) => {
-      const doc = state.documents.get(id);
-      if (!doc) return state;
-
-      const newDocs = new Map(state.documents);
-      newDocs.set(id, { 
-        ...doc, 
-        isModified: false,
-        lastSaved: new Date()
-      });
-      return { documents: newDocs };
-    }),
-
   isActiveDocumentTemplate: () => {
     const state = get();
     const activeDoc = state.activeDocumentId ? state.documents.get(state.activeDocumentId) : null;

@@ -218,21 +218,38 @@ export function TemplatesTab() {
             </div>
           ))}
           
-          {/* Loaded templates from filesystem */}
-          {templates.map((template) => (
+          {/* Loaded templates from filesystem - only show if not already active */}
+          {templates
+            .filter(template => !documentsArray.some(doc => doc.id === template.id))
+            .map((template) => (
             <div
               key={template.id}
               className="p-2 rounded hover:bg-accent cursor-pointer group"
+              onClick={() => {
+                // Convert Template to Document format and add to active documents
+                const templateDoc: Document = {
+                  id: template.id,
+                  filename: template.filename,
+                  filepath: template.filepath,
+                  content: template.content,
+                  isModified: false,
+                  lastSaved: new Date(),
+                  isTemplate: true
+                };
+                
+                // Add template to active documents and set as active
+                addTemplate(templateDoc);
+                setActiveDocument(template.id);
+              }}
             >
               <div className="flex items-center gap-2">
-                <FileText style={{ height: '1rem', width: '1rem' }} />
                 <span className="flex-1 truncate text-sm">
                   {getDisplayName(template.filename)}
                 </span>
                 <Button
                   size="sm"
-                  variant="ghost"
-                  className="h-7 text-xs px-2"
+                  variant="default"
+                  className="h-7 text-xs px-2 bg-primary text-primary-foreground hover:bg-primary/90"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleUseTemplate(template);

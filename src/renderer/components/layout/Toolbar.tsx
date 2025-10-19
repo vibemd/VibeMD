@@ -101,7 +101,9 @@ export function Toolbar() {
         }
       } else {
         // Regular files use Save As dialog
-        const filepath = await fileService.saveFileAs(doc.content, settings.files.defaultSavePath || undefined);
+        console.log('[Save] Document filename:', doc.filename);
+        console.log('[Save] Document content length:', doc.content.length);
+        const filepath = await fileService.saveFileAs(doc.content, settings.files.defaultSavePath || undefined, doc.filename);
         if (filepath) {
           updateDocument(doc.id, { filepath });
           await fileService.saveFile(filepath, doc.content);
@@ -121,7 +123,7 @@ export function Toolbar() {
     // Save As is only available for regular files, not templates
     if (doc.isTemplate) return;
 
-    const filepath = await fileService.saveFileAs(doc.content, settings.files.defaultSavePath || undefined);
+    const filepath = await fileService.saveFileAs(doc.content, settings.files.defaultSavePath || undefined, doc.filename);
     if (filepath) {
       updateDocument(doc.id, { filepath });
       await fileService.saveFile(filepath, doc.content);

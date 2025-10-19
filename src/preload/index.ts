@@ -7,8 +7,8 @@ const electronAPI = {
   fileOpen: (defaultPath?: string) => ipcRenderer.invoke('file:open', defaultPath),
   fileSave: (filepath: string, content: string) => 
     ipcRenderer.invoke('file:save', filepath, content),
-  fileSaveAs: (content: string, defaultPath?: string) => 
-    ipcRenderer.invoke('file:saveAs', content, defaultPath),
+  fileSaveAs: (content: string, defaultPath?: string, suggestedFilename?: string) => 
+    ipcRenderer.invoke('file:saveAs', content, defaultPath, suggestedFilename),
   fileRead: (filepath: string) => 
     ipcRenderer.invoke('file:read', filepath),
   
