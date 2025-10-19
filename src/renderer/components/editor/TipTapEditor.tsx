@@ -15,7 +15,6 @@ import { TaskList } from '@tiptap/extension-task-list';
 import { TaskItem } from '@tiptap/extension-task-item';
 import { Superscript } from '@tiptap/extension-superscript';
 import { Subscript } from '@tiptap/extension-subscript';
-import { HardBreak } from '@tiptap/extension-hard-break';
 import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
 import { Extension } from '@tiptap/core';
 import { useDocumentStore } from '@/stores/documentStore';
@@ -174,15 +173,11 @@ export function TipTapEditor() {
         heading: false, // Use custom Heading extension instead
         listItem: false, // Exclude to prevent duplicate
         link: false, // Exclude to prevent duplicate
-        hardBreak: false, // Use custom HardBreak extension
         horizontalRule: false, // Use custom HorizontalRule extension
-        // Enable strikethrough (GFM)
-        strike: true,
-        // Keep code and codeBlock enabled
-        code: true,
-        codeBlock: true,
+        // Keep hardBreak enabled in StarterKit (don't exclude it)
+        // Keep strikethrough, code, and codeBlock with default configurations
       }),
-      
+
       // Custom extensions for better control
       Heading.configure({
         levels: [1, 2, 3, 4, 5, 6], // Support all heading levels
@@ -194,13 +189,8 @@ export function TipTapEditor() {
       TaskItem.configure({
         nested: true,
       }),
-      Superscript.configure({
-        excludeNodes: ['subscript'],
-      }),
-      Subscript.configure({
-        excludeNodes: ['superscript'],
-      }),
-      HardBreak,
+      Superscript,
+      Subscript,
       HorizontalRule,
       HeadingIdExtension,
       
