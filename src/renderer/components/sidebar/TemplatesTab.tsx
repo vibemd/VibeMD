@@ -19,7 +19,6 @@ import { cn } from '@/lib/utils';
 import { fileService } from '@/services/fileService';
 
 export function TemplatesTab() {
-  console.log('TemplatesTab RENDERED');
   const { templates, loading, loadTemplates } = useTemplatesStore();
   const { settings } = useSettingsStore();
   const { 
@@ -36,7 +35,6 @@ export function TemplatesTab() {
   
   // Force re-render when documents change by converting Map to Array
   const documentsArray = Array.from(documents.values());
-  console.log('TemplatesTab: Documents array length:', documentsArray.length);
   
   // Helper function to remove file extensions from display names
   const getDisplayName = (filename: string) => {
@@ -53,19 +51,6 @@ export function TemplatesTab() {
       loadTemplates(settings.files.templatesLocation);
     }
   }, [settings.files.templatesLocation, loadTemplates]);
-
-  // Force re-render when documents change
-  useEffect(() => {
-    console.log('TemplatesTab: Documents changed, re-rendering');
-    console.log('TemplatesTab: Documents count:', documents.size);
-    console.log('TemplatesTab: All documents:', Array.from(documents.values()));
-  }, [documents]);
-
-  // Also listen to document store changes
-  const documentCount = documents.size;
-  useEffect(() => {
-    console.log('TemplatesTab: Document count changed to:', documentCount);
-  }, [documentCount]);
 
   const handleUseTemplate = (template: Template) => {
     setSelectedTemplate(template);
@@ -169,21 +154,9 @@ export function TemplatesTab() {
 
   // Get active template documents (templates being edited)
   const activeTemplates = documentsArray.filter((doc: Document) => doc.isTemplate);
-  console.log('TemplatesTab render - All documents:', documentsArray);
-  console.log('TemplatesTab render - Active templates:', activeTemplates);
-  console.log('TemplatesTab render - Documents count:', documentsArray.length);
-  console.log('TemplatesTab render - Template count:', activeTemplates.length);
-  
-  // Check each document's isTemplate flag
-  documentsArray.forEach((doc: Document) => {
-    console.log(`Document ${doc.filename}: isTemplate=${doc.isTemplate}`);
-  });
-  
+
   // Check if we should show the empty state
   const shouldShowEmpty = activeTemplates.length === 0 && templates.length === 0;
-  console.log('TemplatesTab render - Should show empty:', shouldShowEmpty);
-  console.log('TemplatesTab render - Templates from store:', templates);
-  console.log('TemplatesTab render - Templates length:', templates.length);
 
   if (shouldShowEmpty) {
     return (
@@ -248,22 +221,25 @@ export function TemplatesTab() {
           {templates.map((template) => (
             <div
               key={template.id}
-              className="p-2 rounded hover:bg-accent group"
+              className="p-2 rounded hover:bg-accent cursor-pointer group"
             >
               <div className="flex items-center gap-2">
                 <FileText style={{ height: '1rem', width: '1rem' }} />
                 <span className="flex-1 truncate text-sm">
-                  {template.filename}
+                  {getDisplayName(template.filename)}
                 </span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 text-xs px-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleUseTemplate(template);
+                  }}
+                >
+                  Use
+                </Button>
               </div>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="w-full mt-2"
-                onClick={() => handleUseTemplate(template)}
-              >
-                Use
-              </Button>
             </div>
           ))}
         </div>
