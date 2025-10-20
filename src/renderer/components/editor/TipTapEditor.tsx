@@ -39,7 +39,9 @@ import {
   Superscript as SuperscriptIcon,
   Subscript as SubscriptIcon,
   ChevronDown,
-  Minus as HorizontalRuleIcon
+  Minus as HorizontalRuleIcon,
+  Indent,
+  Outdent
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -175,7 +177,7 @@ export function TipTapEditor() {
   // Custom extension to preserve heading IDs
   const HeadingIdExtension = Extension.create({
     name: 'headingId',
-    
+
     addGlobalAttributes() {
       return [
         {
@@ -196,6 +198,30 @@ export function TipTapEditor() {
           },
         },
       ];
+    },
+  });
+
+  // Custom extension for list indentation keyboard shortcuts
+  const ListIndentExtension = Extension.create({
+    name: 'listIndent',
+
+    addKeyboardShortcuts() {
+      return {
+        'Tab': () => {
+          // Check if we're in a list
+          if (this.editor.isActive('listItem')) {
+            return this.editor.commands.sinkListItem('listItem');
+          }
+          return false;
+        },
+        'Shift-Tab': () => {
+          // Check if we're in a list
+          if (this.editor.isActive('listItem')) {
+            return this.editor.commands.liftListItem('listItem');
+          }
+          return false;
+        },
+      };
     },
   });
 
@@ -232,7 +258,8 @@ export function TipTapEditor() {
       Subscript,
       HorizontalRule,
       HeadingIdExtension,
-      
+      ListIndentExtension,
+
       // Link support (CommonMark) with autolink enabled
       Link.configure({
         openOnClick: false,
@@ -589,6 +616,48 @@ export function TipTapEditor() {
           </TooltipTrigger>
           <TooltipContent>
             <p>Numbered List</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
+    {
+      id: 'indent',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().sinkListItem('listItem').run()}
+              disabled={!editor?.can().sinkListItem('listItem')}
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground disabled:opacity-30 disabled:cursor-not-allowed ${
+                editor?.isActive('listItem') ? '' : ''
+              }`}
+            >
+              <Indent className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Indent List (Tab)</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
+    {
+      id: 'outdent',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => editor?.chain().focus().liftListItem('listItem').run()}
+              disabled={!editor?.can().liftListItem('listItem')}
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground disabled:opacity-30 disabled:cursor-not-allowed ${
+                editor?.isActive('listItem') ? '' : ''
+              }`}
+            >
+              <Outdent className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Outdent List (Shift+Tab)</p>
           </TooltipContent>
         </Tooltip>
       ),

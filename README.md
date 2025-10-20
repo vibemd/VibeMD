@@ -318,7 +318,7 @@ The `vibemd.sh` script provides process management:
 
 MIT License - See LICENSE file for details
 
-Copyright (c) 2025 Cam McDonald
+Copyright (c) 2025 ONLY1 Pty Ltd
 
 ## Third-Party Licenses
 
@@ -335,7 +335,7 @@ Major components:
 ## Support
 
 For issues, questions, or contributions, please contact:
-- Email: cmcdonald@only1.com.au
+- Email: hello@vibemd.app
 - Project: VibeMD v1.0.0
 
 ## Acknowledgments

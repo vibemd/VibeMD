@@ -48,19 +48,8 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     if (loadedSettings) {
       set({ settings: { ...defaultSettings, ...loadedSettings } });
     } else {
-      // If no settings found, initialize default paths to user's documents root
-      const userDocsPath = await window.electronAPI.getUserDocumentsPath();
-
-      set((state) => ({
-        settings: {
-          ...state.settings,
-          files: {
-            ...state.settings.files,
-            defaultSavePath: userDocsPath, // Set default save path to user's documents root
-            templatesLocation: null, // Don't set templates location - user must explicitly choose
-          },
-        },
-      }));
+      // If no settings found, keep paths blank - user must set them on first use
+      set({ settings: defaultSettings });
       await settingsService.saveSettings(get().settings); // Save initial settings
     }
     set({ loading: false });

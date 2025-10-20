@@ -25,10 +25,27 @@
     "templates"
   ],
   "author": {
-    "name": "Cam McDonald",
-    "email": "cmcdonald@only1.com.au"
+    "name": "ONLY1 Pty Ltd",
+    "email": "hello@vibemd.app"
   },
   "license": "MIT",
+  "fileAssociations": [
+    {
+      "ext": "md",
+      "name": "Markdown File",
+      "role": "Editor"
+    },
+    {
+      "ext": "markdown",
+      "name": "Markdown File",
+      "role": "Editor"
+    },
+    {
+      "ext": "vibe",
+      "name": "VibeMD Document",
+      "role": "Editor"
+    }
+  ],
   "devDependencies": {
     "@electron-forge/cli": "^7.10.2",
     "@electron-forge/maker-deb": "^7.10.2",

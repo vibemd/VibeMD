@@ -18,13 +18,78 @@ const config: ForgeConfig = {
     name: 'VibeMD',
     executableName: 'VibeMD',
     icon: './build/icons/icon',
+    appCopyright: 'Copyright © 2025 ONLY1 Pty Ltd',
+    appBundleId: 'com.vibemd.app',
+    // macOS file associations
+    protocols: [
+      {
+        name: 'VibeMD',
+        schemes: ['vibemd']
+      }
+    ],
+    extendInfo: {
+      CFBundleDocumentTypes: [
+        {
+          CFBundleTypeName: 'Markdown File',
+          CFBundleTypeRole: 'Editor',
+          CFBundleTypeExtensions: ['md', 'markdown'],
+          CFBundleTypeIconFile: 'icon.icns',
+          LSHandlerRank: 'Default'
+        },
+        {
+          CFBundleTypeName: 'VibeMD Document',
+          CFBundleTypeRole: 'Editor',
+          CFBundleTypeExtensions: ['vibe'],
+          CFBundleTypeIconFile: 'icon.icns',
+          LSHandlerRank: 'Owner'
+        }
+      ]
+    },
+    win32metadata: {
+      CompanyName: 'ONLY1 Pty Ltd',
+      FileDescription: 'VibeMD - Modern Markdown Editor',
+      OriginalFilename: 'VibeMD.exe',
+      ProductName: 'VibeMD',
+      InternalName: 'VibeMD'
+    }
   },
   rebuildConfig: {},
   makers: [
-    new MakerSquirrel({}),
-    new MakerZIP({}, ['darwin']),
-    new MakerRpm({}),
-    new MakerDeb({}),
+    new MakerSquirrel({
+      name: 'VibeMD',
+      authors: 'ONLY1 Pty Ltd',
+      description: 'A modern, cross-platform desktop markdown editor',
+      setupIcon: './build/icons/icon.ico',
+      iconUrl: 'https://raw.githubusercontent.com/vibemd/vibemd/main/build/icons/icon.ico',
+      noMsi: true,
+      // Windows file associations
+      loadingGif: './build/icons/icon.ico',
+      setupExe: 'VibeMD-Setup.exe',
+      setupMsi: 'VibeMD-Setup.msi'
+    }),
+    new MakerZIP({}, ['darwin', 'win32']),
+    new MakerRpm({
+      options: {
+        name: 'vibemd',
+        productName: 'VibeMD',
+        genericName: 'Markdown Editor',
+        description: 'A modern, cross-platform desktop markdown editor',
+        icon: './build/icons/icon.svg',
+        categories: ['Office', 'TextEditor'],
+        mimeType: ['text/markdown', 'text/x-markdown', 'application/x-vibe']
+      }
+    }),
+    new MakerDeb({
+      options: {
+        name: 'vibemd',
+        productName: 'VibeMD',
+        genericName: 'Markdown Editor',
+        description: 'A modern, cross-platform desktop markdown editor',
+        icon: './build/icons/icon.svg',
+        categories: ['Office', 'TextEditor'],
+        mimeType: ['text/markdown', 'text/x-markdown', 'application/x-vibe']
+      }
+    }),
   ],
   plugins: [
     new AutoUnpackNativesPlugin({}),
@@ -55,7 +120,7 @@ const config: ForgeConfig = {
       [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
       [FuseV1Options.EnableNodeCliInspectArguments]: false,
       [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
-      [FuseV1Options.OnlyLoadAppFromAsar]: true,
+      [FuseV1Options.OnlyLoadAppFromAsar]: false,  // Must be false for ICU data to load on Windows
     }),
   ],
 };

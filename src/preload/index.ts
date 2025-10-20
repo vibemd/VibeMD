@@ -9,9 +9,11 @@ const electronAPI = {
     ipcRenderer.invoke('file:save', filepath, content),
   fileSaveAs: (content: string, defaultPath?: string, suggestedFilename?: string) => 
     ipcRenderer.invoke('file:saveAs', content, defaultPath, suggestedFilename),
-  fileRead: (filepath: string) => 
+  fileRead: (filepath: string) =>
     ipcRenderer.invoke('file:read', filepath),
-  
+  fileOpenFromPath: (filepath: string) =>
+    ipcRenderer.invoke('file:openFromPath', filepath),
+
   // Directory operations
   selectFolder: () => ipcRenderer.invoke('dir:selectFolder'),
   readTemplates: (dirPath: string) => 
@@ -44,6 +46,14 @@ const electronAPI = {
   },
   removeMenuEventListener: (callback: (event: any, menuAction: string) => void) => {
     ipcRenderer.removeListener('menu-event', callback);
+  },
+
+  // File association handling
+  onOpenFileFromAssociation: (callback: (event: any, filepath: string) => void) => {
+    ipcRenderer.on('open-file-from-association', callback);
+  },
+  removeOpenFileFromAssociationListener: (callback: (event: any, filepath: string) => void) => {
+    ipcRenderer.removeListener('open-file-from-association', callback);
   },
 };
 

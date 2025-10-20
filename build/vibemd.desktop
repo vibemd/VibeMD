@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=VibeMD
+GenericName=Markdown Editor
+Comment=A modern, cross-platform desktop markdown editor
+Exec=vibemd %F
+Icon=vibemd
+Terminal=false
+Categories=Office;TextEditor;
+MimeType=text/markdown;text/x-markdown;application/x-vibe;
+Keywords=markdown;editor;md;notes;
+StartupNotify=true
+StartupWMClass=VibeMD

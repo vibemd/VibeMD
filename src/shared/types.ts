@@ -14,6 +14,7 @@ export interface ElectronAPI {
   fileSave: (filepath: string, content: string) => Promise<boolean>;
   fileSaveAs: (content: string, defaultPath?: string, suggestedFilename?: string) => Promise<string | null>;
   fileRead: (filepath: string) => Promise<string | null>;
+  fileOpenFromPath: (filepath: string) => Promise<{ filepath: string; filename: string; content: string; isTemplate: boolean } | null>;
   selectFolder: () => Promise<string | null>;
   readTemplates: (dirPath: string) => Promise<Template[]>;
   getUserDocumentsPath: () => Promise<string>;
@@ -25,6 +26,8 @@ export interface ElectronAPI {
   testPing: () => Promise<string>;
   onMenuEvent: (callback: (event: any, menuAction: string) => void) => void;
   removeMenuEventListener: (callback: (event: any, menuAction: string) => void) => void;
+  onOpenFileFromAssociation: (callback: (event: any, filepath: string) => void) => void;
+  removeOpenFileFromAssociationListener: (callback: (event: any, filepath: string) => void) => void;
 }
 
 export interface Document {

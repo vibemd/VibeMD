@@ -1,7 +1,16 @@
+import * as path from 'path';
+
+// CRITICAL FIX: Configure ICU data path BEFORE importing Electron
+// This must happen before any Electron module loads
+if (process.platform === 'win32') {
+  const exeDir = path.dirname(process.execPath);
+  // Set ICU data path via environment variable
+  process.env.ICU_DATA_FILE = path.join(exeDir, 'icudtl.dat');
+}
+
 import { app, BrowserWindow, Menu, nativeImage } from 'electron';
 import { createMainWindow } from './window';
 import './handlers'; // Import IPC handlers
-import * as path from 'path';
 import * as fs from 'fs';
 
 // Set app name for macOS navbar and dock
@@ -35,8 +44,45 @@ if (require('electron-squirrel-startup')) {
 
 let mainWindow: BrowserWindow | null = null;
 
+// Store file path to open on launch (for file associations)
+let fileToOpen: string | null = null;
+
+// Handle file opening on macOS (open-file event)
+app.on('open-file', (event, path) => {
+  event.preventDefault();
+  console.log('[File Association] open-file event received:', path);
+
+  if (mainWindow) {
+    // Window is already open, send file path to renderer
+    mainWindow.webContents.send('open-file-from-association', path);
+  } else {
+    // Window not yet created, store path for later
+    fileToOpen = path;
+  }
+});
+
+// Handle file opening on Windows/Linux (via command line arguments)
+if (process.platform === 'win32' || process.platform === 'linux') {
+  // Check if a file path was passed as command line argument
+  const args = process.argv.slice(1);
+  if (args.length > 0 && !args[0].startsWith('--') && (args[0].endsWith('.md') || args[0].endsWith('.markdown') || args[0].endsWith('.vibe'))) {
+    fileToOpen = args[0];
+    console.log('[File Association] File to open from command line:', fileToOpen);
+  }
+}
+
 app.on('ready', () => {
   mainWindow = createMainWindow();
+
+  // If a file was queued to open, send it to the renderer after window is ready
+  if (fileToOpen && mainWindow) {
+    console.log('[File Association] Sending queued file to renderer:', fileToOpen);
+    // Give the renderer time to initialize
+    setTimeout(() => {
+      mainWindow?.webContents.send('open-file-from-association', fileToOpen);
+      fileToOpen = null;
+    }, 1000);
+  }
   
   // Set application menu for macOS
   if (process.platform === 'darwin') {

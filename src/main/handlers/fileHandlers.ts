@@ -90,3 +90,24 @@ ipcMain.handle('file:read', async (event, filepath: string) => {
   }
 });
 
+// Handle opening a file from file association (double-click, "Open With", etc.)
+ipcMain.handle('file:openFromPath', async (event, filepath: string) => {
+  try {
+    const content = await readFile(filepath, 'utf-8');
+    const filename = filepath.split(/[/\\]/).pop() || 'Untitled.md';
+    const isTemplate = filepath.endsWith('.vibe');
+
+    console.log('[FileHandler] Opened file from association:', { filename, filepath, isTemplate });
+
+    return {
+      filename,
+      filepath,
+      content,
+      isTemplate
+    };
+  } catch (error) {
+    console.error('Error opening file from path:', error);
+    throw error;
+  }
+});
+
