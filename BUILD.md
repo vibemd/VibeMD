@@ -346,15 +346,36 @@ jobs:
           path: out/make/**/*
 ```
 
+## Pre-Build Preparation
+
+### Settings Reset for Clean Deployment
+
+Before building for deployment, ensure settings are reset to allow automatic path initialization:
+
+```bash
+# Run the settings reset script
+./scripts/reset-settings.sh
+```
+
+This removes the local settings file so that:
+- Users get automatic OS-appropriate default paths on first launch
+- defaultSavePath is set to user's Documents folder
+- templatesLocation is set to Documents/VibeMD/Templates
+
+**Important**: The application is designed to auto-initialize paths on first run. No settings file should be included in the build.
+
+See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for comprehensive deployment information.
+
 ## Version Updates
 
 To release a new version:
 
 1. Update `version` in `package.json`
 2. Update `README.md` if needed
-3. Build for all platforms
-4. Create GitHub release with built artifacts
-5. Tag the release: `git tag v1.0.1`
+3. Reset settings for clean deployment (see above)
+4. Build for all platforms
+5. Create GitHub release with built artifacts
+6. Tag the release: `git tag v1.0.1`
 
 ## Support
 

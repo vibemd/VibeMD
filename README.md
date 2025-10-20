@@ -11,10 +11,14 @@ VibeMD is an Electron-based markdown editor that combines the simplicity of mark
 ### Editor Capabilities
 - **WYSIWYG Editing**: Real-time rich-text editing with TipTap editor framework
 - **Markdown Support**: Full CommonMark and GitHub Flavored Markdown (GFM) support
-- **Mathematical Expressions**: LaTeX math rendering powered by KaTeX
+- **Mathematical Expressions**: LaTeX math rendering powered by KaTeX with intuitive formula insertion dialog
+  - Insert inline math ($...$) or block math ($$...$$) via toolbar button
+  - Plain text LaTeX entry with real-time preview
+  - Support for complex formulas including integrals, matrices, and more
 - **Syntax Highlighting**: Code blocks with syntax awareness
 - **Tables**: Full table support with editing capabilities
 - **Task Lists**: Interactive checkboxes for task management
+- **List Management**: Indent and outdent list items with Tab/Shift+Tab keyboard shortcuts
 - **Image Support**: Inline image embedding and display
 - **Link Management**: Easy link insertion and editing
 
@@ -22,6 +26,10 @@ VibeMD is an Electron-based markdown editor that combines the simplicity of mark
 - **Multi-Document Interface**: Work with multiple documents simultaneously
 - **Auto-Save**: Automatic saving to prevent data loss
 - **File Operations**: New, Open, Save, Save As with native file dialogs
+- **Automatic Path Initialization**: First-launch auto-detection of OS documents folder for seamless setup
+  - Automatically sets default save location to user's Documents folder
+  - Auto-configures templates directory to Documents/VibeMD/Templates
+  - Works across macOS, Windows, and Linux with OS-appropriate paths
 - **Template System**: Create and manage document templates
 - **File Organization**: Sidebar navigation with document list and outline view
 
@@ -63,13 +71,15 @@ VibeMD is an Electron-based markdown editor that combines the simplicity of mark
   - Subscript, Superscript
   - Table (with Cell, Header, Row)
   - Task List and Task Item
+  - Mathematics Extension (custom LaTeX support)
 - **Marked 16.4.0**: Markdown parser and compiler
 - **Turndown 7.2.1**: HTML to Markdown converter
 - **Remark 15.0.1**: Markdown processor with plugins
   - Remark Parse 11.0.0
   - Remark GFM 4.0.1 (GitHub Flavored Markdown)
   - Remark Math 6.0.0
-- **KaTeX 0.16.25**: Fast math typesetting
+- **KaTeX 0.16.25**: Fast math typesetting for LaTeX formulas
+- **@tiptap/extension-mathematics**: TipTap LaTeX extension
 - **React Markdown 10.1.0**: Markdown rendering component
 - **Rehype KaTeX 7.0.1**: KaTeX integration for HTML
 
@@ -105,7 +115,7 @@ VibeMD/
 │   │   ├── index.ts            # Main entry point, window management
 │   │   └── handlers/           # IPC handlers
 │   │       ├── fileHandlers.ts     # File operations (open, save, etc.)
-│   │       └── settingsHandlers.ts # Settings, print operations
+│   │       └── settingsHandlers.ts # Settings, print, system path operations
 │   │
 │   ├── preload/                 # Preload scripts (context bridge)
 │   │   └── index.ts            # IPC API exposure to renderer
@@ -116,7 +126,8 @@ VibeMD/
 │   │   │   ├── dialogs/        # Modal dialogs
 │   │   │   │   ├── SettingsDialog.tsx
 │   │   │   │   ├── SettingsTab.tsx
-│   │   │   │   └── AboutTab.tsx
+│   │   │   │   ├── AboutTab.tsx
+│   │   │   │   └── MathDialog.tsx  # LaTeX formula input dialog
 │   │   │   ├── editor/         # Editor components
 │   │   │   │   └── TipTapEditor.tsx  # Main WYSIWYG editor
 │   │   │   ├── layout/         # Layout components
@@ -141,12 +152,19 @@ VibeMD/
 │   │   ├── stores/             # Zustand state stores
 │   │   │   ├── documentStore.ts    # Document state
 │   │   │   ├── uiStore.ts          # UI state (theme, sidebar)
-│   │   │   └── settingsStore.ts    # Application settings
+│   │   │   └── settingsStore.ts    # Settings with auto-path init
 │   │   └── styles/             # Global styles
 │   │       └── globals.css     # Tailwind & custom CSS
 │   │
 │   └── shared/                  # Shared types and constants
 │       └── types.ts            # TypeScript interfaces
+│
+├── scripts/                     # Build and deployment scripts
+│   ├── pre-build.js            # Pre-build documentation
+│   └── reset-settings.sh       # Settings reset utility
+│
+├── docs/                        # Documentation
+│   └── MARKDOWN_CONFORMANCE_20251020.md
 │
 ├── templates/                   # Built-in document templates
 │   ├── meeting-notes.vibe
@@ -157,6 +175,7 @@ VibeMD/
 ├── tsconfig.json               # TypeScript configuration
 ├── tailwind.config.js          # Tailwind CSS configuration
 ├── forge.config.ts             # Electron Forge configuration
+├── DEPLOYMENT_GUIDE.md         # Deployment and path initialization guide
 └── vibemd.sh                   # Process management script (macOS/Linux)
 ```
 
@@ -172,7 +191,7 @@ The application uses Electron's IPC (Inter-Process Communication) with context i
 Three separate Zustand stores manage different concerns:
 - **documentStore**: Active documents, content, templates
 - **uiStore**: Theme, sidebar state, active tabs
-- **settingsStore**: User preferences, editor settings
+- **settingsStore**: User preferences, editor settings, automatic OS path initialization
 
 #### Document Format
 Documents are stored with metadata in a structured format:
