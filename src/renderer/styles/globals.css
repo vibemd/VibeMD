@@ -230,6 +230,7 @@
 
 .ProseMirror code {
   background-color: #f3f4f6;
+  color: #1f2937; /* Dark text for light background */
   padding: 0.125em 0.25em;
   border-radius: 0.25em;
   font-family: 'Courier New', monospace;
@@ -238,6 +239,7 @@
 
 .ProseMirror pre {
   background-color: #f3f4f6;
+  color: #1f2937; /* Dark text for light background */
   padding: 1em;
   border-radius: 0.5em;
   margin: 1em 0;
@@ -393,8 +395,8 @@
   }
   
   .prose code {
-    color: hsl(var(--foreground));
-    background-color: hsl(var(--muted));
+    color: #1f2937; /* Dark text for light background */
+    background-color: #f3f4f6; /* Light background */
     font-weight: 600;
     font-size: 0.875em;
     padding: 0.125em 0.25em;
@@ -403,8 +405,8 @@
   }
   
   .prose pre {
-    color: hsl(var(--foreground));
-    background-color: hsl(var(--muted));
+    color: #1f2937; /* Dark text for light background */
+    background-color: #f3f4f6; /* Light background */
     overflow-x: auto;
     font-weight: 400;
     font-size: 0.875em;
