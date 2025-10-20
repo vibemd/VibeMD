@@ -246,6 +246,18 @@ export function TemplatesTab() {
                 <span className="flex-1 truncate text-sm">
                   {getDisplayName(template.filename)}
                 </span>
+                
+                {/* Save state indicator - filesystem templates are always saved */}
+                <span 
+                  style={{ 
+                    width: '0.5rem', 
+                    height: '0.5rem', 
+                    borderRadius: '50%',
+                    backgroundColor: '#22c55e' // green for saved (filesystem templates are always saved)
+                  }} 
+                  title="Saved"
+                />
+                
                 <Button
                   size="sm"
                   variant="default"
