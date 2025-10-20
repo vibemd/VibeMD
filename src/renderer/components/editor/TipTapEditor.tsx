@@ -54,6 +54,7 @@ import {
   X,
   Divide
 } from 'lucide-react';
+import { MathDialog } from '../dialogs/MathDialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -403,7 +404,7 @@ export function TipTapEditor() {
       }),
       
       Table.configure({
-        resizable: true,
+        resizable: false, // Disable resizing to prevent width: 0px issue
         allowTableNodeSelection: true,
         HTMLAttributes: {
           class: 'border-collapse table-auto w-full',
@@ -412,16 +413,14 @@ export function TipTapEditor() {
       TableRow,
       TableHeader,
       TableCellWithAlignment,
-      
-      // Mathematics extension (conditional based on settings)
-      ...(settings.editor.latexSupport ? [
-        Mathematics.configure({
-          katexOptions: {
-            throwOnError: false,
-            errorColor: '#cc0000',
-          },
-        })
-      ] : []),
+
+      // Mathematics extension (always enabled)
+      Mathematics.configure({
+        katexOptions: {
+          throwOnError: false,
+          errorColor: '#cc0000',
+        },
+      }),
     ],
     content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
     autofocus: 'start', // Auto-focus at start
@@ -448,6 +447,9 @@ export function TipTapEditor() {
 
   // State to force toolbar re-render when editor state changes
   const [updateTrigger, setUpdateTrigger] = React.useState(0);
+  
+  // State for math dialog
+  const [mathDialogOpen, setMathDialogOpen] = React.useState(false);
 
   // Update editor content when active document changes
   React.useEffect(() => {
@@ -686,6 +688,78 @@ export function TipTapEditor() {
           </TooltipTrigger>
           <TooltipContent>
             <p>Inline Code (click again to exit)</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
+    {
+      id: 'alignLeft',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                editor?.chain().focus().setTextAlign('left').run();
+              }}
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive({ textAlign: 'left' }) ||
+                editor?.isActive('tableCell', { textAlign: 'left' }) ?
+                'bg-accent text-accent-foreground' : ''
+              }`}
+            >
+              <AlignLeft className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Align Left</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
+    {
+      id: 'alignCenter',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                editor?.chain().focus().setTextAlign('center').run();
+              }}
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive({ textAlign: 'center' }) ||
+                editor?.isActive('tableCell', { textAlign: 'center' }) ?
+                'bg-accent text-accent-foreground' : ''
+              }`}
+            >
+              <AlignCenter className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Align Center</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
+    {
+      id: 'alignRight',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                editor?.chain().focus().setTextAlign('right').run();
+              }}
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive({ textAlign: 'right' }) ||
+                editor?.isActive('tableCell', { textAlign: 'right' }) ?
+                'bg-accent text-accent-foreground' : ''
+              }`}
+            >
+              <AlignRight className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Align Right</p>
           </TooltipContent>
         </Tooltip>
       ),
@@ -931,9 +1005,22 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => {
+                if (!editor) return;
+
                 console.log('[Table] Inserting table');
-                editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
-                console.log('[Table] After insert, isActive:', editor?.isActive('table'));
+                try {
+                  // Insert a simple 3x3 table without header row first, then convert first row to header
+                  // This ensures all rows have the same number of cells
+                  editor.chain()
+                    .focus()
+                    .insertTable({ rows: 3, cols: 3, withHeaderRow: false })
+                    .run();
+
+                  console.log('[Table] After insert, isActive:', editor.isActive('table'));
+                  console.log('[Table] HTML:', editor.getHTML());
+                } catch (error) {
+                  console.error('[Table] Error inserting table:', error);
+                }
               }}
               className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
             >
@@ -1010,198 +1097,67 @@ export function TipTapEditor() {
         </Tooltip>
       ),
     },
+
+    // Math button (always shown)
     {
-      id: 'alignLeft',
+      id: 'insertMath',
       component: (
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => {
-                editor?.chain().focus().setTextAlign('left').run();
-              }}
-              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
-                editor?.isActive({ textAlign: 'left' }) || 
-                editor?.isActive('tableCell', { textAlign: 'left' }) ? 
-                'bg-accent text-accent-foreground' : ''
-              }`}
+              onClick={() => setMathDialogOpen(true)}
+              className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
             >
-              <AlignLeft className="h-4 w-4" />
+              <SquareFunction className="h-4 w-4" />
             </button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Align Left</p>
+            <p>Insert Math Formula</p>
           </TooltipContent>
         </Tooltip>
       ),
     },
-    {
-      id: 'alignCenter',
-      component: (
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => {
-                editor?.chain().focus().setTextAlign('center').run();
-              }}
-              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
-                editor?.isActive({ textAlign: 'center' }) || 
-                editor?.isActive('tableCell', { textAlign: 'center' }) ? 
-                'bg-accent text-accent-foreground' : ''
-              }`}
-            >
-              <AlignCenter className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Align Center</p>
-          </TooltipContent>
-        </Tooltip>
-      ),
-    },
-    {
-      id: 'alignRight',
-      component: (
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => {
-                editor?.chain().focus().setTextAlign('right').run();
-              }}
-              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
-                editor?.isActive({ textAlign: 'right' }) || 
-                editor?.isActive('tableCell', { textAlign: 'right' }) ? 
-                'bg-accent text-accent-foreground' : ''
-              }`}
-            >
-              <AlignRight className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Align Right</p>
-          </TooltipContent>
-        </Tooltip>
-      ),
-    },
-    
-    // Math buttons (only show if LaTeX support is enabled)
-    ...(settings.editor.latexSupport ? [
-      {
-        id: 'inlineMath',
-        component: (
-          <Tooltip delayDuration={300}>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => {
-                  editor?.chain().focus().insertInlineMath({ latex: 'E = mc^2' }).run();
-                }}
-                className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
-              >
-                <SquareFunction className="h-4 w-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Inline Math ($...$)</p>
-            </TooltipContent>
-          </Tooltip>
-        ),
-      },
-      {
-        id: 'blockMath',
-        component: (
-          <Tooltip delayDuration={300}>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => {
-                  editor?.chain().focus().insertBlockMath({ latex: '\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}' }).run();
-                }}
-                className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
-              >
-                <SquarePower className="h-4 w-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Block Math ($$...$$)</p>
-            </TooltipContent>
-          </Tooltip>
-        ),
-      },
-      {
-        id: 'mathPlus',
-        component: (
-          <Tooltip delayDuration={300}>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => editor?.chain().focus().insertContent('+').run()}
-                className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Plus (+)</p>
-            </TooltipContent>
-          </Tooltip>
-        ),
-      },
-      {
-        id: 'mathMinus',
-        component: (
-          <Tooltip delayDuration={300}>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => editor?.chain().focus().insertContent('-').run()}
-                className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
-              >
-                <Minus className="h-4 w-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Minus (-)</p>
-            </TooltipContent>
-          </Tooltip>
-        ),
-      },
-      {
-        id: 'mathTimes',
-        component: (
-          <Tooltip delayDuration={300}>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => editor?.chain().focus().insertContent('×').run()}
-                className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Times (×)</p>
-            </TooltipContent>
-          </Tooltip>
-        ),
-      },
-      {
-        id: 'mathDivide',
-        component: (
-          <Tooltip delayDuration={300}>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => editor?.chain().focus().insertContent('÷').run()}
-                className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
-              >
-                <Divide className="h-4 w-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Divide (÷)</p>
-            </TooltipContent>
-          </Tooltip>
-        ),
-      },
-    ] : []),
-  ], [editor, updateTrigger, settings.editor.latexSupport]); // Re-create when editor state changes
+  ], [editor, updateTrigger]); // Re-create when editor state changes
 
   // Filter out null components (like tableCommands when not in table)
   const visibleToolbarButtons = toolbarButtons.filter(button => button.component !== null);
+
+  // Handler for math dialog
+  const handleMathInsert = (type: 'inline' | 'block', latex: string) => {
+    console.log('[MathDialog] Inserting math:', { type, latex });
+
+    if (!editor) {
+      console.error('[MathDialog] No editor instance available');
+      return;
+    }
+
+    try {
+      // Get current cursor position
+      const { from } = editor.state.selection;
+      console.log('[MathDialog] Current cursor position:', from);
+      console.log('[MathDialog] Available commands:', Object.keys(editor.commands));
+
+      if (type === 'inline') {
+        console.log('[MathDialog] Attempting to insert inline math');
+        // Try using the command directly with explicit typing bypass
+        const result = (editor.chain().focus() as any).insertInlineMath({ latex }).run();
+        console.log('[MathDialog] Insert inline math result:', result);
+        console.log('[MathDialog] HTML after insert:', editor.getHTML());
+      } else {
+        console.log('[MathDialog] Attempting to insert block math');
+        // Try using the command directly with explicit typing bypass
+        const result = (editor.chain().focus() as any).insertBlockMath({ latex }).run();
+        console.log('[MathDialog] Insert block math result:', result);
+        console.log('[MathDialog] HTML after insert:', editor.getHTML());
+      }
+
+      // Close the dialog after successful insertion
+      setMathDialogOpen(false);
+    } catch (error) {
+      console.error('[MathDialog] Error inserting math:', error);
+      console.error('[MathDialog] Error details:', error);
+    }
+  };
 
   if (!editor) {
     return null;
@@ -1373,6 +1329,13 @@ export function TipTapEditor() {
             }
             setImageDialogOpen(false);
           }}
+        />
+        
+        {/* Math Dialog */}
+        <MathDialog
+          open={mathDialogOpen}
+          onOpenChange={setMathDialogOpen}
+          onInsert={handleMathInsert}
         />
       </div>
     </TooltipProvider>

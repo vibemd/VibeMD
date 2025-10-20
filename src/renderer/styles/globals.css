@@ -22,7 +22,7 @@
 .ProseMirror table {
   border-collapse: collapse;
   table-layout: fixed;
-  width: 100%;
+  width: 100% !important; /* Force full width, override inline styles */
   margin: 0;
   overflow: hidden;
 }

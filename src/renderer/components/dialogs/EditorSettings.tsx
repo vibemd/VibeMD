@@ -61,17 +61,6 @@ export function EditorSettings({ settings, onChange }: EditorSettingsProps) {
               Sets the base font size for normal text. All other formatting scales from this value.
             </p>
           </div>
-          
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="latexSupport"
-              checked={settings.editor.latexSupport}
-              onCheckedChange={(checked) => updateEditor({ latexSupport: !!checked })}
-            />
-            <label htmlFor="latexSupport" className="text-sm font-medium">
-              Enable LaTeX support
-            </label>
-          </div>
         </div>
       </div>
     </div>

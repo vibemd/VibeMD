@@ -11,6 +11,7 @@ interface SettingsState {
   updateThemeSettings: (updates: Partial<Settings['theme']>) => void;
   updateFileSettings: (updates: Partial<Settings['files']>) => void;
   updateEditorSettings: (updates: Partial<Settings['editor']>) => void;
+  resetPathsToDefaults: () => Promise<void>;
 }
 
 const defaultSettings: Settings = {
@@ -30,7 +31,6 @@ const defaultSettings: Settings = {
     fontSize: 12, // Changed default from 16 to 12
     fontFamily: 'Arial', // Set default font family
     lineNumbers: false, // Removed line numbers by default
-    latexSupport: true,
   },
   about: {
     version: '1.0.0',
@@ -45,13 +45,43 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   loadSettings: async () => {
     set({ loading: true });
     const loadedSettings = await settingsService.loadSettings();
+
+    // Get the user's documents path from the OS
+    const userDocumentsPath = await window.electronAPI.getUserDocumentsPath();
+
     if (loadedSettings) {
-      set({ settings: { ...defaultSettings, ...loadedSettings } });
+      // Merge loaded settings with defaults
+      const mergedSettings = { ...defaultSettings, ...loadedSettings };
+
+      // Auto-initialize paths if they are null (first run or reset scenario)
+      if (mergedSettings.files.defaultSavePath === null) {
+        mergedSettings.files.defaultSavePath = userDocumentsPath;
+      }
+
+      if (mergedSettings.files.templatesLocation === null) {
+        mergedSettings.files.templatesLocation = `${userDocumentsPath}/VibeMD/Templates`;
+      }
+
+      set({ settings: mergedSettings });
+
+      // Save the updated settings if paths were auto-initialized
+      if (loadedSettings.files?.defaultSavePath === null || loadedSettings.files?.templatesLocation === null) {
+        await settingsService.saveSettings(mergedSettings);
+      }
     } else {
-      // If no settings found, keep paths blank - user must set them on first use
-      set({ settings: defaultSettings });
-      await settingsService.saveSettings(get().settings); // Save initial settings
+      // First run - initialize with OS defaults
+      const initialSettings = {
+        ...defaultSettings,
+        files: {
+          defaultSavePath: userDocumentsPath,
+          templatesLocation: `${userDocumentsPath}/VibeMD/Templates`,
+        },
+      };
+
+      set({ settings: initialSettings });
+      await settingsService.saveSettings(initialSettings);
     }
+
     set({ loading: false });
   },
 
@@ -100,5 +130,23 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       },
     }));
     settingsService.saveSettings(get().settings);
+  },
+
+  resetPathsToDefaults: async () => {
+    // Get the user's documents path from the OS
+    const userDocumentsPath = await window.electronAPI.getUserDocumentsPath();
+
+    // Reset paths to OS defaults
+    const updatedSettings = {
+      ...get().settings,
+      files: {
+        ...get().settings.files,
+        defaultSavePath: userDocumentsPath,
+        templatesLocation: `${userDocumentsPath}/VibeMD/Templates`,
+      },
+    };
+
+    set({ settings: updatedSettings });
+    await settingsService.saveSettings(updatedSettings);
   },
 }));

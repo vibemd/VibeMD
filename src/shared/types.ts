@@ -64,7 +64,6 @@ export interface Settings {
     fontSize: number;
     fontFamily: string;
     lineNumbers: boolean;
-    latexSupport: boolean;
   };
   about: {
     version: string;
