@@ -22,6 +22,7 @@ import { Document } from '@shared/types';
 import { useState } from 'react';
 import { NewDocumentDialog } from '@/components/dialogs/NewDocumentDialog';
 import { NewDocumentDialogData } from '@shared/types';
+import { marked } from 'marked';
 
 export function Toolbar() {
   const { addDocument, addTemplate, getActiveDocument, setActiveDocument, updateDocument, markAsSaved, isActiveDocumentTemplate } =
@@ -132,25 +133,58 @@ export function Toolbar() {
   };
 
   const handlePrint = async () => {
+    console.log('[Print] Print button clicked!');
+    console.log('[Print] window.electronAPI available:', !!window.electronAPI);
+    console.log('[Print] printDocument function available:', !!window.electronAPI?.printDocument);
+    
+    // Test IPC communication first
+    try {
+      console.log('[Print] Testing IPC communication...');
+      const testResult = await window.electronAPI.testPing?.();
+      console.log('[Print] IPC test result:', testResult);
+    } catch (testError) {
+      console.error('[Print] IPC test failed:', testError);
+    }
+    
     const doc = getActiveDocument();
-    if (!doc) return;
+    console.log('[Print] Active document:', doc);
+    
+    if (!doc) {
+      console.log('[Print] No active document, returning');
+      return;
+    }
 
-    // Convert markdown to HTML for printing
-    // This is a simple implementation - in production, you'd use a proper markdown renderer
-    const htmlContent = doc.content
-      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-      .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
-      .replace(/^##### (.*$)/gim, '<h5>$1</h5>')
-      .replace(/^###### (.*$)/gim, '<h6>$1</h6>')
-      .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
-      .replace(/\*(.*)\*/gim, '<em>$1</em>')
-      .replace(/`(.*)`/gim, '<code>$1</code>')
-      .replace(/^- (.*$)/gim, '<li>$1</li>')
-      .replace(/\n/g, '<br>');
-
-    await window.electronAPI.printDocument(htmlContent);
+    console.log('[Print] Starting print process...');
+    try {
+      // Use the marked library to properly convert markdown to HTML
+      // marked() returns a Promise<string>, so we need to await it
+      console.log('[Print] Converting markdown to HTML...');
+      const htmlContent = await marked(doc.content);
+      console.log('[Print] HTML content length:', htmlContent.length);
+      console.log('[Print] Calling electronAPI.printDocument...');
+      const result = await window.electronAPI.printDocument(htmlContent);
+      console.log('[Print] Print request completed, result:', result);
+    } catch (error) {
+      console.error('[Print] Error printing document:', error);
+      // Fallback to basic conversion if marked fails
+      console.log('[Print] Using fallback HTML conversion...');
+      const fallbackHTML = doc.content
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+        .replace(/^##### (.*$)/gim, '<h5>$1</h5>')
+        .replace(/^###### (.*$)/gim, '<h6>$1</h6>')
+        .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+        .replace(/\*(.*)\*/gim, '<em>$1</em>')
+        .replace(/`(.*)`/gim, '<code>$1</code>')
+        .replace(/^- (.*$)/gim, '<li>$1</li>')
+        .replace(/\n/g, '<br>');
+      
+      console.log('[Print] Calling electronAPI.printDocument with fallback...');
+      const fallbackResult = await window.electronAPI.printDocument(fallbackHTML);
+      console.log('[Print] Fallback print request completed, result:', fallbackResult);
+    }
   };
 
   const handleSettings = () => {
@@ -160,6 +194,10 @@ export function Toolbar() {
   const activeDoc = getActiveDocument();
   const hasUnsavedChanges = activeDoc?.isModified;
   const isTemplate = isActiveDocumentTemplate();
+  
+  // Debug logging for print button state
+  console.log('[Toolbar] activeDoc:', activeDoc);
+  console.log('[Toolbar] Print button disabled:', !activeDoc);
 
   return (
     <TooltipProvider delayDuration={300} skipDelayDuration={100}>

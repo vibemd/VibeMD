@@ -3,6 +3,7 @@ import { useDocumentStore } from '@/stores/documentStore';
 import { useUIStore } from '@/stores/uiStore';
 import { fileService } from '@/services/fileService';
 import { Document } from '@shared/types';
+import { marked } from 'marked';
 
 export function useKeyboardShortcuts() {
   const { addDocument, getActiveDocument, updateDocument, markAsSaved } = 
@@ -63,7 +64,16 @@ export function useKeyboardShortcuts() {
             
           case 'p':
             event.preventDefault();
-            // Print functionality is already implemented in Toolbar
+            // Print functionality
+            const printDoc = getActiveDocument();
+            if (!printDoc) return;
+            
+            try {
+              const htmlContent = await marked(printDoc.content);
+              await window.electronAPI.printDocument(htmlContent);
+            } catch (error) {
+              console.error('[Keyboard] Error printing document:', error);
+            }
             break;
             
           case ',':

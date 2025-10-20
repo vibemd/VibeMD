@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useTheme } from '@/hooks/useTheme';
+import { useMenuService } from '@/services/menuService';
 import './services/appService'; // Initialize app service
 import './styles/globals.css';
 
@@ -11,6 +12,9 @@ function App() {
   
   // Apply theme changes
   useTheme();
+  
+  // Initialize menu service
+  useMenuService();
   
   useEffect(() => {
     loadSettings();

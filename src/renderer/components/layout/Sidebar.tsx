@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/tooltip';
 
 export function Sidebar() {
-  const { sidebarCollapsed, toggleSidebar } = useUIStore();
+  const { sidebarCollapsed, toggleSidebar, sidebarTab, setSidebarTab } = useUIStore();
 
   if (sidebarCollapsed) {
     return (
@@ -62,7 +62,7 @@ export function Sidebar() {
           </Tooltip>
         </div>
         
-        <Tabs defaultValue="files" className="flex-1 flex flex-col h-full">
+        <Tabs value={sidebarTab} onValueChange={(value) => setSidebarTab(value as 'files' | 'outline' | 'templates')} className="flex-1 flex flex-col h-full">
           <TabsList className="grid w-full" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
             <TabsTrigger value="files">Files</TabsTrigger>
             <TabsTrigger value="outline">Outline</TabsTrigger>

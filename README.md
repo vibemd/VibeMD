@@ -1,232 +1,348 @@
 # VibeMD
 
-A professional cross-platform desktop markdown editor for Windows, macOS, and Linux featuring WYSIWYG editing, comprehensive CommonMark/GFM support, template system, and native OS integration.
+A modern, cross-platform desktop markdown editor with WYSIWYG editing capabilities, a powerful template system, and seamless native OS integration.
 
-## 🚀 Features
+## Overview
 
-### Core Editor Features
-- **WYSIWYG Editor**: TipTap-powered rich text editor with professional toolbar
-- **Complete Markdown Support**: 100% CommonMark and GitHub Flavored Markdown (GFM) compliance
-- **Real-time Preview**: Live markdown rendering with bidirectional conversion
-- **Multi-document Support**: Work with multiple documents simultaneously
-- **Outline Navigation**: Collapsible document outline with click-to-navigate functionality
+VibeMD is an Electron-based markdown editor that combines the simplicity of markdown with the convenience of rich-text editing. Built with React, TypeScript, and TipTap, it provides a distraction-free writing environment with real-time preview and extensive markdown support including GitHub Flavored Markdown (GFM) and mathematical expressions.
 
-### Formatting Capabilities
-- **Text Formatting**: Bold, italic, strikethrough, inline code
-- **Headings**: All levels (H1-H6) with automatic ID generation
-- **Lists**: Bullet lists, numbered lists, and task lists with checkboxes
-- **Tables**: Full table support with insert/delete operations
-- **Media**: Links and images with professional dialog interfaces
-- **Advanced**: Superscript, subscript, blockquotes, code blocks, horizontal rules
+## Key Features
+
+### Editor Capabilities
+- **WYSIWYG Editing**: Real-time rich-text editing with TipTap editor framework
+- **Markdown Support**: Full CommonMark and GitHub Flavored Markdown (GFM) support
+- **Mathematical Expressions**: LaTeX math rendering powered by KaTeX
+- **Syntax Highlighting**: Code blocks with syntax awareness
+- **Tables**: Full table support with editing capabilities
+- **Task Lists**: Interactive checkboxes for task management
+- **Image Support**: Inline image embedding and display
+- **Link Management**: Easy link insertion and editing
+
+### Document Management
+- **Multi-Document Interface**: Work with multiple documents simultaneously
+- **Auto-Save**: Automatic saving to prevent data loss
+- **File Operations**: New, Open, Save, Save As with native file dialogs
+- **Template System**: Create and manage document templates
+- **File Organization**: Sidebar navigation with document list and outline view
 
 ### Template System
-- **Document Templates**: Create and use `.vibe` files for document scaffolding
-- **Template Management**: Built-in template creation and organization
-- **Quick Start**: Pre-built templates for common document types
+- **Built-in Templates**: Pre-configured templates for common document types
+- **Custom Templates**: Create your own templates for recurring document structures
+- **Filesystem Templates**: Load templates from a designated folder
+- **Template Categories**: Organize templates by use case (Meeting Notes, Project Proposal, etc.)
 
-### Native Integration
-- **File Operations**: Native file dialogs for open/save operations
-- **Print Support**: Direct printing with markdown-to-HTML conversion
-- **System Theme**: Automatic light/dark/system theme detection
-- **Keyboard Shortcuts**: Standard editor shortcuts (Ctrl+B, Ctrl+I, etc.)
+### User Interface
+- **Dark/Light Theme**: System-integrated theme switching
+- **Collapsible Sidebar**: Maximize writing space when needed
+- **Toolbar**: Quick access to formatting options and document actions
+- **Outline View**: Navigate long documents via heading structure
+- **Settings Dialog**: Comprehensive settings management
+- **Keyboard Shortcuts**: Efficient keyboard-driven workflow
 
-### User Experience
-- **Settings Management**: Comprehensive customization options
-- **Responsive Design**: Adaptive toolbar with overflow handling
-- **Status Bar**: Document statistics and save status indicators
-- **Process Management**: Clean startup/shutdown with conflict avoidance
+### Native OS Integration
+- **Native Menus**: Platform-native menu bars (macOS, Windows, Linux)
+- **File Dialogs**: Native file open/save dialogs
+- **Print Support**: System print dialog integration
+- **Window Management**: Native window controls and behaviors
 
-## 🏗️ Architecture
+## Architecture
 
 ### Technology Stack
-- **Desktop Framework**: Electron Forge with Webpack bundling
-- **Frontend**: React 18 + TypeScript 5
-- **Editor Engine**: TipTap with custom extensions
-- **Markdown Processing**: marked + turndown for bidirectional conversion
-- **UI Components**: ShadCN/ui with Tailwind CSS styling
-- **State Management**: Zustand stores
-- **Math Support**: KaTeX engine (ready for LaTeX integration)
 
-### Application Architecture
+#### Core Framework
+- **Electron 38.2.2**: Cross-platform desktop application framework
+- **React 19.2.0**: UI component library
+- **TypeScript 4.5.4**: Type-safe development
+- **Electron Forge 7.10.2**: Build and packaging toolchain
+
+#### Editor & Markdown
+- **TipTap 3.7.1**: Headless editor framework with extensions
+  - Starter Kit (base functionality)
+  - Hard Break, Horizontal Rule
+  - Image, Link
+  - Subscript, Superscript
+  - Table (with Cell, Header, Row)
+  - Task List and Task Item
+- **Marked 16.4.0**: Markdown parser and compiler
+- **Turndown 7.2.1**: HTML to Markdown converter
+- **Remark 15.0.1**: Markdown processor with plugins
+  - Remark Parse 11.0.0
+  - Remark GFM 4.0.1 (GitHub Flavored Markdown)
+  - Remark Math 6.0.0
+- **KaTeX 0.16.25**: Fast math typesetting
+- **React Markdown 10.1.0**: Markdown rendering component
+- **Rehype KaTeX 7.0.1**: KaTeX integration for HTML
+
+#### UI Components
+- **Radix UI**: Accessible, unstyled UI primitives
+  - Checkbox, Dialog, Dropdown Menu
+  - Label, Radio Group, Select
+  - Separator, Slot, Tabs
+  - Toggle Group, Tooltip
+- **Tailwind CSS 3.4.18**: Utility-first CSS framework
+- **Lucide React 0.545.0**: Icon library
+
+#### State Management & Utilities
+- **Zustand 5.0.8**: Lightweight state management
+- **Date-fns 4.1.0**: Modern date utility library
+- **UUID 13.0.0**: Unique identifier generation
+- **Zod 4.1.12**: TypeScript-first schema validation
+- **Class Variance Authority 0.7.1**: Variant-based component APIs
+- **CLSX 2.1.1**: Conditional className construction
+- **Tailwind Merge 3.3.1**: Tailwind class conflict resolution
+
+#### Build Tools
+- **Autoprefixer 10.4.21**: CSS vendor prefix automation
+- **PostCSS 8.5.6**: CSS transformation tool
+- **Webpack**: Module bundler (via Electron Forge)
+
+### Application Structure
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    VibeMD Desktop App                       │
-├─────────────────────────────────────────────────────────────┤
-│  Main Process (Electron)                                    │
-│  ├── Window Management                                       │
-│  ├── File Operations (IPC Handlers)                        │
-│  ├── System Integration (Print, Dialogs)                    │
-│  └── Process Management                                      │
-├─────────────────────────────────────────────────────────────┤
-│  Renderer Process (React)                                   │
-│  ├── TipTap Editor Component                                │
-│  │   ├── Toolbar (Formatting Controls)                     │
-│  │   ├── Editor Content (WYSIWYG)                          │
-│  │   └── Context Menus (Table Operations)                  │
-│  ├── Layout Components                                      │
-│  │   ├── Sidebar (Files, Outline, Templates)               │
-│  │   ├── Status Bar (Document Stats)                       │
-│  │   └── Dialogs (Settings, Links, Images)                 │
-│  ├── Services Layer                                         │
-│  │   ├── File Service (Markdown I/O)                       │
-│  │   ├── Settings Service (Persistence)                   │
-│  │   ├── Navigation Service (Outline)                       │
-│  │   └── Markdown Service (Processing)                      │
-│  └── State Management (Zustand)                            │
-│      ├── Document Store (Active Documents)                 │
-│      ├── Settings Store (User Preferences)                 │
-│      ├── UI Store (Interface State)                        │
-│      └── Templates Store (Template Management)              │
-└─────────────────────────────────────────────────────────────┘
+VibeMD/
+├── src/
+│   ├── main/                    # Electron main process
+│   │   ├── index.ts            # Main entry point, window management
+│   │   └── handlers/           # IPC handlers
+│   │       ├── fileHandlers.ts     # File operations (open, save, etc.)
+│   │       └── settingsHandlers.ts # Settings, print operations
+│   │
+│   ├── preload/                 # Preload scripts (context bridge)
+│   │   └── index.ts            # IPC API exposure to renderer
+│   │
+│   ├── renderer/                # React application
+│   │   ├── App.tsx             # Main application component
+│   │   ├── components/         # UI components
+│   │   │   ├── dialogs/        # Modal dialogs
+│   │   │   │   ├── SettingsDialog.tsx
+│   │   │   │   ├── SettingsTab.tsx
+│   │   │   │   └── AboutTab.tsx
+│   │   │   ├── editor/         # Editor components
+│   │   │   │   └── TipTapEditor.tsx  # Main WYSIWYG editor
+│   │   │   ├── layout/         # Layout components
+│   │   │   │   ├── Sidebar.tsx
+│   │   │   │   └── Toolbar.tsx
+│   │   │   ├── sidebar/        # Sidebar tab components
+│   │   │   │   ├── FilesTab.tsx
+│   │   │   │   ├── OutlineTab.tsx
+│   │   │   │   └── TemplatesTab.tsx
+│   │   │   └── ui/             # Reusable UI primitives (shadcn/ui)
+│   │   │       ├── button.tsx
+│   │   │       ├── dialog.tsx
+│   │   │       ├── tabs.tsx
+│   │   │       └── ...
+│   │   ├── hooks/              # Custom React hooks
+│   │   │   └── useKeyboardShortcuts.ts
+│   │   ├── lib/                # Utility functions
+│   │   │   └── utils.ts
+│   │   ├── services/           # Business logic
+│   │   │   ├── menuService.ts      # Menu event handling
+│   │   │   └── settingsService.ts  # Settings persistence
+│   │   ├── stores/             # Zustand state stores
+│   │   │   ├── documentStore.ts    # Document state
+│   │   │   ├── uiStore.ts          # UI state (theme, sidebar)
+│   │   │   └── settingsStore.ts    # Application settings
+│   │   └── styles/             # Global styles
+│   │       └── globals.css     # Tailwind & custom CSS
+│   │
+│   └── shared/                  # Shared types and constants
+│       └── types.ts            # TypeScript interfaces
+│
+├── templates/                   # Built-in document templates
+│   ├── meeting-notes.vibe
+│   ├── project-proposal.vibe
+│   └── ...
+│
+├── package.json                 # Project dependencies and scripts
+├── tsconfig.json               # TypeScript configuration
+├── tailwind.config.js          # Tailwind CSS configuration
+├── forge.config.ts             # Electron Forge configuration
+└── vibemd.sh                   # Process management script (macOS/Linux)
 ```
 
-### Markdown Processing Pipeline
+### Key Architectural Patterns
 
+#### IPC Communication
+The application uses Electron's IPC (Inter-Process Communication) with context isolation:
+- **Main Process**: Handles file I/O, system dialogs, print operations
+- **Preload Script**: Exposes secure API to renderer via `contextBridge`
+- **Renderer Process**: React UI that calls exposed APIs
+
+#### State Management
+Three separate Zustand stores manage different concerns:
+- **documentStore**: Active documents, content, templates
+- **uiStore**: Theme, sidebar state, active tabs
+- **settingsStore**: User preferences, editor settings
+
+#### Document Format
+Documents are stored with metadata in a structured format:
+```typescript
+{
+  id: string;              // UUID
+  title: string;           // Document title
+  content: string;         // Markdown content
+  filePath?: string;       // Filesystem path
+  isModified: boolean;     // Unsaved changes flag
+  isTemplate: boolean;     // Template designation
+  createdAt: Date;
+  updatedAt: Date;
+}
 ```
-Markdown Input → marked (GFM) → HTML → TipTap Editor
-TipTap Editor → HTML → turndown → Markdown Output
-```
 
-### Extension Architecture
-- **Core Extensions**: StarterKit (bold, italic, headings, etc.)
-- **GFM Extensions**: Tables, task lists, strikethrough, superscript/subscript
-- **Custom Extensions**: Heading ID generation, navigation support
-- **Future Extensions**: Mathematics (LaTeX) support ready for integration
-
-## 📋 Markdown Support Status
-
-### ✅ CommonMark (100% Complete)
-- Headings (H1-H6)
-- Paragraphs and line breaks
-- Bold and italic emphasis
-- Code blocks (fenced) and inline code
-- Blockquotes
-- Ordered and unordered lists
-- Links and images
-- Horizontal rules
-
-### ✅ GitHub Flavored Markdown (100% Complete)
-- Strikethrough text
-- Tables with full editing capabilities
-- Task lists with checkboxes
-- Autolinks
-- Subscript and superscript
-
-### 🔄 LaTeX Math (Ready for Implementation)
-- **Available Libraries**: KaTeX, remark-math, rehype-katex
-- **Missing**: TipTap mathematics extension integration
-- **Planned**: Inline math (`$...$`) and block math (`$$...$$`)
-
-## 🛠️ Development
+## Installation
 
 ### Prerequisites
-- Node.js 18.x or higher
-- npm 9.x or higher
-- Git
+- Node.js 16.x or higher
+- npm 7.x or higher
 
-### Quick Start
+### Development Setup
+
+1. Clone the repository:
 ```bash
-# Clone and setup
-git clone https://github.com/camonly1group/vibemd.git
-cd vibemd
+git clone <repository-url>
+cd VibeMD
+```
+
+2. Install dependencies:
+```bash
 npm install
-
-# Start development (recommended)
-npm run start:clean
-
-# Build for production
-npm run make
 ```
 
-### Development Scripts
-- `npm run start:clean` - Start with process cleanup (recommended)
-- `npm run stop` - Stop the application
-- `npm run restart` - Restart the application
-- `npm run status` - Check application status
-- `npm run logs` - View recent logs
-- `npm run make` - Build for production
-- `npm run lint` - Run ESLint
-
-### Process Management
-VibeMD includes intelligent process management to avoid conflicts with development tools:
-
+3. Start the development server:
 ```bash
-# Recommended startup
-npm run start:clean
-
-# Check status
-npm run status
-
-# View logs
-npm run logs
+npm start
 ```
 
-For detailed process management, see [PROCESS_MANAGEMENT.md](./PROCESS_MANAGEMENT.md).
+### Building for Production
 
-## 📦 Building and Distribution
+1. Package the application:
+```bash
+npm run package
+```
 
-### Cross-Platform Builds
+2. Create distributables:
 ```bash
 npm run make
 ```
 
-Builds native applications for:
-- Windows (x64)
-- macOS (x64, ARM64)
-- Linux (x64)
+This will create platform-specific distributables in the `out/` directory:
+- macOS: `.dmg` and `.zip`
+- Windows: `.exe` installer
+- Linux: `.deb` and `.rpm` packages
 
-### Build Configuration
-- **Electron Forge**: Automated packaging and distribution
-- **Webpack**: Optimized bundling for main, renderer, and preload processes
-- **Code Signing**: Ready for macOS and Windows code signing
-- **Auto-updater**: Electron Squirrel integration
-
-## 🔧 Configuration
-
-### Settings Categories
-- **General**: Theme, language, startup behavior
-- **Editor**: Font family, font size, line height, tab size
-- **Files**: Default save location, templates directory
-- **Advanced**: Debug options, experimental features
+## Usage
 
 ### Keyboard Shortcuts
-- `Ctrl+N` - New document
-- `Ctrl+O` - Open document
-- `Ctrl+S` - Save document
-- `Ctrl+Shift+S` - Save as
-- `Ctrl+P` - Print document
-- `Ctrl+,` - Open settings
-- `Ctrl+B` - Bold text
-- `Ctrl+I` - Italic text
 
-## 📚 Documentation
+#### File Operations
+- `Cmd+N` / `Ctrl+N`: New document
+- `Cmd+O` / `Ctrl+O`: Open document
+- `Cmd+S` / `Ctrl+S`: Save document
+- `Cmd+Shift+S` / `Ctrl+Shift+S`: Save As
+- `Cmd+P` / `Ctrl+P`: Print document
 
-- **[COMMONMARK_GFM_LATEX_GAPS_20251020.md](./docs/COMMONMARK_GFM_LATEX_GAPS_20251020.md)** - Comprehensive markdown support analysis
-- **[PROCESS_MANAGEMENT.md](./PROCESS_MANAGEMENT.md)** - Development process management guide
+#### Editing
+- `Cmd+B` / `Ctrl+B`: Bold
+- `Cmd+I` / `Ctrl+I`: Italic
+- `Cmd+U` / `Ctrl+U`: Underline
+- `Cmd+Z` / `Ctrl+Z`: Undo
+- `Cmd+Shift+Z` / `Ctrl+Shift+Z`: Redo
 
-## 🤝 Contributing
+#### Application
+- `Cmd+,` / `Ctrl+,`: Settings
+- `Cmd+Q` / `Ctrl+Q`: Quit (macOS)
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### Working with Templates
 
-### Development Guidelines
-- Follow TypeScript best practices
-- Use Prettier for code formatting
-- Write comprehensive tests for new features
-- Update documentation for significant changes
+1. **Using Built-in Templates**:
+   - Click "Use Template" button in sidebar (when no documents open)
+   - Select from available templates in the Templates tab
+   - Click "Use Template" on desired template
 
-## 📄 License
+2. **Creating Custom Templates**:
+   - Create a new document
+   - Add your template content
+   - Save with `.vibe` extension
+   - Place in templates folder or save as template within app
 
-MIT License - see [LICENSE](LICENSE) file for details.
+3. **Managing Templates**:
+   - Templates tab shows all available templates
+   - Can set a custom templates directory in Settings
+   - Templates are automatically loaded on app start
 
-## 🌐 Website
+### Configuration
 
-Visit [www.vibemd.app](https://www.vibemd.app) for more information, documentation, and updates.
+Settings are accessible via `Cmd+,` / `Ctrl+,`:
 
----
+- **Appearance**: Theme (Light/Dark/System)
+- **Editor**: Font size, line numbers, word wrap
+- **Files**: Auto-save, templates directory
+- **About**: Version info, licenses, third-party components
 
-**VibeMD** - Professional markdown editing for the modern developer.
+## Development
+
+### Project Scripts
+
+```bash
+npm start              # Start development server
+npm run start:clean    # Clean start (via vibemd.sh)
+npm run stop           # Stop running instance (via vibemd.sh)
+npm run restart        # Restart instance (via vibemd.sh)
+npm run status         # Check running status (via vibemd.sh)
+npm run logs           # View application logs (via vibemd.sh)
+npm run package        # Package for current platform
+npm run make           # Build distributables
+npm run lint           # Run ESLint
+```
+
+### Process Management (macOS/Linux)
+
+The `vibemd.sh` script provides process management:
+```bash
+./vibemd.sh start      # Start in background
+./vibemd.sh stop       # Stop all instances
+./vibemd.sh restart    # Restart application
+./vibemd.sh status     # Check if running
+./vibemd.sh logs       # Tail application logs
+```
+
+### Adding New Features
+
+1. **New IPC Handlers**: Add to `src/main/handlers/`
+2. **Expose to Renderer**: Update `src/preload/index.ts`
+3. **Type Definitions**: Add to `src/shared/types.ts`
+4. **UI Components**: Add to `src/renderer/components/`
+5. **State Management**: Update relevant store in `src/renderer/stores/`
+
+## License
+
+MIT License - See LICENSE file for details
+
+Copyright (c) 2025 Cam McDonald
+
+## Third-Party Licenses
+
+This application incorporates open-source software. Full license information for all third-party components is available in the About section of the application (Settings → About).
+
+Major components:
+- Electron (MIT)
+- React (MIT)
+- TipTap (MIT)
+- Tailwind CSS (MIT)
+- Radix UI (MIT)
+- And many others - see application About section for complete list
+
+## Support
+
+For issues, questions, or contributions, please contact:
+- Email: cmcdonald@only1.com.au
+- Project: VibeMD v1.0.0
+
+## Acknowledgments
+
+VibeMD is built on the shoulders of giants. Special thanks to:
+- The Electron team for the amazing cross-platform framework
+- The TipTap team for the flexible editor framework
+- The Radix UI team for accessible UI primitives
+- The Tailwind CSS team for the utility-first CSS framework
+- All open-source contributors whose libraries make this project possible

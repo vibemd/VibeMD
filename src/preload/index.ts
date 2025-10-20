@@ -30,9 +30,21 @@ const electronAPI = {
   printDocument: (htmlContent: string) => 
     ipcRenderer.invoke('print:document', htmlContent),
   
+  // Test operations
+  testPing: () => 
+    ipcRenderer.invoke('test:ping'),
+  
   // App operations
   checkUnsavedChanges: () => ipcRenderer.invoke('app:checkUnsavedChanges'),
   showCloseConfirmation: () => ipcRenderer.invoke('app:showCloseConfirmation'),
+  
+  // Menu event handling
+  onMenuEvent: (callback: (event: any, menuAction: string) => void) => {
+    ipcRenderer.on('menu-event', callback);
+  },
+  removeMenuEventListener: (callback: (event: any, menuAction: string) => void) => {
+    ipcRenderer.removeListener('menu-event', callback);
+  },
 };
 
 // Expose the API to the renderer process

@@ -58,10 +58,12 @@ app.on('ready', () => {
       {
         label: 'File',
         submenu: [
-          { label: 'New', accelerator: 'Command+N', click: () => mainWindow?.webContents.send('menu-new-file') },
-          { label: 'Open', accelerator: 'Command+O', click: () => mainWindow?.webContents.send('menu-open-file') },
-          { label: 'Save', accelerator: 'Command+S', click: () => mainWindow?.webContents.send('menu-save-file') },
-          { label: 'Save As', accelerator: 'Command+Shift+S', click: () => mainWindow?.webContents.send('menu-save-as-file') },
+          { label: 'New', accelerator: 'Command+N', click: () => mainWindow?.webContents.send('menu-event', 'menu-new-file') },
+          { label: 'Open', accelerator: 'Command+O', click: () => mainWindow?.webContents.send('menu-event', 'menu-open-file') },
+          { label: 'Save', accelerator: 'Command+S', click: () => mainWindow?.webContents.send('menu-event', 'menu-save-file') },
+          { label: 'Save As', accelerator: 'Command+Shift+S', click: () => mainWindow?.webContents.send('menu-event', 'menu-save-as-file') },
+          { type: 'separator' },
+          { label: 'Print', accelerator: 'Command+P', click: () => mainWindow?.webContents.send('menu-event', 'menu-print-file') },
           { type: 'separator' },
           { label: 'Close', accelerator: 'Command+W', role: 'close' }
         ]
