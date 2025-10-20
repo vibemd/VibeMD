@@ -17,6 +17,7 @@ import { Superscript } from '@tiptap/extension-superscript';
 import { Subscript } from '@tiptap/extension-subscript';
 import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
 import { TextAlign } from '@tiptap/extension-text-align';
+import { Mathematics } from '@tiptap/extension-mathematics';
 import { Extension } from '@tiptap/core';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -45,7 +46,13 @@ import {
   Outdent,
   AlignLeft,
   AlignCenter,
-  AlignRight
+  AlignRight,
+  SquareFunction,
+  SquarePower,
+  Plus,
+  Minus,
+  X,
+  Divide
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -93,7 +100,33 @@ export function TipTapEditor() {
   // Function to convert markdown to HTML
   const markdownToHtml = (markdown: string): string => {
     try {
-      const html = marked.parse(markdown, {
+      // First, protect LaTeX math expressions from being processed by marked
+      const protectedMath: { content: string; placeholder: string; type: 'block' | 'inline' }[] = [];
+      let protectedMarkdown = markdown;
+      
+      // Protect block math ($$...$$) - handle multi-line expressions
+      protectedMarkdown = protectedMarkdown.replace(/\$\$([\s\S]*?)\$\$/g, (match, content) => {
+        const placeholder = `<!-- MATH_BLOCK_${protectedMath.length} -->`;
+        protectedMath.push({
+          content: content.trim(),
+          placeholder: placeholder,
+          type: 'block'
+        });
+        return placeholder;
+      });
+      
+      // Protect inline math ($...$) - but not $$ patterns
+      protectedMarkdown = protectedMarkdown.replace(/(?<!\$)\$([^$\n]+?)\$(?!\$)/g, (match, content) => {
+        const placeholder = `<!-- MATH_INLINE_${protectedMath.length} -->`;
+        protectedMath.push({
+          content: content.trim(),
+          placeholder: placeholder,
+          type: 'inline'
+        });
+        return placeholder;
+      });
+      
+      const html = marked.parse(protectedMarkdown, {
         gfm: true,
         breaks: false,
         pedantic: false,
@@ -113,7 +146,20 @@ export function TipTapEditor() {
         return `<div style="text-align: ${align}">${content}</div>`;
       });
       
-      return htmlWithIds;
+      // Restore protected math expressions
+      let finalHtml = htmlWithIds;
+      protectedMath.forEach((math) => {
+        const mathHtml = math.type === 'block' 
+          ? `<div data-type="block-math" data-latex="${math.content}"></div>`
+          : `<span data-type="inline-math" data-latex="${math.content}"></span>`;
+        
+        finalHtml = finalHtml.replace(math.placeholder, mathHtml);
+      });
+      
+      // Debug: Log the HTML to see what's being generated
+      console.log('[markdownToHtml] Generated HTML:', finalHtml);
+      
+      return finalHtml;
     } catch (error) {
       console.error('Error converting markdown to HTML:', error);
       return markdown; // Fallback to original content
@@ -196,6 +242,29 @@ export function TipTapEditor() {
         }
       });
 
+      // Add LaTeX math support
+      turndownService.addRule('mathInline', {
+        filter: function (node) {
+          return node.nodeName === 'SPAN' && 
+                 (node as HTMLElement).getAttribute('data-type') === 'inline-math';
+        },
+        replacement: function (content, node) {
+          const latex = (node as HTMLElement).getAttribute('data-latex');
+          return latex ? `$${latex}$` : content;
+        }
+      });
+
+      turndownService.addRule('mathDisplay', {
+        filter: function (node) {
+          return node.nodeName === 'DIV' && 
+                 (node as HTMLElement).getAttribute('data-type') === 'block-math';
+        },
+        replacement: function (content, node) {
+          const latex = (node as HTMLElement).getAttribute('data-latex');
+          return latex ? `$$${latex}$$` : content;
+        }
+      });
+
       return turndownService.turndown(html);
     } catch (error) {
       console.error('Error converting HTML to markdown:', error);
@@ -258,7 +327,6 @@ export function TipTapEditor() {
   const TableCellWithAlignment = TableCell.extend({
     addAttributes() {
       return {
-        ...this.parent?.() || {},
         textAlign: {
           default: 'left',
           parseHTML: (element: HTMLElement) => element.style.textAlign || 'left',
@@ -344,6 +412,16 @@ export function TipTapEditor() {
       TableRow,
       TableHeader,
       TableCellWithAlignment,
+      
+      // Mathematics extension (conditional based on settings)
+      ...(settings.editor.latexSupport ? [
+        Mathematics.configure({
+          katexOptions: {
+            throwOnError: false,
+            errorColor: '#cc0000',
+          },
+        })
+      ] : []),
     ],
     content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
     autofocus: 'start', // Auto-focus at start
@@ -1004,7 +1082,123 @@ export function TipTapEditor() {
         </Tooltip>
       ),
     },
-  ], [editor, updateTrigger]); // Re-create when editor state changes
+    
+    // Math buttons (only show if LaTeX support is enabled)
+    ...(settings.editor.latexSupport ? [
+      {
+        id: 'inlineMath',
+        component: (
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => {
+                  editor?.chain().focus().insertInlineMath({ latex: 'E = mc^2' }).run();
+                }}
+                className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
+              >
+                <SquareFunction className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Inline Math ($...$)</p>
+            </TooltipContent>
+          </Tooltip>
+        ),
+      },
+      {
+        id: 'blockMath',
+        component: (
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => {
+                  editor?.chain().focus().insertBlockMath({ latex: '\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}' }).run();
+                }}
+                className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
+              >
+                <SquarePower className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Block Math ($$...$$)</p>
+            </TooltipContent>
+          </Tooltip>
+        ),
+      },
+      {
+        id: 'mathPlus',
+        component: (
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => editor?.chain().focus().insertContent('+').run()}
+                className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Plus (+)</p>
+            </TooltipContent>
+          </Tooltip>
+        ),
+      },
+      {
+        id: 'mathMinus',
+        component: (
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => editor?.chain().focus().insertContent('-').run()}
+                className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
+              >
+                <Minus className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Minus (-)</p>
+            </TooltipContent>
+          </Tooltip>
+        ),
+      },
+      {
+        id: 'mathTimes',
+        component: (
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => editor?.chain().focus().insertContent('×').run()}
+                className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Times (×)</p>
+            </TooltipContent>
+          </Tooltip>
+        ),
+      },
+      {
+        id: 'mathDivide',
+        component: (
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => editor?.chain().focus().insertContent('÷').run()}
+                className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
+              >
+                <Divide className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Divide (÷)</p>
+            </TooltipContent>
+          </Tooltip>
+        ),
+      },
+    ] : []),
+  ], [editor, updateTrigger, settings.editor.latexSupport]); // Re-create when editor state changes
 
   // Filter out null components (like tableCommands when not in table)
   const visibleToolbarButtons = toolbarButtons.filter(button => button.component !== null);

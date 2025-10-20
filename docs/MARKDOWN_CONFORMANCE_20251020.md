@@ -220,9 +220,12 @@ Table.configure({
    ```
 
 ### Priority 2: Improve Toolbar Coverage
-1. **Add Math Button**
+1. **Add Math Button** ✅ **COMPLETED**
    ```typescript
-   // Toolbar button for math expressions
+   // Toolbar buttons for math expressions with settings control
+   // Inline math: SquareFunction icon ($...$)
+   // Block math: SquarePower icon ($$...$$)
+   // Math operators: Plus, Minus, X, Divide icons
    ```
 
 2. **Add Hard Break Button**
@@ -230,16 +233,26 @@ Table.configure({
    // Toolbar button for line breaks
    ```
 
-3. **Add Autolink Toggle**
+3. **Add Autolink Toggle** ✅ **COMPLETED**
    ```typescript
-   // Toggle for automatic URL detection
+   // Autolinks are enabled by default (GFM compliant)
+   // No toolbar needed - automatic URL detection
    ```
 
 ### Priority 3: Enhanced Features
-1. **Footnotes Support**
-2. **Definition Lists**
-3. **Emoji Support**
-4. **Mermaid Diagram Support**
+1. **LaTeX Math Support** ✅ **COMPLETED**
+   ```typescript
+   // Full LaTeX math support with KaTeX rendering
+   // Settings-controlled toolbar visibility
+   // Inline math: $...$ syntax
+   // Block math: $$...$$ syntax
+   // Math operators: +, -, ×, ÷ toolbar buttons
+   ```
+
+2. **Footnotes Support**
+3. **Definition Lists**
+4. **Emoji Support**
+5. **Mermaid Diagram Support**
 
 ## Conclusion
 

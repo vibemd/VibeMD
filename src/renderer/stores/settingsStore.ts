@@ -30,7 +30,7 @@ const defaultSettings: Settings = {
     fontSize: 12, // Changed default from 16 to 12
     fontFamily: 'Arial', // Set default font family
     lineNumbers: false, // Removed line numbers by default
-    latexSupport: false,
+    latexSupport: true,
   },
   about: {
     version: '1.0.0',
