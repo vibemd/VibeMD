@@ -16,6 +16,7 @@ import { TaskItem } from '@tiptap/extension-task-item';
 import { Superscript } from '@tiptap/extension-superscript';
 import { Subscript } from '@tiptap/extension-subscript';
 import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
+import { TextAlign } from '@tiptap/extension-text-align';
 import { Extension } from '@tiptap/core';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -41,7 +42,10 @@ import {
   ChevronDown,
   Minus as HorizontalRuleIcon,
   Indent,
-  Outdent
+  Outdent,
+  AlignLeft,
+  AlignCenter,
+  AlignRight
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -96,11 +100,17 @@ export function TipTapEditor() {
       }) as string;
       
       // Add heading IDs for navigation
-      const htmlWithIds = html.replace(/<h([1-6])>(.*?)<\/h[1-6]>/g, (match: string, level: string, content: string) => {
+      let htmlWithIds = html.replace(/<h([1-6])>(.*?)<\/h[1-6]>/g, (match: string, level: string, content: string) => {
         // Extract text content from HTML (remove any HTML tags)
         const textContent = content.replace(/<[^>]*>/g, '');
         const id = generateHeadingId(textContent);
         return `<h${level} id="${id}">${content}</h${level}>`;
+      });
+      
+      // Handle text alignment from HTML divs
+      htmlWithIds = htmlWithIds.replace(/<div style="text-align: (center|right)">(.*?)<\/div>/g, (match: string, align: string, content: string) => {
+        // Wrap content in appropriate tags with alignment
+        return `<div style="text-align: ${align}">${content}</div>`;
       });
       
       return htmlWithIds;
@@ -156,14 +166,33 @@ export function TipTapEditor() {
             
             markdown += '| ' + cellContents.join(' | ') + ' |\n';
             
-            // Add separator row after header row
+            // Add separator row after header row with alignment
             if (rowIndex === 0) {
-              const separator = cells.map(() => '---').join(' | ');
-              markdown += '| ' + separator + ' |\n';
+              const separators = cells.map(cell => {
+                const align = (cell as HTMLElement).style.textAlign;
+                switch (align) {
+                  case 'center': return ':---:';
+                  case 'right': return '---:';
+                  default: return '---';
+                }
+              });
+              markdown += '| ' + separators.join(' | ') + ' |\n';
             }
           });
           
           return markdown + '\n';
+        }
+      });
+
+      // Add text alignment support
+      turndownService.addRule('textAlign', {
+        filter: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+        replacement: function (content, node) {
+          const align = (node as HTMLElement).style?.textAlign;
+          if (align && align !== 'left' && (align === 'center' || align === 'right')) {
+            return `<div style="text-align: ${align}">${content}</div>\n\n`;
+          }
+          return content + '\n\n';
         }
       });
 
@@ -225,6 +254,27 @@ export function TipTapEditor() {
     },
   });
 
+  // Custom TableCell extension with alignment support
+  const TableCellWithAlignment = TableCell.extend({
+    addAttributes() {
+      return {
+        ...this.parent?.() || {},
+        textAlign: {
+          default: 'left',
+          parseHTML: (element: HTMLElement) => element.style.textAlign || 'left',
+          renderHTML: (attributes: any) => {
+            if (!attributes.textAlign || attributes.textAlign === 'left') {
+              return {};
+            }
+            return {
+              style: `text-align: ${attributes.textAlign}`,
+            };
+          },
+        },
+      };
+    },
+  });
+
   const editor = useEditor({
     extensions: [
       // Core extensions (CommonMark compliant)
@@ -260,6 +310,12 @@ export function TipTapEditor() {
       HeadingIdExtension,
       ListIndentExtension,
 
+      // Text alignment support
+      TextAlign.configure({
+        types: ['heading', 'paragraph', 'tableCell'],
+        alignments: ['left', 'center', 'right'],
+      }),
+
       // Link support (CommonMark) with autolink enabled
       Link.configure({
         openOnClick: false,
@@ -287,7 +343,7 @@ export function TipTapEditor() {
       }),
       TableRow,
       TableHeader,
-      TableCell,
+      TableCellWithAlignment,
     ],
     content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
     autofocus: 'start', // Auto-focus at start
@@ -872,6 +928,78 @@ export function TipTapEditor() {
           </TooltipTrigger>
           <TooltipContent>
             <p>Subscript (click again to exit)</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
+    {
+      id: 'alignLeft',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                editor?.chain().focus().setTextAlign('left').run();
+              }}
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive({ textAlign: 'left' }) || 
+                editor?.isActive('tableCell', { textAlign: 'left' }) ? 
+                'bg-accent text-accent-foreground' : ''
+              }`}
+            >
+              <AlignLeft className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Align Left</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
+    {
+      id: 'alignCenter',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                editor?.chain().focus().setTextAlign('center').run();
+              }}
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive({ textAlign: 'center' }) || 
+                editor?.isActive('tableCell', { textAlign: 'center' }) ? 
+                'bg-accent text-accent-foreground' : ''
+              }`}
+            >
+              <AlignCenter className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Align Center</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
+    {
+      id: 'alignRight',
+      component: (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                editor?.chain().focus().setTextAlign('right').run();
+              }}
+              className={`p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground ${
+                editor?.isActive({ textAlign: 'right' }) || 
+                editor?.isActive('tableCell', { textAlign: 'right' }) ? 
+                'bg-accent text-accent-foreground' : ''
+              }`}
+            >
+              <AlignRight className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Align Right</p>
           </TooltipContent>
         </Tooltip>
       ),
