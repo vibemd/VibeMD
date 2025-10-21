@@ -63,7 +63,7 @@ const config: ForgeConfig = {
       description: 'A modern, cross-platform desktop markdown editor',
       setupIcon: './build/icons/icon.ico',
       iconUrl: 'https://raw.githubusercontent.com/vibemd/vibemd/main/build/icons/icon.ico',
-      noMsi: true,
+      noMsi: false,  // Enable MSI creation
       // Windows file associations
       loadingGif: './build/icons/icon.ico',
       setupExe: 'VibeMD-Setup.exe',
