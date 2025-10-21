@@ -13,15 +13,30 @@ VibeMD is an Electron-based desktop markdown editor that combines the simplicity
 **Perfect for:**
 
 -   Technical documentation and software development
-    
+
 -   Academic writing and research papers
-    
+
 -   Note-taking and knowledge management
-    
+
 -   Project proposals and meeting notes
-    
+
 -   Scientific writing with mathematical expressions
-    
+
+
+* * *
+
+## Download
+
+**[📥 Download the latest release](https://github.com/vibemd/VibeMD/releases/latest)**
+
+### Choose Your Platform
+
+- **macOS Apple Silicon (M1/M2/M3/M4)**: Download `VibeMD-darwin-arm64-*.zip`
+- **macOS Intel**: Download `VibeMD-darwin-x64-*.zip`
+- **Windows x64**: Download `VibeMD-win32-x64-*.zip` or installer
+- **Windows ARM64**: Download `VibeMD-win32-arm64-*.zip` or installer
+
+See all releases: [Releases Page](https://github.com/vibemd/VibeMD/releases)
 
 * * *
 
