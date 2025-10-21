@@ -162,29 +162,46 @@ VibeMD is an Electron-based desktop markdown editor that combines the simplicity
 
 ### Building for Production
 
-1.  **Package the application:**
-    
+#### Automated Builds (GitHub Actions)
+
+VibeMD uses GitHub Actions for automated builds. Push a version tag to trigger a release:
+
+```bash
+# Update version in package.json, then:
+git tag v1.0.1
+git push origin v1.0.1
+```
+
+This automatically builds for all platforms and creates a GitHub Release.
+
+#### Manual Builds
+
+1.  **Build all platforms:**
+
     ```bash
-    npm run package
+    ./build-all.sh
     ```
-    
-2.  **Create distributables:**
-    
+
+2.  **Build specific platform:**
+
     ```bash
-    npm run make
+    npm run build:mac-arm64    # macOS Apple Silicon
+    npm run build:mac-x64      # macOS Intel
+    npm run build:win-x64      # Windows x64
+    npm run build:win-arm64    # Windows ARM64
     ```
-    
+
 
 This creates platform-specific distributables in the `out/` directory:
 
--   **macOS**: `.dmg` and `.zip`
-    
--   **Windows**: `.exe` installer
-    
--   **Linux**: `.deb` and `.rpm` packages
-    
+-   **macOS**: `.zip` archives
 
-For detailed build instructions, see [BUILD.md](BUILD.md).
+-   **Windows**: `.zip` archives (portable)
+
+-   **Windows installers**: `.exe` and `.msi` (when built on Windows)
+
+
+For detailed build instructions, see [BUILD.md](BUILD.md) or [BUILD_GUIDE.md](BUILD_GUIDE.md).
 
 * * *
 
