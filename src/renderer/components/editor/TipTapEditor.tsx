@@ -807,16 +807,17 @@ export function TipTapEditor() {
   // Function to save current editor content to document store
   const saveCurrentContent = React.useCallback(() => {
     if (!editor || !lastDocumentId.current) return;
-    
+
     const html = editor.getHTML();
     const markdown = htmlToMarkdown(html);
-    
+
     console.log('[Save Current] Saving content for document:', lastDocumentId.current);
     console.log('[Save Current] Content length:', markdown.length);
-    
+
+    // Only update the content, don't mark as modified
+    // The onUpdate handler will mark as modified when user actually edits
     updateDocument(lastDocumentId.current, { content: markdown });
-    markAsModified(lastDocumentId.current);
-  }, [editor, updateDocument, markAsModified]);
+  }, [editor, updateDocument]);
 
   // Register save function with editor service
   React.useEffect(() => {
