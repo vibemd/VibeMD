@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeMD | The Modern WYSIWYG Markdown Editor</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb; /* Blue-600 */
+            --primary-dark: #1d4ed8; /* Blue-700 */
+            --accent-color: #3b82f6; /* Blue-500 - Used as secondary accent/gradient */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Slate-50 */
+        }
+        .text-gradient {
+            background-image: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .feature-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            /* Updated shadow color from indigo to blue (25, 99, 235 is the RGB for Blue-600) */
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.1); 
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+
+        <!-- Header/Navigation -->
+        <header class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <nav class="flex justify-between items-center h-16">
+                    <div class="flex-shrink-0 flex items-center">
+                        <!-- Logo (using the uploaded logo.png) -->
+                        <img class="h-8 w-auto" src="logo.png" alt="VibeMD Logo" onerror="this.onerror=null; this.src='https://placehold.co/100x32/2563eb/ffffff?text=VibeMD'">
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="#features" class="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition">Features</a>
+                        <a href="#use-cases" class="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition">Use Cases</a>
+                        <a href="https://github.com/vibemd/VibeMD" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition">GitHub (Source)</a>
+                    </div>
+                    <div>
+                        <!-- Download Button -->
+                        <a href="https://github.com/vibemd/VibeMD/releases/latest" target="_blank" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            📥 Download Latest
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <main>
+            <section class="py-20 sm:py-24 lg:py-32 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight">
+                        The <span class="text-gradient">Modern Markdown Editor</span>
+                    </h1>
+                    <p class="mt-6 max-w-3xl mx-auto text-xl text-gray-600">
+                        VibeMD is a cross-platform desktop editor combining the simplicity of **Markdown** with the power of **WYSIWYG** editing, complete with **LaTeX math** and native OS integration.
+                    </p>
+                    <div class="mt-10 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="https://github.com/vibemd/VibeMD/releases/latest" target="_blank" class="inline-flex items-center justify-center rounded-xl border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white shadow-lg transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            📥 Get VibeMD Now
+                        </a>
+                        <a href="https://github.com/vibemd/VibeMD" target="_blank" class="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-8 py-3 text-base font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            View Source on GitHub
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Screenshot / Visual Section -->
+            <section class="pb-20 sm:pb-24 lg:pb-32 bg-white -mt-16 sm:-mt-20">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="bg-gray-50 p-4 sm:p-6 lg:p-10 rounded-3xl shadow-2xl ring-4 ring-blue-500/20">
+                        <!-- Use the uploaded Screenshot.jpg -->
+                        <img class="w-full rounded-2xl shadow-xl border border-gray-100" src="Screenshot.jpg" alt="VibeMD Editor Screenshot showing WYSIWYG editing, sidebar file organization, and outline view." onerror="this.onerror=null; this.src='https://placehold.co/1200x700/bfdbfe/1d4ed8?text=VibeMD+Editor+Screenshot'">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section id="features" class="py-20 bg-slate-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center">
+                        <h2 class="text-sm font-semibold text-blue-600 uppercase tracking-wider">POWERFUL EDITING</h2>
+                        <p class="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl">Everything You Need to Write and Document</p>
+                    </div>
+                    <div class="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                        
+                        <!-- Feature 1: WYSIWYG & Markdown -->
+                        <div class="feature-card p-6 bg-white rounded-xl shadow-md border border-gray-200">
+                            <div class="text-3xl text-blue-600 mb-4">
+                                <!-- Icon: Pen Nib -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><path d="M18 5V3a2 2 0 0 0-2-2L8 4l-6 6v3h3l7-7-2-2-4 4-2-2 4-4L6 4a2 2 0 0 0-2 2v2"/><path d="M21.378 12.378a2.121 2.121 0 0 0-3 0L12 18l-1 4 4-1 6-6a2.121 2.121 0 0 0 0-3z"/></svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">WYSIWYG Meets Markdown</h3>
+                            <p class="mt-3 text-base text-gray-500">Edit in a rich-text environment while retaining the portability and simplicity of **100% CommonMark and GFM** markdown syntax in the background.</p>
+                        </div>
+                        
+                        <!-- Feature 2: LaTeX Math -->
+                        <div class="feature-card p-6 bg-white rounded-xl shadow-md border border-gray-200">
+                            <div class="text-3xl text-blue-600 mb-4">
+                                <!-- Icon: Sigma (Math) -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><path d="M12 21V3"/><path d="M7 16l-3 5h14l-3-5"/><path d="M4 8l3 5h10l3-5"/></svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Full LaTeX Math Support</h3>
+                            <p class="mt-3 text-base text-gray-500">Powered by **KaTeX**, easily insert inline and block mathematical expressions for scientific writing and technical documentation with real-time preview.</p>
+                        </div>
+
+                        <!-- Feature 3: Auto-Save & Native Integration -->
+                        <div class="feature-card p-6 bg-white rounded-xl shadow-md border border-gray-200">
+                            <div class="text-3xl text-blue-600 mb-4">
+                                <!-- Icon: Laptop/Desktop -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><rect width="20" height="12" x="2" y="5" rx="2" ry="2"/><path d="M22 17H2"/><path d="M6 17v4"/><path d="M18 17v4"/><path d="M12 21v0"/></svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Native & Reliable</h3>
+                            <p class="mt-3 text-base text-gray-500">Enjoy **automatic background saving**, platform-native menus, file dialogs, and system theme integration across macOS, Windows, and Linux.</p>
+                        </div>
+                        
+                        <!-- Feature 4: Code & Tables -->
+                        <div class="feature-card p-6 bg-white rounded-xl shadow-md border border-gray-200">
+                            <div class="text-3xl text-blue-600 mb-4">
+                                <!-- Icon: Code -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><path d="M14 4h-4"/><path d="M14 20h-4"/></svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Code Blocks & Tables</h3>
+                            <p class="mt-3 text-base text-gray-500">Syntax highlighting for **code blocks** and **full table support** with easy context-menu editing, perfect for documentation.</p>
+                        </div>
+                        
+                        <!-- Feature 5: Templates -->
+                        <div class="feature-card p-6 bg-white rounded-xl shadow-md border border-gray-200">
+                            <div class="text-3xl text-blue-600 mb-4">
+                                <!-- Icon: Copy/Template -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><path d="M12 7v10"/><path d="M7 12h10"/></svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Templates & Management</h3>
+                            <p class="mt-3 text-base text-gray-500">Utilize built-in templates (Meeting Notes, Research Paper) or create your own custom templates for organizational consistency.</p>
+                        </div>
+
+                        <!-- Feature 6: Task Lists & Outline -->
+                        <div class="feature-card p-6 bg-white rounded-xl shadow-md border border-gray-200">
+                            <div class="text-3xl text-blue-600 mb-4">
+                                <!-- Icon: List Checklist -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><path d="M12 22h-5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v5"/><path d="M16 4h-4"/><path d="M10 4H5"/><path d="M21 15l-4 4-2-2"/></svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Task Lists & Outline Navigation</h3>
+                            <p class="mt-3 text-base text-gray-500">Interactive **task lists** for tracking progress and a collapsible sidebar with a document **outline** for quick navigation in long documents.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- Use Cases Section -->
+            <section id="use-cases" class="py-20 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center">
+                        <h2 class="text-sm font-semibold text-blue-600 uppercase tracking-wider">WHO IS IT FOR?</h2>
+                        <p class="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl">Perfect For Every Writer</p>
+                    </div>
+                    <div class="mt-12">
+                        <div class="space-y-10 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:gap-y-10 lg:space-y-0">
+                            <!-- Use Case 1 -->
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <div class="flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 text-blue-600">
+                                        <!-- Icon: File Text -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <dt class="text-lg leading-6 font-medium text-gray-900">
+                                        Technical Documentation
+                                    </dt>
+                                    <dd class="mt-2 text-base text-gray-500">
+                                        Write comprehensive software documentation with easy table management, code block highlighting, and persistent file organization.
+                                    </dd>
+                                </div>
+                            </div>
+
+                            <!-- Use Case 2 -->
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <div class="flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 text-blue-600">
+                                        <!-- Icon: Graduation Cap -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M22 10v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4"/><path d="M12 2v20"/><path d="M16 6a4 4 0 0 1-8 0"/></svg>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <dt class="text-lg leading-6 font-medium text-gray-900">
+                                        Academic & Scientific Writing
+                                    </dt>
+                                    <dd class="mt-2 text-base text-gray-500">
+                                        Format research papers and reports easily using LaTeX math for complex equations, ensuring perfect rendering every time.
+                                    </dd>
+                                </div>
+                            </div>
+
+                            <!-- Use Case 3 -->
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <div class="flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 text-blue-600">
+                                        <!-- Icon: Notebook -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2z"/><line x1="8" y1="2" x2="8" y2="22"/><line x1="16" y1="2" x2="16" y2="22"/></svg>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <dt class="text-lg leading-6 font-medium text-gray-900">
+                                        Note-Taking & Knowledge Management
+                                    </dt>
+                                    <dd class="mt-2 text-base text-gray-500">
+                                        Keep your knowledge base in markdown for future-proofing, using multi-document support to organize and cross-reference notes easily.
+                                    </dd>
+                                </div>
+                            </div>
+
+                            <!-- Use Case 4 -->
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <div class="flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 text-blue-600">
+                                        <!-- Icon: List Check -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M12 22h-5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v5"/><path d="M21 15l-4 4-2-2"/><path d="M16 4h-4"/><path d="M10 4H5"/></svg>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <dt class="text-lg leading-6 font-medium text-gray-900">
+                                        Project & Task Management
+                                    </dt>
+                                    <dd class="mt-2 text-base text-gray-500">
+                                        Use interactive task lists and project proposal templates to plan, track, and share progress with colleagues or on GitHub.
+                                    </dd>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Call to Action Section -->
+        <section class="bg-blue-700">
+            <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8 lg:flex lg:items-center lg:justify-between">
+                <h2 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                    <span class="block">Ready to simplify your writing?</span>
+                    <span class="block text-blue-200">Start using VibeMD today.</span>
+                </h2>
+                <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0">
+                    <div class="inline-flex rounded-md shadow">
+                        <a href="https://github.com/vibemd/VibeMD/releases/latest" target="_blank" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-xl text-blue-600 bg-white hover:bg-blue-50 transition">
+                            Download Now
+                        </a>
+                    </div>
+                    <div class="ml-3 inline-flex rounded-md shadow">
+                        <a href="https://github.com/vibemd/VibeMD" target="_blank" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-blue-500 hover:bg-blue-400 transition">
+                            View GitHub
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Footer -->
+        <footer class="bg-gray-800">
+            <div class="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
+                <nav class="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
+                    <div class="px-5 py-2">
+                        <a href="#features" class="text-base text-gray-300 hover:text-white transition">
+                            Features
+                        </a>
+                    </div>
+                    <div class="px-5 py-2">
+                        <a href="#use-cases" class="text-base text-gray-300 hover:text-white transition">
+                            Use Cases
+                        </a>
+                    </div>
+                    <div class="px-5 py-2">
+                        <a href="https://github.com/vibemd/VibeMD" target="_blank" class="text-base text-gray-300 hover:text-white transition">
+                            GitHub
+                        </a>
+                    </div>
+                    <div class="px-5 py-2">
+                        <a href="mailto:hello@vibemd.app" class="text-base text-gray-300 hover:text-white transition">
+                            Contact
+                        </a>
+                    </div>
+                </nav>
+                <div class="mt-8 flex justify-center space-x-6">
+                    <!-- GitHub Link -->
+                    <a href="https://github.com/vibemd/VibeMD" target="_blank" class="text-gray-400 hover:text-gray-300 transition">
+                        <span class="sr-only">GitHub</span>
+                        <svg fill="currentColor" viewBox="0 0 24 24" class="h-6 w-6" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.418 2.867 8.163 6.842 9.504.5.092.682-.217.682-.483 0-.237-.008-.887-.015-1.745-2.785.602-3.374-1.341-3.374-1.341-.454-1.157-1.11-1.465-1.11-1.465-.908-.62.069-.608.069-.608 1.006.071 1.53.942 1.53.942.893 1.528 2.341 1.085 2.915.829.091-.643.351-1.085.637-1.332-2.228-.252-4.567-1.114-4.567-4.945 0-1.091.39-1.984 1.03-2.684-.103-.252-.445-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.878 9.878 0 0 1 12 5.867c.85.004 1.706.112 2.502.327 1.908-1.296 2.748-1.025 2.748-1.025.543 1.378.201 2.398.098 2.65.64.7 1.03 1.593 1.03 2.684 0 3.84-2.342 4.686-4.577 4.939.362.312.68.924.68 1.855 0 1.343-.012 2.433-.012 2.75 0 .267.18.579.688.484 3.97-1.347 6.83-5.089 6.83-9.503C22 6.484 17.523 2 12 2Z" clip-rule="evenodd"/></svg>
+                    </a>
+                </div>
+                <p class="mt-8 text-center text-base text-gray-400">
+                    &copy; 2025 VibeMD. Built with <span class="text-red-500">❤️</span> by the open-source community.
+                </p>
+                <p class="mt-2 text-center text-sm text-gray-500">
+                    Website: <a href="http://www.vibemd.app" class="hover:text-white">www.vibemd.app</a> | Contact: <a href="mailto:hello@vibemd.app" class="hover:text-white">hello@vibemd.app</a>
+                </p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
