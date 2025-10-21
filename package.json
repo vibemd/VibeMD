@@ -14,7 +14,15 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "eslint --ext .ts,.tsx .",
+    "build:mac-universal": "electron-forge make --platform=darwin --arch=universal",
+    "build:mac-arm64": "electron-forge make --platform=darwin --arch=arm64",
+    "build:mac-x64": "electron-forge make --platform=darwin --arch=x64",
+    "build:win-x64": "electron-forge make --platform=win32 --arch=x64",
+    "build:win-arm64": "electron-forge make --platform=win32 --arch=arm64",
+    "build:all": "npm run build:mac-universal && npm run build:win-x64 && npm run build:win-arm64",
+    "build:all-mac": "npm run build:mac-universal",
+    "build:all-windows": "npm run build:win-x64 && npm run build:win-arm64"
   },
   "keywords": [
     "markdown",
