@@ -66,40 +66,17 @@ npm run make -- --platform=win32 --arch=ia32
 npm run make -- --platform=win32 --arch=x64
 ```
 
+**Note:** When building on macOS, Windows .exe/.msi installers are disabled due to Wine compatibility issues on modern macOS (especially ARM64). The build will create ZIP archives instead.
+
 This will create:
-- Squirrel installer (`.exe` setup file)
-- RELEASES file
-- NuGet packages
+- `.zip` archive (portable package)
 
-Output location: `out/make/squirrel.windows/`
+Output location: `out/make/zip/win32/`
 
-### Building on macOS/Linux for Windows
-
-Cross-platform Windows builds require **Mono** and **Wine**:
-
-#### Install Mono (macOS)
-```bash
-brew install mono
-```
-
-#### Install Wine (macOS)
-```bash
-brew install --cask wine-stable
-```
-
-#### Install on Linux
-```bash
-# Ubuntu/Debian
-sudo apt-get install mono-complete wine
-
-# Fedora
-sudo dnf install mono-complete wine
-```
-
-#### Build Command
-```bash
-npm run make -- --platform=win32 --arch=ia32
-```
+For proper Windows installers (.exe/.msi):
+- Build on a native Windows machine, or
+- Use GitHub Actions with Windows runners (recommended)
+- Uncomment `MakerSquirrel` in `forge.config.ts` when building on Windows
 
 ### Alternative: Package Only (Without Installer)
 
@@ -129,10 +106,11 @@ npm run make -- --platform=darwin --arch=arm64   # Apple Silicon
 
 This will create:
 - `.app` bundle
-- `.dmg` disk image (if configured)
 - `.zip` archive
 
-Output location: `out/make/`
+**Note:** macOS Universal builds (arm64 + x64) are currently disabled due to code signature mismatches. Use separate architecture builds instead.
+
+Output location: `out/make/zip/darwin/`
 
 ### Code Signing (macOS)
 
@@ -185,11 +163,13 @@ Output location: `out/make/`
 
 ### Building on macOS/Windows for Linux
 
-Linux packages can be built on any platform:
+Linux packages (.deb/.rpm) can be built on any platform:
 
 ```bash
 npm run make -- --platform=linux --arch=x64
 ```
+
+**Note:** The current build configuration focuses on macOS and Windows. Linux makers are configured but not part of the standard build process.
 
 ## Build Output Structure
 
@@ -209,42 +189,31 @@ out/
 
 **Note**: The ICU error when trying to run VibeMD.exe on macOS is expected. The .exe can only run on Windows.
 
-### After `npm run make` (With Installer)
+### After `npm run make` (With Distributables)
 
 ```
 out/
 ├── make/
-│   ├── squirrel.windows/      # Windows installer (requires Mono+Wine on macOS)
-│   │   └── ia32/
-│   │       ├── VibeMD-1.0.0 Setup.exe
-│   │       └── RELEASES
-│   ├── zip/
-│   │   ├── darwin/
-│   │   │   └── x64/
-│   │   │       └── VibeMD-darwin-x64-1.0.0.zip
-│   │   └── win32/
-│   │       └── ia32/
-│   │           └── VibeMD-win32-ia32-1.0.0.zip
-│   ├── deb/
-│   │   └── x64/
-│   │       └── vibemd_1.0.0_amd64.deb
-│   └── rpm/
-│       └── x64/
-│           └── vibemd-1.0.0-1.x86_64.rpm
+│   └── zip/
+│       ├── darwin/
+│       │   ├── arm64/
+│       │   │   └── VibeMD-darwin-arm64-1.0.0.zip
+│       │   └── x64/
+│       │       └── VibeMD-darwin-x64-1.0.0.zip
+│       └── win32/
+│           ├── x64/
+│           │   └── VibeMD-win32-x64-1.0.0.zip
+│           └── arm64/
+│               └── VibeMD-win32-arm64-1.0.0.zip
 └── VibeMD-{platform}-{arch}/
     └── [Application files]
 ```
 
+**Note:** Windows .exe/.msi installers are disabled when building on macOS. To create them, uncomment `MakerSquirrel` in `forge.config.ts` and build on Windows.
+
 ### Distribution Package
 
-For easy distribution, create a ZIP file:
-
-```bash
-cd out
-zip -r VibeMD-1.0.0-Windows-x86.zip VibeMD-win32-ia32/
-```
-
-This creates a ~113MB portable package that users can extract and run anywhere on Windows 11 x86.
+ZIP archives are automatically created for all platforms during the build process. Users can extract and run the application without installation.
 
 ## Configuration Files
 
@@ -266,11 +235,11 @@ Contains:
 
 ## Troubleshooting
 
-### Windows Build on macOS Fails
+### Windows Build on macOS Shows Wine Errors
 
-**Error**: "You must install both Mono and Wine on non-Windows"
+**Issue**: Wine compatibility issues on modern macOS (especially ARM64)
 
-**Solution**: Install Mono and Wine (see Windows cross-build section above)
+**Solution**: This is expected. The build is configured to create ZIP archives instead of .exe/.msi installers. For proper Windows installers, build on a Windows machine or use GitHub Actions.
 
 ### Icon Not Showing
 
