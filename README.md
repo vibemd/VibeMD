@@ -1,212 +1,81 @@
 # VibeMD
 
-A modern, cross-platform desktop markdown editor with WYSIWYG editing capabilities, a powerful template system, and seamless native OS integration.
+**Version:** 1.0.0
+**A modern, cross-platform markdown editor with WYSIWYG editing, LaTeX math support, and seamless native OS integration.**
+
+---
 
 ## Overview
 
-VibeMD is an Electron-based markdown editor that combines the simplicity of markdown with the convenience of rich-text editing. Built with React, TypeScript, and TipTap, it provides a distraction-free writing environment with real-time preview and extensive markdown support including GitHub Flavored Markdown (GFM) and mathematical expressions.
+VibeMD is an Electron-based desktop markdown editor that combines the simplicity and portability of markdown with the convenience of rich-text WYSIWYG editing. Built with React, TypeScript, and TipTap, it provides a distraction-free writing environment with real-time formatting, comprehensive markdown support (CommonMark + GFM), and mathematical expression rendering.
+
+**Perfect for:**
+- Technical documentation and software development
+- Academic writing and research papers
+- Note-taking and knowledge management
+- Project proposals and meeting notes
+- Scientific writing with mathematical expressions
+
+---
 
 ## Key Features
 
 ### Editor Capabilities
-- **WYSIWYG Editing**: Real-time rich-text editing with TipTap editor framework
-- **Markdown Support**: Full CommonMark and GitHub Flavored Markdown (GFM) support
-- **Mathematical Expressions**: LaTeX math rendering powered by KaTeX with intuitive formula insertion dialog
-  - Insert inline math ($...$) or block math ($$...$$) via toolbar button
-  - Plain text LaTeX entry with real-time preview
-  - Support for complex formulas including integrals, matrices, and more
-- **Syntax Highlighting**: Code blocks with syntax awareness
-- **Tables**: Full table support with editing capabilities
-- **Task Lists**: Interactive checkboxes for task management
-- **List Management**: Indent and outdent list items with Tab/Shift+Tab keyboard shortcuts
-- **Image Support**: Inline image embedding and display
-- **Link Management**: Easy link insertion and editing
+- **WYSIWYG Editing**: Real-time rich-text editing with the TipTap editor framework
+- **Full Markdown Support**: 100% CommonMark compliance + 85% GitHub Flavored Markdown (GFM)
+- **Mathematical Expressions**: Complete LaTeX math rendering powered by KaTeX
+  - Intuitive formula insertion dialog (ƒ button)
+  - Inline math (`$...$`) and block math (`$$...$$`)
+  - Real-time LaTeX preview
+  - Support for complex formulas, matrices, integrals, and more
+- **Syntax Highlighting**: Code blocks with language-specific highlighting
+- **Tables**: Full table support with context menu editing
+- **Task Lists**: Interactive checkboxes for project management
+- **List Management**: Indent/outdent with Tab/Shift+Tab shortcuts
+- **Image & Link Support**: Easy insertion with dialog-based UI
+- **Text Alignment**: Left/center/right alignment for text and tables
 
 ### Document Management
-- **Multi-Document Interface**: Work with multiple documents simultaneously
-- **Auto-Save**: Automatic saving to prevent data loss
-- **File Operations**: New, Open, Save, Save As with native file dialogs
-- **Automatic Path Initialization**: First-launch auto-detection of OS documents folder for seamless setup
-  - Automatically sets default save location to user's Documents folder
-  - Auto-configures templates directory to Documents/VibeMD/Templates
-  - Works across macOS, Windows, and Linux with OS-appropriate paths
-- **Template System**: Create and manage document templates
-- **File Organization**: Sidebar navigation with document list and outline view
+- **Multi-Document Interface**: Work with multiple files simultaneously
+- **Auto-Save**: Automatic background saving prevents data loss
+- **Automatic Path Initialization**: First-launch auto-detection of OS documents folder
+  - Auto-sets default save location to user's Documents folder
+  - Auto-configures templates directory
+  - Works seamlessly across macOS, Windows, and Linux
+- **Template System**: Built-in and custom templates for recurring document types
+- **File Organization**: Sidebar with files list and document outline navigation
 
-### Template System
-- **Built-in Templates**: Pre-configured templates for common document types
-- **Custom Templates**: Create your own templates for recurring document structures
-- **Filesystem Templates**: Load templates from a designated folder
-- **Template Categories**: Organize templates by use case (Meeting Notes, Project Proposal, etc.)
-
-### User Interface
-- **Dark/Light Theme**: System-integrated theme switching
-- **Collapsible Sidebar**: Maximize writing space when needed
-- **Toolbar**: Quick access to formatting options and document actions
-- **Outline View**: Navigate long documents via heading structure
-- **Settings Dialog**: Comprehensive settings management
-- **Keyboard Shortcuts**: Efficient keyboard-driven workflow
-
-### Native OS Integration
-- **Native Menus**: Platform-native menu bars (macOS, Windows, Linux)
-- **File Dialogs**: Native file open/save dialogs
+###Native OS Integration
+- **Platform-Native Menus**: macOS, Windows, and Linux menu bars
+- **Native File Dialogs**: Open/save dialogs match OS appearance
 - **Print Support**: System print dialog integration
 - **Window Management**: Native window controls and behaviors
+- **Theme Integration**: Automatic system theme detection
 
-## Architecture
+---
 
-### Technology Stack
+## Technology Stack
 
-#### Core Framework
-- **Electron 38.2.2**: Cross-platform desktop application framework
+### Core Framework
+- **Electron 38.2.2**: Cross-platform desktop framework
 - **React 19.2.0**: UI component library
 - **TypeScript 4.5.4**: Type-safe development
 - **Electron Forge 7.10.2**: Build and packaging toolchain
 
-#### Editor & Markdown
+### Editor & Markdown
 - **TipTap 3.7.1**: Headless editor framework with extensions
-  - Starter Kit (base functionality)
-  - Hard Break, Horizontal Rule
-  - Image, Link
-  - Subscript, Superscript
-  - Table (with Cell, Header, Row)
-  - Task List and Task Item
-  - Mathematics Extension (custom LaTeX support)
-- **Marked 16.4.0**: Markdown parser and compiler
+- **Marked 16.4.0**: Markdown parser with GFM support
 - **Turndown 7.2.1**: HTML to Markdown converter
-- **Remark 15.0.1**: Markdown processor with plugins
-  - Remark Parse 11.0.0
-  - Remark GFM 4.0.1 (GitHub Flavored Markdown)
-  - Remark Math 6.0.0
-- **KaTeX 0.16.25**: Fast math typesetting for LaTeX formulas
-- **@tiptap/extension-mathematics**: TipTap LaTeX extension
-- **React Markdown 10.1.0**: Markdown rendering component
-- **Rehype KaTeX 7.0.1**: KaTeX integration for HTML
+- **Remark 15.0.1**: Markdown processor with GFM plugin
+- **KaTeX 0.16.25**: Fast LaTeX math typesetting
 
-#### UI Components
+### UI & State Management
 - **Radix UI**: Accessible, unstyled UI primitives
-  - Checkbox, Dialog, Dropdown Menu
-  - Label, Radio Group, Select
-  - Separator, Slot, Tabs
-  - Toggle Group, Tooltip
 - **Tailwind CSS 3.4.18**: Utility-first CSS framework
-- **Lucide React 0.545.0**: Icon library
-
-#### State Management & Utilities
 - **Zustand 5.0.8**: Lightweight state management
-- **Date-fns 4.1.0**: Modern date utility library
-- **UUID 13.0.0**: Unique identifier generation
-- **Zod 4.1.12**: TypeScript-first schema validation
-- **Class Variance Authority 0.7.1**: Variant-based component APIs
-- **CLSX 2.1.1**: Conditional className construction
-- **Tailwind Merge 3.3.1**: Tailwind class conflict resolution
+- **Lucide React 0.545.0**: Beautiful icon library
 
-#### Build Tools
-- **Autoprefixer 10.4.21**: CSS vendor prefix automation
-- **PostCSS 8.5.6**: CSS transformation tool
-- **Webpack**: Module bundler (via Electron Forge)
-
-### Application Structure
-
-```
-VibeMD/
-├── src/
-│   ├── main/                    # Electron main process
-│   │   ├── index.ts            # Main entry point, window management
-│   │   └── handlers/           # IPC handlers
-│   │       ├── fileHandlers.ts     # File operations (open, save, etc.)
-│   │       └── settingsHandlers.ts # Settings, print, system path operations
-│   │
-│   ├── preload/                 # Preload scripts (context bridge)
-│   │   └── index.ts            # IPC API exposure to renderer
-│   │
-│   ├── renderer/                # React application
-│   │   ├── App.tsx             # Main application component
-│   │   ├── components/         # UI components
-│   │   │   ├── dialogs/        # Modal dialogs
-│   │   │   │   ├── SettingsDialog.tsx
-│   │   │   │   ├── SettingsTab.tsx
-│   │   │   │   ├── AboutTab.tsx
-│   │   │   │   └── MathDialog.tsx  # LaTeX formula input dialog
-│   │   │   ├── editor/         # Editor components
-│   │   │   │   └── TipTapEditor.tsx  # Main WYSIWYG editor
-│   │   │   ├── layout/         # Layout components
-│   │   │   │   ├── Sidebar.tsx
-│   │   │   │   └── Toolbar.tsx
-│   │   │   ├── sidebar/        # Sidebar tab components
-│   │   │   │   ├── FilesTab.tsx
-│   │   │   │   ├── OutlineTab.tsx
-│   │   │   │   └── TemplatesTab.tsx
-│   │   │   └── ui/             # Reusable UI primitives (shadcn/ui)
-│   │   │       ├── button.tsx
-│   │   │       ├── dialog.tsx
-│   │   │       ├── tabs.tsx
-│   │   │       └── ...
-│   │   ├── hooks/              # Custom React hooks
-│   │   │   └── useKeyboardShortcuts.ts
-│   │   ├── lib/                # Utility functions
-│   │   │   └── utils.ts
-│   │   ├── services/           # Business logic
-│   │   │   ├── menuService.ts      # Menu event handling
-│   │   │   └── settingsService.ts  # Settings persistence
-│   │   ├── stores/             # Zustand state stores
-│   │   │   ├── documentStore.ts    # Document state
-│   │   │   ├── uiStore.ts          # UI state (theme, sidebar)
-│   │   │   └── settingsStore.ts    # Settings with auto-path init
-│   │   └── styles/             # Global styles
-│   │       └── globals.css     # Tailwind & custom CSS
-│   │
-│   └── shared/                  # Shared types and constants
-│       └── types.ts            # TypeScript interfaces
-│
-├── scripts/                     # Build and deployment scripts
-│   ├── pre-build.js            # Pre-build documentation
-│   └── reset-settings.sh       # Settings reset utility
-│
-├── docs/                        # Documentation
-│   └── MARKDOWN_CONFORMANCE_20251020.md
-│
-├── templates/                   # Built-in document templates
-│   ├── meeting-notes.vibe
-│   ├── project-proposal.vibe
-│   └── ...
-│
-├── package.json                 # Project dependencies and scripts
-├── tsconfig.json               # TypeScript configuration
-├── tailwind.config.js          # Tailwind CSS configuration
-├── forge.config.ts             # Electron Forge configuration
-├── DEPLOYMENT_GUIDE.md         # Deployment and path initialization guide
-└── vibemd.sh                   # Process management script (macOS/Linux)
-```
-
-### Key Architectural Patterns
-
-#### IPC Communication
-The application uses Electron's IPC (Inter-Process Communication) with context isolation:
-- **Main Process**: Handles file I/O, system dialogs, print operations
-- **Preload Script**: Exposes secure API to renderer via `contextBridge`
-- **Renderer Process**: React UI that calls exposed APIs
-
-#### State Management
-Three separate Zustand stores manage different concerns:
-- **documentStore**: Active documents, content, templates
-- **uiStore**: Theme, sidebar state, active tabs
-- **settingsStore**: User preferences, editor settings, automatic OS path initialization
-
-#### Document Format
-Documents are stored with metadata in a structured format:
-```typescript
-{
-  id: string;              // UUID
-  title: string;           // Document title
-  content: string;         // Markdown content
-  filePath?: string;       // Filesystem path
-  isModified: boolean;     // Unsaved changes flag
-  isTemplate: boolean;     // Template designation
-  createdAt: Date;
-  updatedAt: Date;
-}
-```
+---
 
 ## Installation
 
@@ -216,87 +85,161 @@ Documents are stored with metadata in a structured format:
 
 ### Development Setup
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd VibeMD
-```
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd VibeMD
+   ```
 
-2. Install dependencies:
-```bash
-npm install
-```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-3. Start the development server:
-```bash
-npm start
-```
+3. **Start development server:**
+   ```bash
+   npm start
+   ```
 
 ### Building for Production
 
-1. Package the application:
-```bash
-npm run package
+1. **Package the application:**
+   ```bash
+   npm run package
+   ```
+
+2. **Create distributables:**
+   ```bash
+   npm run make
+   ```
+
+This creates platform-specific distributables in the `out/` directory:
+- **macOS**: `.dmg` and `.zip`
+- **Windows**: `.exe` installer
+- **Linux**: `.deb` and `.rpm` packages
+
+For detailed build instructions, see [BUILD.md](BUILD.md).
+
+---
+
+## Quick Start
+
+### Creating Your First Document
+
+1. Launch VibeMD
+2. Click **New Document** or press `Cmd+N` (`Ctrl+N` on Windows/Linux)
+3. Start typing!
+
+VibeMD automatically saves your work, so you can focus on writing.
+
+### Using Templates
+
+1. Click **Use Template** button (or go to Templates tab in sidebar)
+2. Select a template (Meeting Notes, Project Proposal, etc.)
+3. Click **Use Template**
+4. Customize the content
+
+### Inserting Math Formulas
+
+1. Click the **ƒ** (Formula) button in the toolbar
+2. Choose **Inline Math** ($...$) or **Block Math** ($$...$$)
+3. Enter your LaTeX formula (e.g., `E = mc^2`)
+4. Click **Insert Math**
+
+The formula renders immediately in your document!
+
+---
+
+## Keyboard Shortcuts
+
+### File Operations
+| Action | macOS | Windows/Linux |
+|--------|-------|---------------|
+| New Document | `Cmd+N` | `Ctrl+N` |
+| Open | `Cmd+O` | `Ctrl+O` |
+| Save | `Cmd+S` | `Ctrl+S` |
+| Save As | `Cmd+Shift+S` | `Ctrl+Shift+S` |
+| Print | `Cmd+P` | `Ctrl+P` |
+
+### Text Formatting
+| Action | macOS | Windows/Linux |
+|--------|-------|---------------|
+| Bold | `Cmd+B` | `Ctrl+B` |
+| Italic | `Cmd+I` | `Ctrl+I` |
+| Underline | `Cmd+U` | `Ctrl+U` |
+
+### Editing
+| Action | macOS | Windows/Linux |
+|--------|-------|---------------|
+| Undo | `Cmd+Z` | `Ctrl+Z` |
+| Redo | `Cmd+Shift+Z` | `Ctrl+Shift+Z` |
+
+### Lists
+| Action | Shortcut |
+|--------|----------|
+| Indent List Item | `Tab` |
+| Outdent List Item | `Shift+Tab` |
+
+### Application
+| Action | macOS | Windows/Linux |
+|--------|-------|---------------|
+| Settings | `Cmd+,` | `Ctrl+,` |
+| Quit | `Cmd+Q` | `Ctrl+Q` |
+
+For complete keyboard shortcut list, see the [User Guide](docs/USER_GUIDE.md).
+
+---
+
+## Documentation
+
+- **[User Guide](docs/USER_GUIDE.md)**: Complete guide to using VibeMD
+- **[Architecture Guide](docs/ARCHITECTURE_GUIDE.md)**: Technical architecture and component documentation
+- **[Markdown Conformance](docs/MARKDOWN_CONFORMANCE.md)**: CommonMark, GFM, and LaTeX specification compliance
+- **[Build Instructions](BUILD.md)**: Platform-specific build instructions
+- **[Deployment Guide](DEPLOYMENT_GUIDE.md)**: Deployment and automatic path initialization
+
+---
+
+## Project Structure
+
+```
+VibeMD/
+├── src/
+│   ├── main/                    # Electron main process
+│   │   ├── index.ts            # Main entry point
+│   │   ├── window.ts           # Window management
+│   │   └── handlers/           # IPC handlers
+│   │
+│   ├── preload/                # Preload scripts
+│   │   └── index.ts            # Context bridge API
+│   │
+│   ├── renderer/               # React application
+│   │   ├── App.tsx             # Root component
+│   │   ├── components/         # UI components
+│   │   │   ├── dialogs/        # Modal dialogs
+│   │   │   ├── editor/         # TipTap editor
+│   │   │   ├── layout/         # Layout components
+│   │   │   ├── sidebar/        # Sidebar tabs
+│   │   │   └── ui/             # Reusable UI primitives
+│   │   ├── hooks/              # Custom React hooks
+│   │   ├── services/           # Business logic
+│   │   ├── stores/             # Zustand state stores
+│   │   └── styles/             # Global styles
+│   │
+│   └── shared/                 # Shared types
+│
+├── docs/                       # Documentation
+├── templates/                  # Built-in templates
+├── scripts/                    # Build scripts
+├── package.json
+├── tsconfig.json
+├── tailwind.config.js
+└── forge.config.ts
 ```
 
-2. Create distributables:
-```bash
-npm run make
-```
+See [Architecture Guide](docs/ARCHITECTURE_GUIDE.md) for detailed component documentation.
 
-This will create platform-specific distributables in the `out/` directory:
-- macOS: `.dmg` and `.zip`
-- Windows: `.exe` installer
-- Linux: `.deb` and `.rpm` packages
-
-## Usage
-
-### Keyboard Shortcuts
-
-#### File Operations
-- `Cmd+N` / `Ctrl+N`: New document
-- `Cmd+O` / `Ctrl+O`: Open document
-- `Cmd+S` / `Ctrl+S`: Save document
-- `Cmd+Shift+S` / `Ctrl+Shift+S`: Save As
-- `Cmd+P` / `Ctrl+P`: Print document
-
-#### Editing
-- `Cmd+B` / `Ctrl+B`: Bold
-- `Cmd+I` / `Ctrl+I`: Italic
-- `Cmd+U` / `Ctrl+U`: Underline
-- `Cmd+Z` / `Ctrl+Z`: Undo
-- `Cmd+Shift+Z` / `Ctrl+Shift+Z`: Redo
-
-#### Application
-- `Cmd+,` / `Ctrl+,`: Settings
-- `Cmd+Q` / `Ctrl+Q`: Quit (macOS)
-
-### Working with Templates
-
-1. **Using Built-in Templates**:
-   - Click "Use Template" button in sidebar (when no documents open)
-   - Select from available templates in the Templates tab
-   - Click "Use Template" on desired template
-
-2. **Creating Custom Templates**:
-   - Create a new document
-   - Add your template content
-   - Save with `.vibe` extension
-   - Place in templates folder or save as template within app
-
-3. **Managing Templates**:
-   - Templates tab shows all available templates
-   - Can set a custom templates directory in Settings
-   - Templates are automatically loaded on app start
-
-### Configuration
-
-Settings are accessible via `Cmd+,` / `Ctrl+,`:
-
-- **Appearance**: Theme (Light/Dark/System)
-- **Editor**: Font size, line numbers, word wrap
-- **Files**: Auto-save, templates directory
-- **About**: Version info, licenses, third-party components
+---
 
 ## Development
 
@@ -304,11 +247,6 @@ Settings are accessible via `Cmd+,` / `Ctrl+,`:
 
 ```bash
 npm start              # Start development server
-npm run start:clean    # Clean start (via vibemd.sh)
-npm run stop           # Stop running instance (via vibemd.sh)
-npm run restart        # Restart instance (via vibemd.sh)
-npm run status         # Check running status (via vibemd.sh)
-npm run logs           # View application logs (via vibemd.sh)
 npm run package        # Package for current platform
 npm run make           # Build distributables
 npm run lint           # Run ESLint
@@ -316,32 +254,83 @@ npm run lint           # Run ESLint
 
 ### Process Management (macOS/Linux)
 
-The `vibemd.sh` script provides process management:
 ```bash
 ./vibemd.sh start      # Start in background
 ./vibemd.sh stop       # Stop all instances
 ./vibemd.sh restart    # Restart application
-./vibemd.sh status     # Check if running
-./vibemd.sh logs       # Tail application logs
+./vibemd.sh status     # Check running status
+./vibemd.sh logs       # View application logs
 ```
 
 ### Adding New Features
 
-1. **New IPC Handlers**: Add to `src/main/handlers/`
-2. **Expose to Renderer**: Update `src/preload/index.ts`
+1. **IPC Handlers**: Add to `src/main/handlers/`
+2. **Preload API**: Update `src/preload/index.ts`
 3. **Type Definitions**: Add to `src/shared/types.ts`
 4. **UI Components**: Add to `src/renderer/components/`
 5. **State Management**: Update relevant store in `src/renderer/stores/`
 
-## License
+---
 
-MIT License - See LICENSE file for details
+## Markdown Support
 
-Copyright (c) 2025 ONLY1 Pty Ltd
+### CommonMark Compliance: 100%
+- Headings (H1-H6)
+- Paragraphs and line breaks
+- Emphasis (bold, italic)
+- Code (inline and blocks)
+- Blockquotes
+- Lists (ordered, unordered)
+- Links and images
+- Horizontal rules
 
-## Third-Party Licenses
+### GitHub Flavored Markdown: 85%
+- Tables with full editing
+- Strikethrough (`~~text~~`)
+- Task lists with interactive checkboxes
+- Automatic URL linking
 
-This application incorporates open-source software. Full license information for all third-party components is available in the About section of the application (Settings → About).
+### Extended Features
+- Superscript and subscript
+- LaTeX mathematical expressions (KaTeX)
+- List indentation (Tab/Shift+Tab)
+- Text alignment (left/center/right)
+
+For complete specification compliance details, see [Markdown Conformance](docs/MARKDOWN_CONFORMANCE.md).
+
+---
+
+## Settings
+
+Access Settings with `Cmd+,` (`Ctrl+,`) or click the Settings button.
+
+### Appearance
+- **Theme**: Light, Dark, or System (auto-matches OS theme)
+- **Color Scheme**: Automatic theme-based syntax highlighting
+
+### Files
+- **Default Save Path**: Auto-initialized to your Documents folder
+- **Templates Location**: Auto-set to `Documents/VibeMD/Templates`
+- **Auto-Save**: Automatic background saving (recommended: enabled)
+
+### Editor
+- **Font Size**: Adjustable from 10-24pt (default: 12pt)
+- **Font Family**: Choose your preferred font
+- **Line Numbers**: Show/hide line numbers
+
+---
+
+## Licensing
+
+**VibeMD** is licensed under the MIT License.
+
+Copyright © 2025 ONLY1 Pty Ltd
+
+See LICENSE file for full details.
+
+### Third-Party Licenses
+
+VibeMD incorporates open-source software. Full license information for all third-party components is available in the About section (Settings → About).
 
 Major components:
 - Electron (MIT)
@@ -349,13 +338,18 @@ Major components:
 - TipTap (MIT)
 - Tailwind CSS (MIT)
 - Radix UI (MIT)
+- KaTeX (MIT)
 - And many others - see application About section for complete list
+
+---
 
 ## Support
 
-For issues, questions, or contributions, please contact:
-- Email: hello@vibemd.app
-- Project: VibeMD v1.0.0
+For issues, questions, or contributions:
+- **Email**: hello@vibemd.app
+- **Version**: VibeMD v1.0.0
+
+---
 
 ## Acknowledgments
 
@@ -364,4 +358,11 @@ VibeMD is built on the shoulders of giants. Special thanks to:
 - The TipTap team for the flexible editor framework
 - The Radix UI team for accessible UI primitives
 - The Tailwind CSS team for the utility-first CSS framework
+- The KaTeX team for beautiful mathematical typesetting
 - All open-source contributors whose libraries make this project possible
+
+---
+
+**VibeMD v1.0.0** - Modern Markdown Editing for Everyone
+
+Happy writing! 📝
