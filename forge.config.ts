@@ -20,6 +20,8 @@ const config: ForgeConfig = {
     icon: './build/icons/icon',
     appCopyright: 'Copyright © 2025 ONLY1 Pty Ltd',
     appBundleId: 'com.vibemd.app',
+    // Let the webpack plugin handle ignore patterns automatically
+    // It will keep only .webpack directory and add Electron resources (icudtl.dat, locales, etc.)
     // macOS file associations
     protocols: [
       {
@@ -75,7 +77,7 @@ const config: ForgeConfig = {
         genericName: 'Markdown Editor',
         description: 'A modern, cross-platform desktop markdown editor',
         icon: './build/icons/icon.svg',
-        categories: ['Office', 'TextEditor'],
+        categories: ['Office'],
         mimeType: ['text/markdown', 'text/x-markdown', 'application/x-vibe']
       }
     }),
@@ -86,7 +88,7 @@ const config: ForgeConfig = {
         genericName: 'Markdown Editor',
         description: 'A modern, cross-platform desktop markdown editor',
         icon: './build/icons/icon.svg',
-        categories: ['Office', 'TextEditor'],
+        categories: ['Office'],
         mimeType: ['text/markdown', 'text/x-markdown', 'application/x-vibe']
       }
     }),
@@ -120,7 +122,7 @@ const config: ForgeConfig = {
       [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
       [FuseV1Options.EnableNodeCliInspectArguments]: false,
       [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
-      [FuseV1Options.OnlyLoadAppFromAsar]: false,  // Must be false for ICU data to load on Windows
+      [FuseV1Options.OnlyLoadAppFromAsar]: true,  // Safe to enable - ICU data is outside ASAR
     }),
   ],
 };

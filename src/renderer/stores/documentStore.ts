@@ -11,6 +11,7 @@ interface DocumentStore {
   removeTemplate: (id: string) => void;
   updateDocument: (id: string, updates: Partial<Document>) => void;
   setActiveDocument: (id: string) => void;
+  setActiveDocumentWithSave: (id: string, saveCurrentContent: () => void) => void;
   getActiveDocument: () => Document | null;
   markAsModified: (id: string) => void;
   markAsSaved: (id: string) => void;
@@ -61,6 +62,13 @@ export const useDocumentStore = create<DocumentStore>((set, get) => ({
 
   setActiveDocument: (id) =>
     set({ activeDocumentId: id }),
+
+  setActiveDocumentWithSave: (id, saveCurrentContent) => {
+    // Save current content before switching
+    saveCurrentContent();
+    // Then switch to the new document
+    set({ activeDocumentId: id });
+  },
 
   getActiveDocument: () => {
     const state = get();

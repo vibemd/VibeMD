@@ -6,16 +6,22 @@ import { cn } from '@/lib/utils';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 
 export function OutlineTab() {
-  const activeDocument = useDocumentStore((state) => 
-    state.getActiveDocument()
-  );
+  // IMPORTANT: Subscribe to the actual state, not the getter function
+  // This ensures the component re-renders when document content changes
+  const activeDocument = useDocumentStore((state) => {
+    if (!state.activeDocumentId) return null;
+    return state.documents.get(state.activeDocumentId) || null;
+  });
   const scrollToHeading = useNavigationStore((state) => state.scrollToHeading);
   const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set());
 
   const outline = useMemo(() => {
     if (!activeDocument) return [];
-    return markdownService.generateOutline(activeDocument.content);
-  }, [activeDocument?.content]);
+    console.log('[OutlineTab] Generating outline for document:', activeDocument.id, 'content length:', activeDocument.content.length);
+    const result = markdownService.generateOutline(activeDocument.content);
+    console.log('[OutlineTab] Generated outline with', result.length, 'top-level items');
+    return result;
+  }, [activeDocument?.id, activeDocument?.content]);
 
   const toggleCollapse = (nodeId: string) => {
     setCollapsedNodes(prev => {

@@ -1,17 +1,64 @@
 import * as path from 'path';
+import * as fs from 'fs';
 
-// CRITICAL FIX: Configure ICU data path BEFORE importing Electron
-// This must happen before any Electron module loads
+// CRITICAL FIX: Set ICU_DATA_FILE environment variable BEFORE importing Electron
+// Chromium reads this on startup, before any JavaScript runs
 if (process.platform === 'win32') {
+  // Determine the directory where the executable is located
   const exeDir = path.dirname(process.execPath);
-  // Set ICU data path via environment variable
-  process.env.ICU_DATA_FILE = path.join(exeDir, 'icudtl.dat');
+  const icuDataPath = path.join(exeDir, 'icudtl.dat');
+
+  console.log('[ICU] Pre-Electron ICU configuration for Windows x64');
+  console.log('[ICU] Process executable:', process.execPath);
+  console.log('[ICU] Executable directory:', exeDir);
+  console.log('[ICU] Expected ICU data path:', icuDataPath);
+
+  // Try to find ICU data file
+  let foundPath: string | null = null;
+
+  if (fs.existsSync(icuDataPath)) {
+    foundPath = icuDataPath;
+  } else {
+    // Try alternative locations (for development vs production)
+    const altPaths = [
+      path.join(exeDir, 'resources', 'icudtl.dat'),
+      path.join(exeDir, '..', 'icudtl.dat'),
+    ];
+
+    for (const altPath of altPaths) {
+      if (fs.existsSync(altPath)) {
+        foundPath = altPath;
+        break;
+      }
+    }
+  }
+
+  if (foundPath) {
+    // Set the environment variable that Chromium reads
+    process.env.ICU_DATA_FILE = foundPath;
+    console.log('[ICU] ✓ ICU data file found:', foundPath);
+    console.log('[ICU] ✓ File size:', fs.statSync(foundPath).size, 'bytes');
+    console.log('[ICU] ✓ Set ICU_DATA_FILE environment variable');
+  } else {
+    console.error('[ICU] ✗ ERROR: ICU data file not found!');
+    console.error('[ICU] Searched locations:');
+    console.error('[ICU]   -', icuDataPath);
+    console.error('[ICU]   -', path.join(exeDir, 'resources', 'icudtl.dat'));
+    console.error('[ICU]   -', path.join(exeDir, '..', 'icudtl.dat'));
+  }
 }
 
+// Now import Electron - ICU should be configured
 import { app, BrowserWindow, Menu, nativeImage } from 'electron';
 import { createMainWindow } from './window';
 import './handlers'; // Import IPC handlers
-import * as fs from 'fs';
+
+// Windows ICU command line switch as backup
+if (process.platform === 'win32' && process.env.ICU_DATA_FILE) {
+  const icuDir = path.dirname(process.env.ICU_DATA_FILE);
+  app.commandLine.appendSwitch('icu-data-dir', icuDir);
+  console.log('[ICU] ✓ Set command line switch icu-data-dir:', icuDir);
+}
 
 // Set app name for macOS navbar and dock
 app.setName('VibeMD');

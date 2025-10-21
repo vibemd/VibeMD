@@ -4,9 +4,12 @@ import { useMemo } from 'react';
 import { markdownService } from '@/services/markdownService';
 
 export function StatusBar() {
-  const activeDocument = useDocumentStore((state) => 
-    state.getActiveDocument()
-  );
+  // IMPORTANT: Subscribe to the actual state, not the getter function
+  // This ensures the component re-renders when document content changes
+  const activeDocument = useDocumentStore((state) => {
+    if (!state.activeDocumentId) return null;
+    return state.documents.get(state.activeDocumentId) || null;
+  });
 
   const stats = useMemo(() => {
     if (!activeDocument) return null;

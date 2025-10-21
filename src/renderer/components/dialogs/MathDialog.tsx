@@ -98,3 +98,7 @@ export function MathDialog({
     </Dialog>
   );
 }
+
+
+
+

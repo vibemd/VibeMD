@@ -24,6 +24,8 @@ export const createMainWindow = (): BrowserWindow => {
       nodeIntegration: false,
       sandbox: false, // Disable sandbox to allow preload script to work with webpack
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      // ICU-related preferences for Windows
+      experimentalFeatures: false,
     },
     show: false, // Show after ready-to-show
   });

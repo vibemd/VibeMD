@@ -22,6 +22,7 @@ import { Extension } from '@tiptap/core';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useNavigationStore } from '@/services/navigationService';
+import { editorService } from '@/services/editorService';
 import { marked } from 'marked';
 import TurndownService from 'turndown';
 import { LinkDialog } from '../dialogs/LinkDialog';
@@ -59,7 +60,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function TipTapEditor() {
-  const activeDocument = useDocumentStore((state) => state.getActiveDocument());
+  // IMPORTANT: Subscribe to the actual state, not the getter function
+  // This ensures the component re-renders when document content changes
+  const activeDocument = useDocumentStore((state) => {
+    if (!state.activeDocumentId) return null;
+    return state.documents.get(state.activeDocumentId) || null;
+  });
   const updateDocument = useDocumentStore((state) => state.updateDocument);
   const markAsModified = useDocumentStore((state) => state.markAsModified);
   const settings = useSettingsStore((state) => state.settings);
@@ -75,6 +81,7 @@ export function TipTapEditor() {
 
   // Flag to prevent circular updates
   const isUpdatingFromEditor = React.useRef(false);
+  const isUpdatingFromDocument = React.useRef(false);
 
   // Heading levels configuration
   const headingLevels = [
@@ -141,25 +148,70 @@ export function TipTapEditor() {
         return `<h${level} id="${id}">${content}</h${level}>`;
       });
       
-      // Handle text alignment from HTML divs
+      // Handle text alignment from HTML divs - CRITICAL FIX
+      // First handle divs with paragraphs inside
+      htmlWithIds = htmlWithIds.replace(/<div style="text-align: (center|right)">\s*<p>(.*?)<\/p>\s*<\/div>/g, (match: string, align: string, content: string) => {
+        return `<p style="text-align: ${align}">${content}</p>`;
+      });
+      
+      // Then handle divs with plain text content
       htmlWithIds = htmlWithIds.replace(/<div style="text-align: (center|right)">(.*?)<\/div>/g, (match: string, align: string, content: string) => {
-        // Wrap content in appropriate tags with alignment
-        return `<div style="text-align: ${align}">${content}</div>`;
+        // If content doesn't start with a tag, wrap it in a paragraph
+        if (!content.trim().startsWith('<')) {
+          return `<p style="text-align: ${align}">${content}</p>`;
+        } else {
+          // For other content, wrap in div with text-align
+          return `<div style="text-align: ${align}">${content}</div>`;
+        }
       });
       
       // Restore protected math expressions
       let finalHtml = htmlWithIds;
       protectedMath.forEach((math) => {
-        const mathHtml = math.type === 'block' 
-          ? `<div data-type="block-math" data-latex="${math.content}"></div>`
-          : `<span data-type="inline-math" data-latex="${math.content}"></span>`;
-        
+        const mathHtml = math.type === 'block'
+          ? `<div data-type="block-math" data-latex="${math.content}" class="math-node"></div>`
+          : `<span data-type="inline-math" data-latex="${math.content}" class="math-node"></span>`;
+
         finalHtml = finalHtml.replace(math.placeholder, mathHtml);
       });
-      
-      // Debug: Log the HTML to see what's being generated
-      console.log('[markdownToHtml] Generated HTML:', finalHtml);
-      
+
+      // CRITICAL FIX: Ensure all math nodes have the math-node class
+      // This handles cases where the Mathematics extension doesn't add the class
+      finalHtml = finalHtml.replace(
+        /<span data-type="inline-math" data-latex="([^"]*)"(?!\s+class="[^"]*math-node[^"]*")/g,
+        '<span data-type="inline-math" data-latex="$1" class="math-node"'
+      );
+      finalHtml = finalHtml.replace(
+        /<div data-type="block-math" data-latex="([^"]*)"(?!\s+class="[^"]*math-node[^"]*")/g,
+        '<div data-type="block-math" data-latex="$1" class="math-node"'
+      );
+
+      // Additional fix: Handle math nodes that might be missing the class attribute entirely
+      finalHtml = finalHtml.replace(
+        /<span data-type="inline-math" data-latex="([^"]*)"(?!\s+class=)/g,
+        '<span data-type="inline-math" data-latex="$1" class="math-node"'
+      );
+      finalHtml = finalHtml.replace(
+        /<div data-type="block-math" data-latex="([^"]*)"(?!\s+class=)/g,
+        '<div data-type="block-math" data-latex="$1" class="math-node"'
+      );
+
+      // Fix task lists - add data-type attributes for TipTap
+      // marked converts `- [ ] task` to `<ul><li><input type="checkbox">task</li></ul>`
+      // We need to add data-type="taskList" and data-type="taskItem" for our Turndown rules
+      finalHtml = finalHtml.replace(/<ul>\s*<li><input[^>]*type="checkbox"[^>]*>/gi, (match) => {
+        // Check if this UL already has data-type (avoid double-processing)
+        if (match.includes('data-type="taskList"')) return match;
+        // Add data-type to UL and LI
+        return '<ul data-type="taskList"><li data-type="taskItem"><input type="checkbox">';
+      });
+
+      // Fix remaining task list items in the same list
+      finalHtml = finalHtml.replace(/<li><input([^>]*)type="checkbox"([^>]*)>/gi, (match, before, after) => {
+        if (match.includes('data-type="taskItem"')) return match;
+        return `<li data-type="taskItem"><input${before}type="checkbox"${after}>`;
+      });
+
       return finalHtml;
     } catch (error) {
       console.error('Error converting markdown to HTML:', error);
@@ -191,31 +243,99 @@ export function TipTapEditor() {
         linkReferenceStyle: 'full',
       });
 
-      // Add table support
+      // CRITICAL: Add LaTeX math support FIRST to ensure highest priority
+      turndownService.addRule('mathInlineNode', {
+        filter: function (node) {
+          // Only check SPAN elements
+          if (node.nodeName !== 'SPAN' && node.nodeName !== 'span') return false;
+          
+          const elem = node as HTMLElement;
+          const dataType = elem.getAttribute('data-type');
+          const dataLatex = elem.getAttribute('data-latex');
+          const className = elem.getAttribute('class') || '';
+
+          // Match any span with data-type="inline-math" or data-latex attribute or math-node class
+          const matches = dataType === 'inline-math' || 
+                         (dataLatex !== null && dataLatex !== '') ||
+                         className.includes('math-node');
+          
+          return matches;
+        },
+        replacement: function (content, node) {
+          const elem = node as HTMLElement;
+          // TipTap stores LaTeX in data-latex attribute or text content
+          let latex = elem.getAttribute('data-latex') || elem.textContent?.trim() || '';
+          
+          // Remove surrounding $ if present (since we add them back)
+          latex = latex.replace(/^\$/, '').replace(/\$$/, '').trim();
+          
+          return latex ? `$${latex}$` : '';
+        }
+      });
+
+      turndownService.addRule('mathDisplayNode', {
+        filter: function (node) {
+          // Only check DIV elements
+          if (node.nodeName !== 'DIV' && node.nodeName !== 'div') return false;
+          
+          const elem = node as HTMLElement;
+          const dataType = elem.getAttribute('data-type');
+          const dataLatex = elem.getAttribute('data-latex');
+          const className = elem.getAttribute('class') || '';
+
+          // Match any div with data-type="block-math" or data-latex attribute or math-node class
+          const matches = dataType === 'block-math' || 
+                         (dataLatex !== null && dataLatex !== '') ||
+                         className.includes('math-node');
+          
+          return matches;
+        },
+        replacement: function (content, node) {
+          const elem = node as HTMLElement;
+          // TipTap stores LaTeX in data-latex attribute or text content
+          let latex = elem.getAttribute('data-latex') || elem.textContent?.trim() || '';
+
+          // Remove surrounding $$ if present (since we add them back)
+          latex = latex.replace(/^\$\$/, '').replace(/\$\$$/, '').trim();
+
+          return latex ? `\n$$${latex}$$\n` : '';
+        }
+      });
+
+      // Add table support - FIXED: Only add header row if table actually has one
       turndownService.addRule('table', {
         filter: 'table',
         replacement: function (content, node) {
           const table = node as HTMLTableElement;
           const rows = Array.from(table.querySelectorAll('tr'));
+
           if (rows.length === 0) return '';
-          
+
           let markdown = '\n';
-          
+          let hasHeaderRow = false;
+
           // Process each row
           rows.forEach((row, rowIndex) => {
-            const cells = Array.from(row.querySelectorAll('td, th'));
-            if (cells.length === 0) return;
-            
-            const cellContents = cells.map(cell => {
+            const headerCells = Array.from(row.querySelectorAll('th'));
+            const dataCells = Array.from(row.querySelectorAll('td'));
+            const allCells = [...headerCells, ...dataCells];
+
+            if (allCells.length === 0) return;
+
+            // Determine if this row is a header (has <th> tags)
+            const isHeaderRow = headerCells.length > 0;
+            if (isHeaderRow) hasHeaderRow = true;
+
+            const cellContents = allCells.map(cell => {
               const cellText = cell.textContent || '';
               return cellText.replace(/\|/g, '\\|').trim();
             });
-            
+
             markdown += '| ' + cellContents.join(' | ') + ' |\n';
-            
-            // Add separator row after header row with alignment
-            if (rowIndex === 0) {
-              const separators = cells.map(cell => {
+
+            // Add separator row ONLY after an actual header row (with <th> tags)
+            if (isHeaderRow) {
+              const separators = allCells.map(cell => {
                 const align = (cell as HTMLElement).style.textAlign;
                 switch (align) {
                   case 'center': return ':---:';
@@ -226,47 +346,191 @@ export function TipTapEditor() {
               markdown += '| ' + separators.join(' | ') + ' |\n';
             }
           });
-          
+
+          // CRITICAL FIX: Markdown tables MUST have a header row
+          // If no header row was found, add one at the beginning with empty headers
+          if (!hasHeaderRow && rows.length > 0) {
+            const firstRowCells = Array.from(rows[0].querySelectorAll('td')).length;
+            const emptyHeaders = Array(firstRowCells).fill('').join(' | ');
+            const separators = Array(firstRowCells).fill('---').join(' | ');
+            // Prepend header row to markdown
+            markdown = '\n| ' + emptyHeaders + ' |\n| ' + separators + ' |\n' + markdown.substring(1);
+          }
+
           return markdown + '\n';
         }
       });
 
-      // Add text alignment support
-      turndownService.addRule('textAlign', {
-        filter: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+      // Add task list support - CRITICAL for preserving checkboxes
+      turndownService.addRule('taskList', {
+        filter: function (node) {
+          return node.nodeName === 'UL' &&
+                 (node as HTMLElement).getAttribute('data-type') === 'taskList';
+        },
         replacement: function (content, node) {
-          const align = (node as HTMLElement).style?.textAlign;
-          if (align && align !== 'left' && (align === 'center' || align === 'right')) {
+          return '\n' + content;
+        }
+      });
+
+      turndownService.addRule('taskItem', {
+        filter: function (node) {
+          return node.nodeName === 'LI' &&
+                 (node as HTMLElement).getAttribute('data-type') === 'taskItem';
+        },
+        replacement: function (content, node) {
+          const elem = node as HTMLElement;
+          const checkbox = elem.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
+          const isChecked = checkbox?.hasAttribute('checked') || checkbox?.checked || false;
+
+          // Extract text from the div>p structure that TipTap creates
+          // TipTap wraps task content in: <label><input><span></span></label><div><p>Task text</p></div>
+          const textDiv = elem.querySelector('div');
+          const taskText = textDiv?.textContent?.trim() || '';
+
+          return '- [' + (isChecked ? 'x' : ' ') + '] ' + taskText + '\n';
+        }
+      });
+
+      // Add strikethrough support
+      turndownService.addRule('strikethrough', {
+        filter: function (node) {
+          return node.nodeName === 'DEL' || node.nodeName === 'S' || node.nodeName === 'STRIKE';
+        },
+        replacement: function (content) {
+          return '~~' + content + '~~';
+        }
+      });
+
+      // Add superscript support
+      turndownService.addRule('superscript', {
+        filter: 'sup',
+        replacement: function (content) {
+          return '<sup>' + content + '</sup>';
+        }
+      });
+
+      // Add subscript support
+      turndownService.addRule('subscript', {
+        filter: 'sub',
+        replacement: function (content) {
+          return '<sub>' + content + '</sub>';
+        }
+      });
+
+      // Add text alignment support - check both style and text-align attribute
+      turndownService.addRule('textAlign', {
+        filter: function (node, options) {
+          if (node.nodeName === 'P') {
+            const elem = node as HTMLElement;
+            const styleAlign = elem.style?.textAlign;
+            const attrAlign = elem.getAttribute('style')?.includes('text-align');
+
+            // Match if has text-align style (center or right)
+            return !!(styleAlign && styleAlign !== 'left' && (styleAlign === 'center' || styleAlign === 'right'));
+          }
+          return false;
+        },
+        replacement: function (content, node) {
+          const elem = node as HTMLElement;
+          const align = elem.style?.textAlign || elem.getAttribute('style')?.match(/text-align:\s*([^;]+)/)?.[1];
+          
+          // Ensure we have a valid alignment value
+          if (align && (align === 'center' || align === 'right')) {
             return `<div style="text-align: ${align}">${content}</div>\n\n`;
           }
-          return content + '\n\n';
+          
+          // Fallback to original content if no valid alignment
+          return content;
         }
       });
 
-      // Add LaTeX math support
-      turndownService.addRule('mathInline', {
-        filter: function (node) {
-          return node.nodeName === 'SPAN' && 
-                 (node as HTMLElement).getAttribute('data-type') === 'inline-math';
-        },
-        replacement: function (content, node) {
-          const latex = (node as HTMLElement).getAttribute('data-latex');
-          return latex ? `$${latex}$` : content;
+      // Keep headings as markdown, but preserve alignment
+      turndownService.addRule('headingWithAlignment', {
+        filter: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+        replacement: function (content, node, options) {
+          const hLevel = parseInt(node.nodeName.charAt(1));
+          const hPrefix = '#'.repeat(hLevel);
+          const align = (node as HTMLElement).style?.textAlign;
+
+          // If heading has alignment, wrap in div
+          if (align && align !== 'left' && (align === 'center' || align === 'right')) {
+            return `<div style="text-align: ${align}">${hPrefix} ${content}</div>\n\n`;
+          }
+
+          // Default heading
+          return hPrefix + ' ' + content + '\n\n';
         }
       });
 
-      turndownService.addRule('mathDisplay', {
-        filter: function (node) {
-          return node.nodeName === 'DIV' && 
-                 (node as HTMLElement).getAttribute('data-type') === 'block-math';
-        },
-        replacement: function (content, node) {
-          const latex = (node as HTMLElement).getAttribute('data-latex');
-          return latex ? `$$${latex}$$` : content;
+      // CRITICAL: Pre-process HTML to ensure math nodes are properly formatted
+      let processedHtml = html;
+      
+      // Ensure all math nodes have the math-node class
+      processedHtml = processedHtml.replace(
+        /<span data-type="inline-math" data-latex="([^"]*)"(?!\s+class=)/g,
+        '<span data-type="inline-math" data-latex="$1" class="math-node"'
+      );
+      processedHtml = processedHtml.replace(
+        /<div data-type="block-math" data-latex="([^"]*)"(?!\s+class=)/g,
+        '<div data-type="block-math" data-latex="$1" class="math-node"'
+      );
+      
+      // Handle math nodes that might have other attributes but no class
+      processedHtml = processedHtml.replace(
+        /<span data-type="inline-math" data-latex="([^"]*)"(?!\s+class="[^"]*math-node[^"]*")/g,
+        '<span data-type="inline-math" data-latex="$1" class="math-node"'
+      );
+      processedHtml = processedHtml.replace(
+        /<div data-type="block-math" data-latex="([^"]*)"(?!\s+class="[^"]*math-node[^"]*")/g,
+        '<div data-type="block-math" data-latex="$1" class="math-node"'
+      );
+
+      // CRITICAL FIX: Extract math nodes before Turndown processing
+      const mathNodesData: Array<{type: 'inline' | 'block', latex: string, placeholder: string}> = [];
+      let mathProcessedHtml = processedHtml;
+      
+      // Replace math nodes with placeholders before Turndown processing
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = processedHtml;
+      const mathNodes = tempDiv.querySelectorAll('[data-type="inline-math"], [data-type="block-math"], [data-latex]');
+      
+      mathNodes.forEach((node, index) => {
+        const dataType = node.getAttribute('data-type');
+        const dataLatex = node.getAttribute('data-latex');
+        const className = node.getAttribute('class') || '';
+
+        if (dataLatex && (dataType === 'inline-math' || dataType === 'block-math' || className.includes('math-node'))) {
+          // Use a unique marker that won't be escaped by Turndown
+          const placeholder = `___MATH_PLACEHOLDER_${index}___`;
+          const type = dataType === 'block-math' ? 'block' : 'inline';
+
+          mathNodesData.push({ type, latex: dataLatex, placeholder });
+
+          // Replace the math node with a placeholder
+          mathProcessedHtml = mathProcessedHtml.replace(node.outerHTML, placeholder);
         }
       });
 
-      return turndownService.turndown(html);
+      const markdown = turndownService.turndown(mathProcessedHtml);
+
+      // Restore math nodes in markdown
+      let finalMarkdown = markdown;
+      mathNodesData.forEach(({ type, latex, placeholder }) => {
+        const mathMarkdown = type === 'block' ? `\n$$${latex}$$\n` : `$${latex}$`;
+
+        // Turndown escapes underscores as \_
+        // So ___MATH_PLACEHOLDER_0___ becomes \\_\\_\\_MATH\\_PLACEHOLDER\\_0\\_\\_\\_
+        const escapedPlaceholder = placeholder.replace(/_/g, '\\_');
+
+        // Try both the original and escaped version
+        const regex1 = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+        const regex2 = new RegExp(escapedPlaceholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+
+        finalMarkdown = finalMarkdown.replace(regex1, mathMarkdown);
+        finalMarkdown = finalMarkdown.replace(regex2, mathMarkdown);
+      });
+
+      return finalMarkdown;
     } catch (error) {
       console.error('Error converting HTML to markdown:', error);
       return html; // Fallback to original content
@@ -340,6 +604,93 @@ export function TipTapEditor() {
             };
           },
         },
+        colspan: {
+          default: 1,
+          parseHTML: (element: HTMLElement) => parseInt(element.getAttribute('colspan') || '1'),
+          renderHTML: (attributes: any) => {
+            if (!attributes.colspan || attributes.colspan === 1) {
+              return {};
+            }
+            return {
+              colspan: attributes.colspan,
+            };
+          },
+        },
+        rowspan: {
+          default: 1,
+          parseHTML: (element: HTMLElement) => parseInt(element.getAttribute('rowspan') || '1'),
+          renderHTML: (attributes: any) => {
+            if (!attributes.rowspan || attributes.rowspan === 1) {
+              return {};
+            }
+            return {
+              rowspan: attributes.rowspan,
+            };
+          },
+        },
+      };
+    },
+  });
+
+  // Custom Mathematics extension that ensures proper HTML output
+  const MathematicsWithClass = Mathematics.extend({
+    addGlobalAttributes() {
+      return [
+        {
+          types: ['mathInline'],
+          attributes: {
+            class: {
+              default: 'math-node',
+              parseHTML: () => 'math-node',
+              renderHTML: () => ({ class: 'math-node' }),
+            },
+          },
+        },
+        {
+          types: ['mathBlock'],
+          attributes: {
+            class: {
+              default: 'math-node',
+              parseHTML: () => 'math-node',
+              renderHTML: () => ({ class: 'math-node' }),
+            },
+          },
+        },
+      ];
+    },
+  });
+
+  // Math insertion is handled directly by the Mathematics extension
+
+  // Custom Table extension to fix navigation issues
+  const TableWithNavigationFix = Table.extend({
+    addKeyboardShortcuts() {
+      return {
+        // Override default arrow key behavior to prevent navigation errors
+        'ArrowUp': ({ editor }: { editor: any }) => {
+          if (editor.isActive('table')) {
+            // Use safer navigation method
+            try {
+              return editor.commands.goToPreviousCell();
+            } catch (error) {
+              console.warn('[Table] Navigation error prevented:', error);
+              return false;
+            }
+          }
+          return false;
+        },
+        'ArrowDown': ({ editor }: { editor: any }) => {
+          if (editor.isActive('table')) {
+            // Use safer navigation method
+            try {
+              return editor.commands.goToNextCell();
+            } catch (error) {
+              console.warn('[Table] Navigation error prevented:', error);
+              return false;
+            }
+          }
+          return false;
+        },
       };
     },
   });
@@ -403,7 +754,7 @@ export function TipTapEditor() {
         },
       }),
       
-      Table.configure({
+      TableWithNavigationFix.configure({
         resizable: false, // Disable resizing to prevent width: 0px issue
         allowTableNodeSelection: true,
         HTMLAttributes: {
@@ -414,23 +765,22 @@ export function TipTapEditor() {
       TableHeader,
       TableCellWithAlignment,
 
-      // Mathematics extension (always enabled)
-      Mathematics.configure({
+      // Mathematics extension (always enabled) - using custom version with class attribute
+      MathematicsWithClass.configure({
         katexOptions: {
           throwOnError: false,
           errorColor: '#cc0000',
+          displayMode: false, // Default to inline mode
         },
       }),
     ],
     content: activeDocument?.content ? markdownToHtml(activeDocument.content) : '',
     autofocus: 'start', // Auto-focus at start
     onUpdate: ({ editor }) => {
-      if (activeDocument) {
+      if (activeDocument && !isUpdatingFromDocument.current) {
         isUpdatingFromEditor.current = true;
         const html = editor.getHTML();
-        console.log('[TipTap onUpdate] HTML:', html);
         const markdown = htmlToMarkdown(html);
-        console.log('[TipTap onUpdate] Markdown:', markdown);
         updateDocument(activeDocument.id, { content: markdown });
         markAsModified(activeDocument.id);
         // Reset flag after a short delay to allow the update to propagate
@@ -451,20 +801,61 @@ export function TipTapEditor() {
   // State for math dialog
   const [mathDialogOpen, setMathDialogOpen] = React.useState(false);
 
+  // Track the last document ID to detect document switches
+  const lastDocumentId = React.useRef<string | null>(null);
+
+  // Function to save current editor content to document store
+  const saveCurrentContent = React.useCallback(() => {
+    if (!editor || !lastDocumentId.current) return;
+    
+    const html = editor.getHTML();
+    const markdown = htmlToMarkdown(html);
+    
+    console.log('[Save Current] Saving content for document:', lastDocumentId.current);
+    console.log('[Save Current] Content length:', markdown.length);
+    
+    updateDocument(lastDocumentId.current, { content: markdown });
+    markAsModified(lastDocumentId.current);
+  }, [editor, updateDocument, markAsModified]);
+
+  // Register save function with editor service
+  React.useEffect(() => {
+    editorService.setSaveCurrentContentCallback(saveCurrentContent);
+    return () => {
+      editorService.clearSaveCallback();
+    };
+  }, [saveCurrentContent]);
+
   // Update editor content when active document changes
   React.useEffect(() => {
     if (!editor) return;
 
     // If no active document, clear the editor
     if (!activeDocument) {
-      console.log('[TipTap setContent] No active document, clearing editor');
       editor.commands.clearContent();
+      lastDocumentId.current = null;
       return;
     }
 
+    // Detect if we've switched to a different document
+    const isDocumentSwitch = lastDocumentId.current !== activeDocument.id;
+
+    if (isDocumentSwitch) {
+      // CRITICAL: Save the previous document's content before switching
+      if (lastDocumentId.current) {
+        saveCurrentContent();
+      }
+      
+      // Force reset the flag on document switch
+      isUpdatingFromEditor.current = false;
+      lastDocumentId.current = activeDocument.id;
+      
+      console.log('[Document Switch] Switched to document:', activeDocument.filename);
+    }
+
     // Skip if the update came from the editor itself to prevent circular updates
-    if (isUpdatingFromEditor.current) {
-      console.log('[TipTap setContent] Skipping - update from editor');
+    // BUT allow updates on document switches
+    if (isUpdatingFromEditor.current && !isDocumentSwitch) {
       return;
     }
 
@@ -473,10 +864,32 @@ export function TipTapEditor() {
 
     // Only update if content has actually changed to avoid unnecessary updates
     if (currentContent !== newContent) {
-      console.log('[TipTap setContent] Setting new content:', newContent);
+      console.log('[Content Update] Setting new content for document:', activeDocument.filename);
+      console.log('[Content Update] Content length:', activeDocument.content.length);
+      
+      isUpdatingFromDocument.current = true;
+      // Use emitUpdate: false to prevent triggering onUpdate during document switch
       editor.commands.setContent(newContent, { emitUpdate: false });
+      
+      // Small delay to ensure the content is properly set before allowing updates
+      setTimeout(() => {
+        isUpdatingFromDocument.current = false;
+        console.log('[Content Update] Content update completed');
+      }, 100);
+    } else {
+      console.log('[Content Update] Content unchanged, skipping update');
     }
-  }, [editor, activeDocument?.id, activeDocument?.content]);
+  }, [editor, activeDocument?.id, activeDocument?.content, saveCurrentContent]);
+
+  // Save content when component unmounts or editor changes
+  React.useEffect(() => {
+    return () => {
+      // Save current content when component unmounts
+      if (editor && lastDocumentId.current) {
+        saveCurrentContent();
+      }
+    };
+  }, [editor, saveCurrentContent]);
 
   // Update toolbar when editor state changes
   React.useEffect(() => {
@@ -1009,8 +1422,8 @@ export function TipTapEditor() {
 
                 console.log('[Table] Inserting table');
                 try {
-                  // Insert a simple 3x3 table without header row first, then convert first row to header
-                  // This ensures all rows have the same number of cells
+                  // Insert a simple 3x3 table with proper structure
+                  // Use withHeaderRow: false to avoid navigation issues
                   editor.chain()
                     .focus()
                     .insertTable({ rows: 3, cols: 3, withHeaderRow: false })
@@ -1132,30 +1545,22 @@ export function TipTapEditor() {
     }
 
     try {
-      // Get current cursor position
-      const { from } = editor.state.selection;
-      console.log('[MathDialog] Current cursor position:', from);
-      console.log('[MathDialog] Available commands:', Object.keys(editor.commands));
-
       if (type === 'inline') {
         console.log('[MathDialog] Attempting to insert inline math');
-        // Try using the command directly with explicit typing bypass
-        const result = (editor.chain().focus() as any).insertInlineMath({ latex }).run();
+        // Use the Mathematics extension command directly
+        const result = editor.chain().focus().insertInlineMath({ latex }).run();
         console.log('[MathDialog] Insert inline math result:', result);
-        console.log('[MathDialog] HTML after insert:', editor.getHTML());
       } else {
         console.log('[MathDialog] Attempting to insert block math');
-        // Try using the command directly with explicit typing bypass
-        const result = (editor.chain().focus() as any).insertBlockMath({ latex }).run();
+        // Use the Mathematics extension command directly
+        const result = editor.chain().focus().insertBlockMath({ latex }).run();
         console.log('[MathDialog] Insert block math result:', result);
-        console.log('[MathDialog] HTML after insert:', editor.getHTML());
       }
 
       // Close the dialog after successful insertion
       setMathDialogOpen(false);
     } catch (error) {
       console.error('[MathDialog] Error inserting math:', error);
-      console.error('[MathDialog] Error details:', error);
     }
   };
 

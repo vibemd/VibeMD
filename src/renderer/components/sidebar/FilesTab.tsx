@@ -12,6 +12,7 @@ import { useDocumentStore } from '@/stores/documentStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { fileService } from '@/services/fileService';
+import { editorService } from '@/services/editorService';
 import { Document, NewDocumentDialogData } from '@shared/types';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
@@ -22,11 +23,13 @@ export function FilesTab() {
     documents, 
     activeDocumentId, 
     setActiveDocument, 
+    setActiveDocumentWithSave,
     removeDocument,
     addDocument,
     addTemplate,
     updateDocument,
-    markAsSaved
+    markAsSaved,
+    getActiveDocument
   } = useDocumentStore();
   const { setSidebarTab } = useUIStore();
   const { settings } = useSettingsStore();
@@ -178,7 +181,7 @@ export function FilesTab() {
                   'p-2 rounded cursor-pointer group',
                   doc.id === activeDocumentId ? 'bg-accent' : 'bg-secondary/30 hover:bg-accent'
                 )}
-                onClick={() => setActiveDocument(doc.id)}
+                onClick={() => setActiveDocumentWithSave(doc.id, () => editorService.saveCurrentContent())}
               >
                 <div className="flex items-center gap-2">
                   <span className="flex-1 truncate text-sm">{getDisplayName(doc.filename)}</span>
