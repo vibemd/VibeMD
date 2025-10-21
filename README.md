@@ -3,8 +3,6 @@
 **Version:** 1.0.0
 **A modern, cross-platform markdown editor with WYSIWYG editing, LaTeX math support, and seamless native OS integration.**
 
----
-
 ## Overview
 
 VibeMD is an Electron-based desktop markdown editor that combines the simplicity and portability of markdown with the convenience of rich-text WYSIWYG editing. Built with React, TypeScript, and TipTap, it provides a distraction-free writing environment with real-time formatting, comprehensive markdown support (CommonMark + GFM), and mathematical expression rendering.
