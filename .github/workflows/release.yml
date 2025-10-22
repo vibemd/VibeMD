@@ -47,33 +47,21 @@ jobs:
 
       - name: Build Windows x64
         uses: ./.github/workflows/build-windows-x64.yml
-        with:
-          version: ${{ steps.version.outputs.version }}
 
       - name: Build Windows ARM64
         uses: ./.github/workflows/build-windows-arm64.yml
-        with:
-          version: ${{ steps.version.outputs.version }}
 
       - name: Build macOS Silicon
         uses: ./.github/workflows/build-macos-silicon.yml
-        with:
-          version: ${{ steps.version.outputs.version }}
 
       - name: Build macOS Intel
         uses: ./.github/workflows/build-macos-intel.yml
-        with:
-          version: ${{ steps.version.outputs.version }}
 
       - name: Build Linux DEB
         uses: ./.github/workflows/build-linux-deb.yml
-        with:
-          version: ${{ steps.version.outputs.version }}
 
       - name: Build Linux RPM
         uses: ./.github/workflows/build-linux-rpm.yml
-        with:
-          version: ${{ steps.version.outputs.version }}
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
