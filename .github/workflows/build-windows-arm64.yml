@@ -24,7 +24,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --no-audit --no-fund
 
       - name: Verify version consistency
         shell: pwsh
@@ -55,4 +55,3 @@ jobs:
           path: out/make/wix/arm64/*.msi
           if-no-files-found: error
           retention-days: 30
-
