@@ -70,8 +70,9 @@ const config: ForgeConfig = {
     new MakerZIP({}, ['darwin', 'win32']),
     new MakerRpm({
       options: {
-        name: 'VibeMD',
+        name: 'vibemd',
         productName: 'VibeMD',
+        bin: 'VibeMD',
         genericName: 'Markdown Editor',
         description: 'A modern, cross-platform desktop markdown editor',
         icon: './build/icons/icon.svg',
@@ -81,8 +82,9 @@ const config: ForgeConfig = {
     }),
     new MakerDeb({
       options: {
-        name: 'VibeMD',
+        name: 'vibemd',
         productName: 'VibeMD',
+        bin: 'VibeMD',
         genericName: 'Markdown Editor',
         description: 'A modern, cross-platform desktop markdown editor',
         icon: './build/icons/icon.svg',
