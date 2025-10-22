@@ -333,7 +333,7 @@ This removes the local settings file so that:
 
 **Important**: The application is designed to auto-initialize paths on first run. No settings file should be included in the build.
 
-See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for comprehensive deployment information.
+See [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md) for comprehensive deployment information.
 
 ## Version Updates
 

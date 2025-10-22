@@ -148,7 +148,7 @@ On Apple Silicon Mac:
 - Users on Intel Macs use the x64 build
 - ZIP archives can be extracted and run immediately
 - No notarization required for personal use
-- For App Store or notarized distribution, see [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)
+- For App Store or notarized distribution, see [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md)
 
 ### Windows
 - **x64 ZIP** for most users (portable, no installation)
@@ -198,9 +198,9 @@ npm run build:all
 
 ## Next Steps
 
-- See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for production deployment
-- See [BUILD.md](BUILD.md) for detailed development setup
-- See [ARCHITECTURE_GUIDE.md](ARCHITECTURE_GUIDE.md) for codebase architecture
+- See [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md) for production deployment
+- See [docs/BUILD.md](docs/BUILD.md) for detailed development setup
+- See [docs/ARCHITECTURE_GUIDE.md](docs/ARCHITECTURE_GUIDE.md) for codebase architecture
 
 ## Questions?
 

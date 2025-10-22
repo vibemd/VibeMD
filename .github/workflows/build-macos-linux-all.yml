@@ -1,0 +1,21 @@
+name: Build All macOS and Linux
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-macos-silicon:
+    name: macOS Silicon
+    uses: ./.github/workflows/build-macos-silicon.yml
+
+  build-macos-intel:
+    name: macOS Intel
+    uses: ./.github/workflows/build-macos-intel.yml
+
+  build-linux-deb:
+    name: Linux DEB
+    uses: ./.github/workflows/build-linux-deb.yml
+
+  build-linux-rpm:
+    name: Linux RPM
+    uses: ./.github/workflows/build-linux-rpm.yml

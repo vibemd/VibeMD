@@ -1,6 +1,6 @@
 # VibeMD
 
-**Version:** 1.0.0 **A modern, cross-platform markdown editor with WYSIWYG editing, LaTeX math support, and seamless native OS integration.**
+**Version:** 1.0.1 **A modern, cross-platform markdown editor with WYSIWYG editing, LaTeX math support, and seamless native OS integration.**
 
 * * *
 
@@ -216,7 +216,7 @@ This creates platform-specific distributables in the `out/` directory:
 -   **Windows installers**: `.exe` and `.msi` (when built on Windows)
 
 
-For detailed build instructions, see [BUILD.md](BUILD.md) or [BUILD_GUIDE.md](BUILD_GUIDE.md).
+For detailed build instructions, see [docs/BUILD.md](docs/BUILD.md) or [docs/BUILD_GUIDE.md](docs/BUILD_GUIDE.md).
 
 * * *
 
@@ -312,15 +312,15 @@ For complete keyboard shortcut list, see the User Guide.
 
 ## Documentation
 
--   **User Guide**: Complete guide to using VibeMD
-    
--   **Architecture Guide**: Technical architecture and component documentation
-    
+-   [**User Guide**](docs/USER_GUIDE.md): Complete guide to using VibeMD
+
+-   [**Architecture Guide**](docs/ARCHITECTURE_GUIDE.md): Technical architecture and component documentation
+
 -   **Markdown Conformance**: CommonMark, GFM, and LaTeX specification compliance
-    
--   [**Build Instructions**](BUILD.md): Platform-specific build instructions
-    
--   [**Deployment Guide**](DEPLOYMENT_GUIDE.md): Deployment and automatic path initialization
+
+-   [**Build Instructions**](docs/BUILD.md): Platform-specific build instructions
+
+-   [**Deployment Guide**](docs/DEPLOYMENT_GUIDE.md): Deployment and automatic path initialization
     
 
 * * *
@@ -362,7 +362,7 @@ VibeMD/
 └── forge.config.ts
 ```
 
-See Architecture Guide for detailed component documentation.
+See [Architecture Guide](docs/ARCHITECTURE_GUIDE.md) for detailed component documentation.
 
 * * *
 
@@ -517,7 +517,7 @@ For issues, questions, or contributions:
 
 -   **Email**: [hello@vibemd.app](mailto:hello@vibemd.app)
     
--   **Version**: VibeMD v1.0.0
+-   **Version**: VibeMD v1.0.1
     
 
 * * *
@@ -541,6 +541,6 @@ VibeMD is built on the shoulders of giants. Special thanks to:
 
 * * *
 
-**VibeMD v1.0.0** - Modern Markdown Editing for Everyone
+**VibeMD v1.0.1** - Modern Markdown Editing for Everyone
 
 Happy writing! 📝

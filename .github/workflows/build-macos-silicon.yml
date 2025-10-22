@@ -1,0 +1,33 @@
+name: Build macOS Silicon
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build:
+    name: Build macOS Silicon (ARM64)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build macOS ARM64
+        run: npm run build:mac-arm64
+
+      - name: Upload ZIP artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: VibeMD-darwin-arm64-zip
+          path: out/make/zip/darwin/arm64/*.zip
+          if-no-files-found: error
+          retention-days: 30
