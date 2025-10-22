@@ -284,14 +284,12 @@ jobs:
         run: |
           ls -R dist-artifacts || true
 
-      - name: Create/Update release and upload assets
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ needs.determine-version.outputs.tag }}
-          name: VibeMD ${{ needs.determine-version.outputs.version }}
-          fail_on_unmatched_files: false
-          draft: false
-          prerelease: ${{ inputs.prerelease }}
-          generate_release_notes: true
-          files: |
-            dist-artifacts/**
+      - name: Create release with assets (immutable-safe)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG='${{ needs.determine-version.outputs.tag }}'
+          TITLE='VibeMD ${{ needs.determine-version.outputs.version }}'
+          PRERELEASE='' ; if [ "${{ inputs.prerelease }}" = "true" ]; then PRERELEASE='--prerelease'; fi
+          echo "Creating release $TAG with assets"
+          gh release create "$TAG" dist-artifacts/**/* --title "$TITLE" --generate-notes $PRERELEASE
