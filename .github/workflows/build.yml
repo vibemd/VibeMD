@@ -1,14 +1,16 @@
 name: Build VibeMD
 
 on:
-  push:
-    branches:
-      - main
-    tags:
-      - 'v*'
-  pull_request:
-    branches:
-      - main
+  # Disabled due to package-lock.json sync issues
+  # Re-enable after resolving npm ci dependency conflicts
+  # push:
+  #   branches:
+  #     - main
+  #   tags:
+  #     - 'v*'
+  # pull_request:
+  #   branches:
+  #     - main
   workflow_dispatch:
 
 jobs:
