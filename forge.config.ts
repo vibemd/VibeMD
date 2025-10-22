@@ -1,5 +1,6 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerWix } from '@electron-forge/maker-wix';
+import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDeb } from '@electron-forge/maker-deb';
 import { MakerRpm } from '@electron-forge/maker-rpm';
@@ -57,14 +58,17 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
+    new MakerSquirrel({
+      setupIcon: './build/icons/icon.ico',
+      // Keep MSI handled by WiX; Squirrel provides EXE for convenience
+      noMsi: true,
+    }),
     new MakerWix({
       name: 'VibeMD',
       description: 'A modern, cross-platform desktop markdown editor',
       manufacturer: 'ONLY1 Pty Ltd',
-      version: '1.0.2',
       appIconPath: './build/icons/icon.ico',
       language: 1033, // English
-      arch: 'x64', // Force 64-bit installation to Program Files
       programFilesFolderName: 'VibeMD',
       ui: {
         chooseDirectory: true,

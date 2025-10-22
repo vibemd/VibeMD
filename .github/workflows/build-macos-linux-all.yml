@@ -6,16 +6,16 @@ on:
 jobs:
   build-macos-silicon:
     name: macOS Silicon
-    uses: ./.github/workflows/build-macos-silicon.yml
+    uses: vibemd/VibeMD/.github/workflows/build-macos-silicon.yml@main
 
   build-macos-intel:
     name: macOS Intel
-    uses: ./.github/workflows/build-macos-intel.yml
+    uses: vibemd/VibeMD/.github/workflows/build-macos-intel.yml@main
 
   build-linux-deb:
     name: Linux DEB
-    uses: ./.github/workflows/build-linux-deb.yml
+    uses: vibemd/VibeMD/.github/workflows/build-linux-deb.yml@main
 
   build-linux-rpm:
     name: Linux RPM
-    uses: ./.github/workflows/build-linux-rpm.yml
+    uses: vibemd/VibeMD/.github/workflows/build-linux-rpm.yml@main

@@ -6,8 +6,8 @@ on:
 jobs:
   build-x64:
     name: Windows x64
-    uses: ./.github/workflows/build-windows-x64.yml
+    uses: vibemd/VibeMD/.github/workflows/build-windows-x64.yml@main
 
   build-arm64:
     name: Windows ARM64
-    uses: ./.github/workflows/build-windows-arm64.yml
+    uses: vibemd/VibeMD/.github/workflows/build-windows-arm64.yml@main

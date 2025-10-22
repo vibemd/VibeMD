@@ -27,17 +27,26 @@ jobs:
         run: npm ci
 
       - name: Verify version consistency
+        shell: pwsh
         run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          echo "Package.json version: $PACKAGE_VERSION"
-          if [ -n "${{ inputs.version }}" ] && [ "$PACKAGE_VERSION" != "${{ inputs.version }}" ]; then
-            echo "❌ Version mismatch! Package.json has $PACKAGE_VERSION but workflow expects ${{ inputs.version }}"
+          $pkg = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          Write-Host "package.json version: $pkg"
+          if ('${{ inputs.version }}' -and $pkg -ne '${{ inputs.version }}') {
+            Write-Error "Version mismatch! package.json has $pkg but workflow expects ${{ inputs.version }}"
             exit 1
-          fi
-          echo "✅ Version verification passed"
+          }
+          Write-Host "Version verification passed"
 
       - name: Build Windows x64
         run: npm run build:win-x64
+
+      - name: Upload Squirrel EXE artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: VibeMD-win32-x64-exe
+          path: out/make/squirrel.windows/x64/*.exe
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Upload ZIP artifacts
         uses: actions/upload-artifact@v4
