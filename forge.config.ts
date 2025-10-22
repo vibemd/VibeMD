@@ -1,5 +1,5 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
-import { MakerSquirrel } from '@electron-forge/maker-squirrel';
+import { MakerWix } from '@electron-forge/maker-wix';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDeb } from '@electron-forge/maker-deb';
 import { MakerRpm } from '@electron-forge/maker-rpm';
@@ -57,15 +57,21 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerSquirrel({
+    new MakerWix({
       name: 'VibeMD',
-      authors: 'ONLY1 Pty Ltd',
       description: 'A modern, cross-platform desktop markdown editor',
-      setupIcon: './build/icons/icon.ico',
-      iconUrl: 'https://raw.githubusercontent.com/vibemd/vibemd/main/build/icons/icon.ico',
-      noMsi: false,  // Enable MSI creation
-      setupExe: 'VibeMD-Setup.exe',
-      setupMsi: 'VibeMD-Setup.msi'
+      manufacturer: 'ONLY1 Pty Ltd',
+      version: '1.0.1',
+      appIconPath: './build/icons/icon.ico',
+      language: 1033, // English
+      ui: {
+        chooseDirectory: true,
+        enabled: true
+      },
+      features: {
+        autoUpdate: false,
+        autoLaunch: false
+      }
     }),
     new MakerZIP({}, ['darwin', 'win32']),
     new MakerRpm({
