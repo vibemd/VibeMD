@@ -64,6 +64,8 @@ const config: ForgeConfig = {
       version: '1.0.1',
       appIconPath: './build/icons/icon.ico',
       language: 1033, // English
+      arch: 'x64', // Force 64-bit installation to Program Files
+      programFilesFolderName: 'VibeMD',
       ui: {
         chooseDirectory: true,
         enabled: true
