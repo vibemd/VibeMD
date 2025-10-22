@@ -1,0 +1,180 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          VERSION=${VERSION#v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+          echo "Tag: ${GITHUB_REF#refs/tags/}"
+
+      - name: Verify version matches package.json
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "Package.json version: $PACKAGE_VERSION"
+          echo "Tag version: ${{ steps.version.outputs.version }}"
+          if [ "$PACKAGE_VERSION" != "${{ steps.version.outputs.version }}" ]; then
+            echo "❌ Version mismatch! Package.json has $PACKAGE_VERSION but tag is ${{ steps.version.outputs.version }}"
+            exit 1
+          fi
+          echo "✅ Version verification passed"
+
+      - name: Build Windows x64
+        uses: ./.github/workflows/build-windows-x64.yml
+        with:
+          version: ${{ steps.version.outputs.version }}
+
+      - name: Build Windows ARM64
+        uses: ./.github/workflows/build-windows-arm64.yml
+        with:
+          version: ${{ steps.version.outputs.version }}
+
+      - name: Build macOS Silicon
+        uses: ./.github/workflows/build-macos-silicon.yml
+        with:
+          version: ${{ steps.version.outputs.version }}
+
+      - name: Build macOS Intel
+        uses: ./.github/workflows/build-macos-intel.yml
+        with:
+          version: ${{ steps.version.outputs.version }}
+
+      - name: Build Linux DEB
+        uses: ./.github/workflows/build-linux-deb.yml
+        with:
+          version: ${{ steps.version.outputs.version }}
+
+      - name: Build Linux RPM
+        uses: ./.github/workflows/build-linux-rpm.yml
+        with:
+          version: ${{ steps.version.outputs.version }}
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: VibeMD ${{ steps.version.outputs.version }} - Windows Installers & Multi-Platform Support
+          body: |
+            # VibeMD ${{ steps.version.outputs.version }} Release
+
+            ## 🎉 New Features
+            - **Windows Installers**: Proper .exe and .msi installers for Windows
+            - **Multi-Platform Support**: Complete builds for Windows, macOS, and Linux
+            - **Enhanced Documentation**: Updated guides and improved cross-references
+
+            ## 📦 Downloads
+
+            ### Windows
+            - **Windows x64**: 
+              - VibeMD-Setup-x64.exe - Windows installer for Intel/AMD 64-bit systems
+              - VibeMD-Setup-x64.msi - MSI package for enterprise deployment
+              - VibeMD-win32-x64-${{ steps.version.outputs.version }}.zip - Portable ZIP archive
+            - **Windows ARM64**: 
+              - VibeMD-Setup-arm64.exe - Windows installer for ARM64 systems
+              - VibeMD-Setup-arm64.msi - MSI package for ARM64
+              - VibeMD-win32-arm64-${{ steps.version.outputs.version }}.zip - Portable ZIP archive
+
+            ### macOS
+            - **Apple Silicon (M1/M2/M3/M4)**: VibeMD-darwin-arm64-${{ steps.version.outputs.version }}.zip
+            - **Intel**: VibeMD-darwin-x64-${{ steps.version.outputs.version }}.zip
+
+            ### Linux
+            - **Debian/Ubuntu**: vibemd_${{ steps.version.outputs.version }}_amd64.deb
+            - **Fedora/RHEL**: vibemd-${{ steps.version.outputs.version }}-1.x86_64.rpm
+
+            ## 🔧 Technical Improvements
+            - Updated GitHub Actions workflows for reliable multi-platform builds
+            - Enhanced documentation with proper cross-references
+            - Improved Windows installer experience with proper MSI packages
+            - Better error handling and build reliability
+            - Fixed documentation links throughout the project
+
+            ## 📚 Documentation
+            - [User Guide](docs/USER_GUIDE.md) - Complete guide to using VibeMD
+            - [Architecture Guide](docs/ARCHITECTURE_GUIDE.md) - Technical architecture documentation
+            - [Build Instructions](docs/BUILD.md) - Platform-specific build instructions
+            - [Build Guide](docs/BUILD_GUIDE.md) - Comprehensive build guide
+            - [Deployment Guide](docs/DEPLOYMENT_GUIDE.md) - Deployment and path initialization
+
+            ## 🚀 Installation Instructions
+
+            ### Windows
+            1. Download the appropriate installer (.exe) for your system architecture
+            2. Run the installer and follow the setup wizard
+            3. VibeMD will be installed and ready to use
+
+            ### macOS
+            1. Download the ZIP file for your Mac's architecture (Intel or Apple Silicon)
+            2. Extract the ZIP file
+            3. Drag VibeMD.app to your Applications folder
+            4. Launch VibeMD from Applications or Spotlight
+
+            ### Linux
+            1. **Debian/Ubuntu**: Install the .deb package with `sudo dpkg -i vibemd_${{ steps.version.outputs.version }}_amd64.deb`
+            2. **Fedora/RHEL**: Install the .rpm package with `sudo rpm -i vibemd-${{ steps.version.outputs.version }}-1.x86_64.rpm`
+
+            ## ✨ What's New in ${{ steps.version.outputs.version }}
+            - **Cross-platform compatibility**: Full support for Windows, macOS, and Linux
+            - **Professional Windows installers**: Proper MSI packages for enterprise environments
+            - **Improved documentation**: Better organized guides with working cross-references
+            - **Enhanced build system**: Reliable GitHub Actions workflows for all platforms
+            - **Better user experience**: Automatic path initialization on first launch
+
+            ## 🐛 Bug Fixes
+            - Fixed documentation links throughout the project
+            - Improved build reliability across all platforms
+            - Enhanced error handling in the build process
+
+            ## 📋 System Requirements
+            - **Windows**: Windows 10 or later (x64 or ARM64)
+            - **macOS**: macOS 10.15 or later (Intel or Apple Silicon)
+            - **Linux**: Modern Linux distribution with glibc 2.28+
+
+            ## 🤝 Support
+            For issues, questions, or contributions:
+            - **Email**: hello@vibemd.app
+            - **Issues**: [GitHub Issues](https://github.com/vibemd/VibeMD/issues)
+            - **Documentation**: See the docs/ folder for comprehensive guides
+
+            ---
+
+            **VibeMD ${{ steps.version.outputs.version }}** - Modern Markdown Editing for Everyone
+
+            Happy writing! 📝
+          files: |
+            artifacts/**/*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

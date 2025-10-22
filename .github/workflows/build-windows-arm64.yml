@@ -3,6 +3,11 @@ name: Build Windows ARM64
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      version:
+        description: 'Version to build'
+        required: false
+        type: string
 
 jobs:
   build:
@@ -20,6 +25,16 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Verify version consistency
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "Package.json version: $PACKAGE_VERSION"
+          if [ -n "${{ inputs.version }}" ] && [ "$PACKAGE_VERSION" != "${{ inputs.version }}" ]; then
+            echo "❌ Version mismatch! Package.json has $PACKAGE_VERSION but workflow expects ${{ inputs.version }}"
+            exit 1
+          fi
+          echo "✅ Version verification passed"
 
       - name: Build Windows ARM64
         run: npm run build:win-arm64

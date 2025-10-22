@@ -61,7 +61,7 @@ const config: ForgeConfig = {
       name: 'VibeMD',
       description: 'A modern, cross-platform desktop markdown editor',
       manufacturer: 'ONLY1 Pty Ltd',
-      version: '1.0.1',
+      version: '1.0.2',
       appIconPath: './build/icons/icon.ico',
       language: 1033, // English
       arch: 'x64', // Force 64-bit installation to Program Files
