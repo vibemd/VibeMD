@@ -1,6 +1,6 @@
 # VibeMD User Guide
 
-**Version:** 1.0.2
+ 1.0.3
 **Date:** October 20, 2025
 
 Welcome to VibeMD, a modern markdown editor that combines the simplicity of markdown with the convenience of WYSIWYG (What You See Is What You Get) editing. This guide will help you get the most out of VibeMD.
@@ -882,3 +882,4 @@ VibeMD combines the power of markdown with the ease of WYSIWYG editing, providin
 **VibeMD User Guide v1.0.0**
 **Copyright © 2025 ONLY1 Pty Ltd**
 **Last Updated: October 20, 2025**
+
