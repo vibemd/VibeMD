@@ -292,4 +292,4 @@ jobs:
           TITLE='VibeMD ${{ needs.determine-version.outputs.version }}'
           PRERELEASE='' ; if [ "${{ inputs.prerelease }}" = "true" ]; then PRERELEASE='--prerelease'; fi
           echo "Creating release $TAG with assets"
-          gh release create "$TAG" dist-artifacts/**/* --title "$TITLE" --generate-notes $PRERELEASE
+          gh release create -R "${{ github.repository }}" "$TAG" dist-artifacts/**/* --title "$TITLE" --generate-notes $PRERELEASE
