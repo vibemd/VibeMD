@@ -1,0 +1,44 @@
+name: Build Linux Only
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x64]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Linux ${{ matrix.arch }}
+        run: npm run build:linux-${{ matrix.arch }}
+
+      - name: Upload DEB artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: VibeMD-linux-${{ matrix.arch }}-deb
+          path: out/make/deb/${{ matrix.arch }}/*.deb
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload RPM artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: VibeMD-linux-${{ matrix.arch }}-rpm
+          path: out/make/rpm/${{ matrix.arch }}/*.rpm
+          if-no-files-found: error
+          retention-days: 30
