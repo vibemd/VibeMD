@@ -284,6 +284,27 @@ jobs:
         run: |
           ls -R dist-artifacts || true
 
+      - name: Prepare assets with unique names
+        shell: bash
+        run: |
+          set -euo pipefail
+          VER='${{ needs.determine-version.outputs.version }}'
+          mkdir -p upload
+          shopt -s nullglob
+          # Windows MSIs (rename to include arch)
+          for f in dist-artifacts/VibeMD-win32-x64-msi/*.msi; do cp "$f" "upload/VibeMD-win32-x64-${VER}.msi"; done
+          for f in dist-artifacts/VibeMD-win32-arm64-msi/*.msi; do cp "$f" "upload/VibeMD-win32-arm64-${VER}.msi"; done
+          # Windows EXE (keep original names)
+          for f in dist-artifacts/VibeMD-win32-x64-exe/*.exe; do cp "$f" upload/; done
+          # Windows ZIPs
+          for f in dist-artifacts/VibeMD-win32-*-zip/*.zip; do cp "$f" upload/; done
+          # macOS ZIPs
+          for f in dist-artifacts/VibeMD-darwin-*-zip/*.zip; do cp "$f" upload/; done
+          # Linux packages
+          for f in dist-artifacts/VibeMD-linux-x64-deb/*.deb; do cp "$f" upload/; done
+          for f in dist-artifacts/VibeMD-linux-x64-rpm/*.rpm; do cp "$f" upload/; done
+          echo "Prepared assets:" && ls -l upload
+
       - name: Create release with assets (immutable-safe)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -292,4 +313,4 @@ jobs:
           TITLE='VibeMD ${{ needs.determine-version.outputs.version }}'
           PRERELEASE='' ; if [ "${{ inputs.prerelease }}" = "true" ]; then PRERELEASE='--prerelease'; fi
           echo "Creating release $TAG with assets"
-          gh release create -R "${{ github.repository }}" "$TAG" dist-artifacts/**/* --title "$TITLE" --generate-notes $PRERELEASE
+          gh release create -R "${{ github.repository }}" "$TAG" upload/* --title "$TITLE" --generate-notes $PRERELEASE
