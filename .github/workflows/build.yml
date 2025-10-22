@@ -65,15 +65,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Uncomment MakerSquirrel for Windows builds
-        shell: pwsh
-        run: |
-          $config = Get-Content -Path "forge.config.ts" -Raw
-          $config = $config -replace '// (new MakerSquirrel)', '$1'
-          $config = $config -replace '//   (name:|authors:|description:|setupIcon:|iconUrl:|noMsi:|loadingGif:|setupExe:|setupMsi:)', '  $1'
-          $config = $config -replace '// \}', '}'
-          Set-Content -Path "forge.config.ts" -Value $config
-
       - name: Build Windows ${{ matrix.arch }}
         run: npm run build:win-${{ matrix.arch }}
 
@@ -95,9 +86,48 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x64]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Linux ${{ matrix.arch }}
+        run: npm run build:linux-${{ matrix.arch }}
+
+      - name: Upload DEB artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: VibeMD-linux-${{ matrix.arch }}-deb
+          path: out/make/deb/${{ matrix.arch }}/*.deb
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload RPM artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: VibeMD-linux-${{ matrix.arch }}-rpm
+          path: out/make/rpm/${{ matrix.arch }}/*.rpm
+          if-no-files-found: error
+          retention-days: 30
+
   create-release:
     name: Create Release
-    needs: [build-macos, build-windows]
+    needs: [build-macos, build-windows, build-linux]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
 
@@ -128,6 +158,8 @@ jobs:
             artifacts/VibeMD-win32-x64-installer/*.msi
             artifacts/VibeMD-win32-arm64-installer/*.exe
             artifacts/VibeMD-win32-arm64-installer/*.msi
+            artifacts/VibeMD-linux-x64-deb/*.deb
+            artifacts/VibeMD-linux-x64-rpm/*.rpm
           draft: false
           prerelease: false
           generate_release_notes: true
@@ -144,6 +176,10 @@ jobs:
             - **ARM64 Installer**: VibeMD-Setup.exe or VibeMD-Setup.msi (from ARM64 folder)
             - **ARM64 Portable**: VibeMD-win32-arm64-*.zip
 
+            ### Linux
+            - **Debian/Ubuntu (.deb)**: vibemd_*.deb
+            - **Fedora/RHEL (.rpm)**: vibemd-*.rpm
+
             ## Installation
 
             ### macOS
@@ -154,6 +190,18 @@ jobs:
             ### Windows
             1. Download the installer (.exe or .msi) or portable ZIP
             2. Run installer or extract ZIP and run VibeMD.exe
+
+            ### Linux
+            **Debian/Ubuntu:**
+            ```bash
+            sudo dpkg -i vibemd_*.deb
+            sudo apt-get install -f  # Install dependencies if needed
+            ```
+
+            **Fedora/RHEL:**
+            ```bash
+            sudo rpm -i vibemd-*.rpm
+            ```
 
             ## Documentation
             - [User Guide](https://github.com/vibemd/VibeMD/blob/main/USER_GUIDE.md)

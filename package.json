@@ -20,9 +20,12 @@
     "build:mac-x64": "electron-forge make --platform=darwin --arch=x64",
     "build:win-x64": "electron-forge make --platform=win32 --arch=x64",
     "build:win-arm64": "electron-forge make --platform=win32 --arch=arm64",
-    "build:all": "npm run build:mac-universal && npm run build:win-x64 && npm run build:win-arm64",
+    "build:linux-x64": "electron-forge make --platform=linux --arch=x64",
+    "build:linux-arm64": "electron-forge make --platform=linux --arch=arm64",
+    "build:all": "npm run build:mac-universal && npm run build:win-x64 && npm run build:win-arm64 && npm run build:linux-x64",
     "build:all-mac": "npm run build:mac-universal",
-    "build:all-windows": "npm run build:win-x64 && npm run build:win-arm64"
+    "build:all-windows": "npm run build:win-x64 && npm run build:win-arm64",
+    "build:all-linux": "npm run build:linux-x64"
   },
   "keywords": [
     "markdown",

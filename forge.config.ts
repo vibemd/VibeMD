@@ -57,20 +57,16 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    // MakerSquirrel requires Wine on macOS which has compatibility issues
-    // Uncomment for Windows builds or use GitHub Actions
-    // new MakerSquirrel({
-    //   name: 'VibeMD',
-    //   authors: 'ONLY1 Pty Ltd',
-    //   description: 'A modern, cross-platform desktop markdown editor',
-    //   setupIcon: './build/icons/icon.ico',
-    //   iconUrl: 'https://raw.githubusercontent.com/vibemd/vibemd/main/build/icons/icon.ico',
-    //   noMsi: false,  // Enable MSI creation
-    //   // Windows file associations
-    //   loadingGif: './build/icons/icon.ico',
-    //   setupExe: 'VibeMD-Setup.exe',
-    //   setupMsi: 'VibeMD-Setup.msi'
-    // }),
+    new MakerSquirrel({
+      name: 'VibeMD',
+      authors: 'ONLY1 Pty Ltd',
+      description: 'A modern, cross-platform desktop markdown editor',
+      setupIcon: './build/icons/icon.ico',
+      iconUrl: 'https://raw.githubusercontent.com/vibemd/vibemd/main/build/icons/icon.ico',
+      noMsi: false,  // Enable MSI creation
+      setupExe: 'VibeMD-Setup.exe',
+      setupMsi: 'VibeMD-Setup.msi'
+    }),
     new MakerZIP({}, ['darwin', 'win32']),
     new MakerRpm({
       options: {
