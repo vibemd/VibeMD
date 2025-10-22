@@ -294,8 +294,9 @@ jobs:
           # Windows MSIs (rename to include arch)
           for f in dist-artifacts/VibeMD-win32-x64-msi/*.msi; do cp "$f" "upload/VibeMD-win32-x64-${VER}.msi"; done
           for f in dist-artifacts/VibeMD-win32-arm64-msi/*.msi; do cp "$f" "upload/VibeMD-win32-arm64-${VER}.msi"; done
-          # Windows EXE (keep original names)
-          for f in dist-artifacts/VibeMD-win32-x64-exe/*.exe; do cp "$f" upload/; done
+          # Windows EXEs (rename to include arch and version to avoid collisions)
+          for f in dist-artifacts/VibeMD-win32-x64-exe/*.exe; do cp "$f" "upload/VibeMD-win32-x64-${VER}.exe"; done
+          for f in dist-artifacts/VibeMD-win32-arm64-exe/*.exe; do cp "$f" "upload/VibeMD-win32-arm64-${VER}.exe"; done
           # Windows ZIPs
           for f in dist-artifacts/VibeMD-win32-*-zip/*.zip; do cp "$f" upload/; done
           # macOS ZIPs
