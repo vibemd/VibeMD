@@ -544,3 +544,21 @@ VibeMD is built on the shoulders of giants. Special thanks to:
 **VibeMD v1.0.2** - Modern Markdown Editing for Everyone
 
 Happy writing! 📝
+## Signing & Notarization
+
+To enable signed installers and notarized macOS apps, configure these repository secrets:
+
+- Windows signing
+  - `WINDOWS_CERT_BASE64` – Base64 of your code-signing PFX
+  - `WINDOWS_CERT_PASSWORD` – Password for the PFX
+
+- macOS signing + notarization
+  - `MAC_CODESIGN_IDENTITY` – e.g. Developer ID Application: Your Name (TEAMID)
+  - `APPLE_ID` – Apple ID email
+  - `APPLE_APP_SPECIFIC_PASSWORD` – App-specific password
+  - `APPLE_TEAM_ID` – Apple Developer Team ID
+
+No secrets set → unsigned builds. Once set, Windows EXE/MSI and macOS apps are signed; macOS is notarized.
+
+
+

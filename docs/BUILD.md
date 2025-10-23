@@ -4,8 +4,8 @@ This document provides comprehensive instructions for building VibeMD for differ
 
 ## Prerequisites
 
-- Node.js 16.x or higher
-- npm 7.x or higher
+- Node.js 20.x
+- npm 10.x
 - Platform-specific requirements (see below)
 
 ## Icon Files
@@ -41,12 +41,12 @@ npm run start:clean          # Clean start (via vibemd.sh)
 npm run package              # Package for current platform
 npm run make                 # Create distributable for current platform
 
-# Platform-specific builds
-npm run package -- --platform=win32 --arch=ia32    # Windows 32-bit
-npm run package -- --platform=win32 --arch=x64     # Windows 64-bit
-npm run package -- --platform=darwin --arch=x64    # macOS Intel
-npm run package -- --platform=darwin --arch=arm64  # macOS Apple Silicon
-npm run package -- --platform=linux --arch=x64     # Linux 64-bit
+# Platform-specific builds (local)
+npm run build:win-x64       # Windows 64-bit (ZIP, EXE/MSI on Windows only)
+npm run build:win-arm64     # Windows ARM64 (ZIP, EXE/MSI on Windows only)
+npm run build:mac-x64       # macOS Intel (ZIP)
+npm run build:mac-arm64     # macOS Apple Silicon (ZIP)
+npm run build:linux-x64     # Linux x64 (DEB, RPM)
 ```
 
 ## Windows Builds
@@ -57,26 +57,19 @@ When building on a Windows machine:
 
 ```bash
 # Install dependencies
-npm install
-
-# Build for Windows 32-bit (x86)
-npm run make -- --platform=win32 --arch=ia32
+npm install --no-audit --no-fund
 
 # Build for Windows 64-bit (x64)
-npm run make -- --platform=win32 --arch=x64
+npm run build:win-x64
+
+# Build for Windows ARM64
+npm run build:win-arm64
 ```
 
-**Note:** When building on macOS, Windows .exe/.msi installers are disabled due to Wine compatibility issues on modern macOS (especially ARM64). The build will create ZIP archives instead.
-
-This will create:
-- `.zip` archive (portable package)
-
-Output location: `out/make/zip/win32/`
-
-For proper Windows installers (.exe/.msi):
-- Build on a native Windows machine, or
-- Use GitHub Actions with Windows runners (recommended)
-- Uncomment `MakerSquirrel` in `forge.config.ts` when building on Windows
+Notes:
+- Windows EXE (Squirrel) and MSI (WiX) are produced on Windows only.
+- On non-Windows hosts, Windows ZIPs can be produced; installers are skipped.
+- Output locations under `out/make/` follow Electron Forge conventions (e.g., `zip/win32/x64`, `wix/x64`, `squirrel.windows/x64`).
 
 ### Alternative: Package Only (Without Installer)
 
@@ -94,7 +87,7 @@ Then manually create a ZIP file from the output directory.
 
 ```bash
 # Install dependencies
-npm install
+npm install --no-audit --no-fund
 
 # Build for current architecture
 npm run make
@@ -108,24 +101,17 @@ This will create:
 - `.app` bundle
 - `.zip` archive
 
-**Note:** macOS Universal builds (arm64 + x64) are currently disabled due to code signature mismatches. Use separate architecture builds instead.
+Note: Universal builds are not currently configured. Build per-arch ZIPs instead.
 
 Output location: `out/make/zip/darwin/`
 
-### Code Signing (macOS)
+### Code Signing & Notarization
 
-For distribution, you'll need to sign the app:
+macOS signing and notarization and Windows code signing are enabled automatically in CI if secrets are present. For local builds, provide environment variables as needed:
 
-```bash
-# Set your Apple Developer ID
-export APPLE_ID="your@email.com"
-export APPLE_ID_PASSWORD="app-specific-password"
+macOS (notarization): `MAC_CODESIGN_IDENTITY`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID`
 
-# Build with signing
-npm run make
-```
-
-Add to `forge.config.ts`:
+Windows (code signing): `WINDOWS_CERT_BASE64`, `WINDOWS_CERT_PASSWORD`
 ```typescript
 osxSign: {
   identity: 'Developer ID Application: Your Name (TEAM_ID)',
@@ -235,11 +221,9 @@ Contains:
 
 ## Troubleshooting
 
-### Windows Build on macOS Shows Wine Errors
+### Windows installers missing on non-Windows hosts
 
-**Issue**: Wine compatibility issues on modern macOS (especially ARM64)
-
-**Solution**: This is expected. The build is configured to create ZIP archives instead of .exe/.msi installers. For proper Windows installers, build on a Windows machine or use GitHub Actions.
+Expected: installers are only built on Windows runners. Use GitHub Actions (Windows) to produce EXE/MSI.
 
 ### Icon Not Showing
 
@@ -276,44 +260,28 @@ npm run package -- --platform=win32 --arch=ia32
 
 ### Windows
 
-- **Installer**: `VibeMD-1.0.0 Setup.exe` (Squirrel installer)
-- **Portable**: Extract ZIP to any folder and run `VibeMD.exe`
+- Installer (MSI): `VibeMD-win32-{arch}-{version}.msi`
+- Installer (EXE): `VibeMD-win32-{arch}-{version}.exe`
+- Portable ZIP: `VibeMD-win32-{arch}-{version}.zip`
 
 ### macOS
 
-- **DMG**: Drag VibeMD.app to Applications folder
-- **ZIP**: Extract and copy to Applications folder
+- ZIP: `VibeMD-darwin-{arch}-{version}.zip`
 
 ### Linux
 
-- **DEB**: `sudo dpkg -i vibemd_1.0.0_amd64.deb`
-- **RPM**: `sudo rpm -i vibemd-1.0.0-1.x86_64.rpm`
+- DEB: `vibemd_{version}_amd64.deb`
+- RPM: `vibemd-{version}-x86_64.rpm`
 
 ## Continuous Integration
 
-For automated builds, see example GitHub Actions workflow:
+For automated builds and releases, use these workflows:
 
-```yaml
-name: Build
-on: [push]
-jobs:
-  build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-      - run: npm install
-      - run: npm run make
-      - uses: actions/upload-artifact@v2
-        with:
-          name: VibeMD-${{ matrix.os }}
-          path: out/make/**/*
-```
+- `release.yml` – determines next available version, updates docs and package.json, builds all platforms, and creates a GitHub Release with assets.
+- `build-windows-all.yml` – runs Windows x64 + ARM64 reusable workflows.
+- `build-macos-linux-all.yml` – runs macOS x64 + arm64 and Linux DEB/RPM builds.
+
+Windows build jobs are reusable workflows referenced via `uses: vibemd/VibeMD/.github/workflows/...@main`.
 
 ## Pre-Build Preparation
 
@@ -335,16 +303,13 @@ This removes the local settings file so that:
 
 See [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md) for comprehensive deployment information.
 
-## Version Updates
+## Versioning & Releases
 
-To release a new version:
+Releases are managed by `release.yml` and are immutable:
 
-1. Update `version` in `package.json`
-2. Update `README.md` if needed
-3. Reset settings for clean deployment (see above)
-4. Build for all platforms
-5. Create GitHub release with built artifacts
-6. Tag the release: `git tag v1.0.1`
+- Provide a version input or allow the workflow to pick the next patch version.
+- The workflow bumps `package.json`, updates docs' Version labels, builds all platforms, and creates a Release with consistently named assets.
+- If a tag already exists as a Release, the workflow bumps the patch until it finds an available tag.
 
 ## Support
 

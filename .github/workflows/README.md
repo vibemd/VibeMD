@@ -4,38 +4,42 @@ This directory contains GitHub Actions workflows for automated building and rele
 
 ## Workflows
 
-### `build.yml` - Build and Release
+### `release.yml` – Build and Release (All Platforms)
 
-Automatically builds VibeMD for all supported platforms and architectures.
+Orchestrates end-to-end releases:
 
-**Triggers:**
-- Push to `main` branch
-- Pull requests to `main` branch
-- Tags matching `v*` (e.g., `v1.0.0`)
-- Manual workflow dispatch
+- Determines the next available version (bumps patch if the tag already exists) or uses an input version.
+- Updates docs’ Version labels and bumps `package.json`.
+- Builds macOS x64/arm64, Windows x64/arm64, and Linux DEB/RPM.
+- Creates a GitHub Release and uploads assets with standardized names.
 
-**Jobs:**
+Artifacts are named with platform, arch, and version, for example:
 
-#### 1. Build macOS (`build-macos`)
-- **Runs on:** macOS latest
-- **Matrix:** arm64, x64
-- **Outputs:** ZIP archives for each architecture
-- **Artifacts:** Uploaded for 30 days
+- `VibeMD-win32-x64-1.2.3.{exe,msi,zip}`
+- `VibeMD-darwin-arm64-1.2.3.zip`
+- `vibemd_1.2.3_amd64.deb`, `vibemd-1.2.3-x86_64.rpm`
 
-#### 2. Build Windows (`build-windows`)
-- **Runs on:** Windows latest
-- **Matrix:** x64, arm64
-- **Outputs:**
-  - ZIP archives (portable)
-  - Squirrel installers (.exe/.msi)
-- **Special handling:** Automatically uncomments `MakerSquirrel` configuration for proper Windows installer creation
-- **Artifacts:** Uploaded for 30 days
+Signing and notarization are enabled if secrets are set (see README Signing & Notarization).
 
-#### 3. Create Release (`create-release`)
-- **Runs on:** Ubuntu latest
-- **Condition:** Only runs on version tags (e.g., `v1.0.0`)
-- **Action:** Creates GitHub release with all build artifacts attached
-- **Permissions:** Requires `contents: write`
+### Aggregate Builds
+
+- `build-windows-all.yml` – Runs both Windows reusable workflows
+- `build-macos-linux-all.yml` – Builds macOS x64/arm64 and Linux DEB/RPM
+
+### Reusable Workflows
+
+- `build-windows-x64.yml` – Windows x64 build (ZIP, EXE, MSI)
+- `build-windows-arm64.yml` – Windows ARM64 build (ZIP, EXE, MSI)
+- `build-macos-intel.yml` – macOS x64 build (ZIP)
+- `build-macos-silicon.yml` – macOS arm64 build (ZIP)
+- `build-linux-deb.yml` – Linux DEB (x64)
+- `build-linux-rpm.yml` – Linux RPM (x64)
+
+These can be invoked from other workflows via:
+
+```
+uses: vibemd/VibeMD/.github/workflows/<workflow>.yml@main
+```
 
 ## Usage
 
@@ -45,18 +49,13 @@ Every push to `main` triggers builds for all platforms. Artifacts are available 
 
 ### Creating a Release
 
-1. Update version in `package.json`
-2. Commit and push changes
-3. Create and push a version tag:
-   ```bash
-   git tag v1.0.1
-   git push origin v1.0.1
-   ```
-4. GitHub Actions will automatically:
-   - Build for all platforms
-   - Create a GitHub Release
-   - Attach all build artifacts
-   - Generate release notes
+From the Actions tab, run the `Release` workflow.
+
+Inputs:
+- `version` (optional) – desired version (e.g., `1.2.3`)
+- `prerelease` (optional) – mark the release as pre-release
+
+The workflow updates docs and `package.json`, builds all platforms, and publishes a release with assets. If the tag already exists as a release, it auto-bumps the patch.
 
 ### Manual Workflow Dispatch
 
@@ -96,10 +95,10 @@ On Windows runners, the workflow automatically enables the Squirrel maker by unc
 
 ## Notes
 
-- **Build time:** Approximately 10-15 minutes for all platforms
-- **Concurrent builds:** macOS and Windows builds run in parallel
-- **Node.js version:** 18.x with npm caching enabled
-- **Dependencies:** Installed via `npm ci` for consistency
+- Build time: ~10–15 minutes for all platforms
+- macOS, Windows, and Linux build in parallel
+- Node.js: 20.x with npm caching enabled
+- Dependencies installed via `npm install --no-audit --no-fund`
 
 ## Troubleshooting
 
@@ -119,7 +118,5 @@ Ensure:
 
 ## Security
 
-- Workflow uses minimal permissions
-- Only `contents: write` for release creation
-- Secrets not required for public repositories
-- All dependencies cached and verified
+- GITHUB_TOKEN with `contents: write` for release creation
+- Optional secrets for signing and notarization (see README)

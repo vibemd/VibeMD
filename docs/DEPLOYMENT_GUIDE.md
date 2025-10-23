@@ -198,6 +198,16 @@ This script:
 - Settings location: `~/Library/Application Support/VibeMD/`
 - Template path: `~/Documents/VibeMD/Templates`
 
+## Release Artifacts & Versioning
+
+- Official builds are published to the GitHub Releases page.
+- Assets include Windows (ZIP, EXE, MSI), macOS (ZIP), and Linux (DEB, RPM).
+- Filenames include platform, architecture, and semantic version. Example:
+  - `VibeMD-win32-x64-1.2.3.msi`
+  - `VibeMD-darwin-arm64-1.2.3.zip`
+  - `vibemd_1.2.3_amd64.deb`
+- Releases are immutable; if a tag already exists, the automation bumps the patch version to avoid conflicts.
+
 ### Windows
 
 - Documents folder: `C:\Users\<username>\Documents`
