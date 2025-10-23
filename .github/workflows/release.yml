@@ -263,6 +263,12 @@ jobs:
     needs:
       - determine-version
       - update-docs
+      - build-macos-arm64
+      - build-macos-x64
+      - build-linux-deb
+      - build-linux-rpm
+      - build-windows-x64
+      - build-windows-arm64
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
