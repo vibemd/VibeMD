@@ -1,0 +1,97 @@
+name: Build Windows Installers
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.arch }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+    env:
+      npm_config_arch: ${{ matrix.arch }}
+      ELECTRON_CACHE: ${{ runner.temp }}\electron
+      ELECTRON_BUILDER_CACHE: ${{ runner.temp }}\electron-builder
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Determine version
+        id: meta
+        shell: bash
+        run: echo "version=$(node -p \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure version is unreleased
+        shell: bash
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "v${VERSION}" >/dev/null 2>&1; then
+            echo "Release v${VERSION} already exists. Please increment the project version before building." >&2
+            exit 1
+          fi
+
+      - name: Run smoke tests
+        run: node scripts/run-smoke-tests.js
+
+      - name: Build installers
+        run: npm run build:win-${{ matrix.arch }}
+
+      - name: Gather artifacts
+        id: gather
+        shell: bash
+        run: |
+          set -euo pipefail
+          artifact_dir="ci-artifacts/windows-${{ matrix.arch }}"
+          mkdir -p "$artifact_dir"
+          mapfile -t files < <(find out/make -type f \( -name '*.msi' -o -name '*.zip' \))
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No MSI or ZIP artifacts found in out/make" >&2
+            exit 1
+          fi
+          for file in "${files[@]}"; do
+            cp "$file" "$artifact_dir/"
+          done
+          mapfile -t copied < <(find "$artifact_dir" -maxdepth 1 -type f -print)
+          printf '%s\n' "${copied[@]}" > "$artifact_dir/filelist.txt"
+          echo "dir=$artifact_dir" >> "$GITHUB_OUTPUT"
+          echo "filelist=$artifact_dir/filelist.txt" >> "$GITHUB_OUTPUT"
+
+      - name: Create manifest
+        shell: bash
+        env:
+          ARTIFACT_VERSION: ${{ steps.meta.outputs.version }}
+          ARTIFACT_PLATFORM: windows
+          ARTIFACT_ARCH: ${{ matrix.arch }}
+          ARTIFACT_FILELIST_PATH: ${{ steps.gather.outputs.filelist }}
+          ARTIFACT_MANIFEST_PATH: ${{ steps.gather.outputs.dir }}/manifest.json
+        run: node scripts/create-artifact-manifest.js
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-windows-${{ matrix.arch }}-v${{ steps.meta.outputs.version }}
+          path: ${{ steps.gather.outputs.dir }}
+          if-no-files-found: error
+          retention-days: 21

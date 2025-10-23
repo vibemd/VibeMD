@@ -41,7 +41,7 @@ export function OutlineTab() {
     }
   };
 
-  const renderOutlineNode = (node: OutlineNode, level: number = 0) => {
+  const renderOutlineNode = (node: OutlineNode, level = 0) => {
     const hasChildren = node.children && node.children.length > 0;
     const isCollapsed = collapsedNodes.has(node.id || '');
     const nodeId = node.id || `node-${node.line}`;

@@ -1,0 +1,54 @@
+name: Update Documentation
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      changelog_b64:
+        required: true
+        type: string
+      release_date:
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Decode changelog payload
+        run: |
+          printf '%s' "${{ inputs.changelog_b64 }}" | base64 --decode > /tmp/changelog.md
+
+      - name: Regenerate documentation
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+          RELEASE_DATE: ${{ inputs.release_date }}
+          RELEASE_CHANGELOG_PATH: /tmp/changelog.md
+        run: node scripts/update-docs.js
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "No documentation changes to commit."
+          else
+            git add README.md docs
+            git commit -m "docs: refresh for v${{ inputs.version }}"
+            git push
+          fi

@@ -14,7 +14,7 @@ export function useMenuService() {
       console.log('[Menu] Received menu event:', menuAction);
       
       switch (menuAction) {
-        case 'menu-new-file':
+        case 'menu-new-file': {
           const id = await fileService.createNewFile();
           const newDoc: Document = {
             id,
@@ -27,8 +27,8 @@ export function useMenuService() {
           };
           addDocument(newDoc);
           break;
-          
-        case 'menu-open-file':
+        }
+        case 'menu-open-file': {
           const result = await fileService.openFile();
           if (result) {
             const doc: Document = {
@@ -39,10 +39,12 @@ export function useMenuService() {
             addDocument(doc);
           }
           break;
-          
-        case 'menu-save-file':
+        }
+        case 'menu-save-file': {
           const saveDoc = getActiveDocument();
-          if (!saveDoc) return;
+          if (!saveDoc) {
+            return;
+          }
 
           if (!saveDoc.filepath) {
             const filepath = await fileService.saveFileAs(saveDoc.content);
@@ -56,10 +58,12 @@ export function useMenuService() {
             markAsSaved(saveDoc.id);
           }
           break;
-          
-        case 'menu-save-as-file':
+        }
+        case 'menu-save-as-file': {
           const saveAsDoc = getActiveDocument();
-          if (!saveAsDoc) return;
+          if (!saveAsDoc) {
+            return;
+          }
 
           const filepath = await fileService.saveFileAs(saveAsDoc.content);
           if (filepath) {
@@ -68,11 +72,13 @@ export function useMenuService() {
             markAsSaved(saveAsDoc.id);
           }
           break;
-          
-        case 'menu-print-file':
+        }
+        case 'menu-print-file': {
           const printDoc = getActiveDocument();
-          if (!printDoc) return;
-          
+          if (!printDoc) {
+            return;
+          }
+
           try {
             const htmlContent = await marked(printDoc.content);
             await window.electronAPI.printDocument(htmlContent);
@@ -80,6 +86,7 @@ export function useMenuService() {
             console.error('[Menu] Error printing document:', error);
           }
           break;
+        }
       }
     };
 

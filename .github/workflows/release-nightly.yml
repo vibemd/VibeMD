@@ -1,0 +1,217 @@
+name: Nightly Release
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.create_release.outcome == 'success' }}
+      version: ${{ steps.meta.outputs.version }}
+      changelog_b64: ${{ steps.docs_payload.outputs.changelog_b64 }}
+      release_date: ${{ steps.docs_payload.outputs.release_date }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Determine version
+        id: meta
+        run: echo "version=$(node -p \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
+
+      - name: Check for existing release
+        id: check_release
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "v${VERSION}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release v${VERSION} already exists; skipping build aggregation."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Collect available build artifacts
+        id: gather
+        if: steps.check_release.outputs.exists == 'false'
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p release-artifacts
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts" --paginate \
+            | jq -s '[.[] | .artifacts[]]' > release-artifacts/actions-artifacts.json
+
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const artifacts = JSON.parse(fs.readFileSync('release-artifacts/actions-artifacts.json', 'utf8'));
+          const version = process.env.VERSION;
+          const targets = [
+            { slug: 'windows-x64', platform: 'windows', arch: 'x64' },
+            { slug: 'windows-arm64', platform: 'windows', arch: 'arm64' },
+            { slug: 'macos-arm64', platform: 'macos', arch: 'arm64' },
+            { slug: 'macos-x64', platform: 'macos', arch: 'x64' },
+            { slug: 'linux-x64', platform: 'linux', arch: 'x64' }
+          ];
+
+          const found = [];
+          const missing = [];
+          for (const target of targets) {
+            const name = `build-${target.slug}-v${version}`;
+            const match = (artifacts || []).find((item) => item.name === name && !item.expired);
+            if (match) {
+              found.push({
+                ...target,
+                artifactName: name,
+                artifactId: match.id,
+                downloadUrl: match.archive_download_url
+              });
+            } else {
+              missing.push(target);
+            }
+          }
+
+          fs.writeFileSync('release-artifacts/found.json', JSON.stringify(found, null, 2));
+          fs.writeFileSync('release-artifacts/missing.json', JSON.stringify(missing, null, 2));
+          fs.writeFileSync('release-artifacts/summary.txt', found.map((item) => item.artifactName).join('\n'));
+
+          console.log(`Found ${found.length} artifact batches for version ${version}`);
+          NODE
+
+          found_count=$(jq 'length' release-artifacts/found.json)
+          missing_list=$(jq -r 'map(.slug) | join(\",\")' release-artifacts/missing.json)
+          echo "found=$found_count" >> "$GITHUB_OUTPUT"
+          echo "missing=$missing_list" >> "$GITHUB_OUTPUT"
+
+      - name: No artifacts message
+        if: steps.check_release.outputs.exists == 'false' && steps.gather.outputs.found == '0'
+        run: echo "No build artifacts found for version v${{ steps.meta.outputs.version }}; skipping release."
+
+      - name: Download artifacts
+        if: steps.check_release.outputs.exists == 'false' && steps.gather.outputs.found != '0'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p release-artifacts/downloads release-artifacts/unpacked
+          ids=$(jq -r '.[].artifactId' release-artifacts/found.json)
+          for id in $ids; do
+            zip_path="release-artifacts/downloads/${id}.zip"
+            gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" --header "Accept: application/octet-stream" > "$zip_path"
+            unzip -q "$zip_path" -d "release-artifacts/unpacked/${id}"
+          done
+
+      - name: Prepare release notes and asset list
+        if: steps.check_release.outputs.exists == 'false' && steps.gather.outputs.found != '0'
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          set -euo pipefail
+          find release-artifacts/unpacked -type f -name 'manifest.json' -print > release-artifacts/manifest-paths.txt
+          find release-artifacts/unpacked -type f \( -name '*.msi' -o -name '*.zip' -o -name '*.dmg' -o -name '*.deb' -o -name '*.rpm' -o -name 'manifest.json' \) -print > release-artifacts/upload-list.txt
+
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+
+          const version = process.env.VERSION;
+          const found = JSON.parse(fs.readFileSync('release-artifacts/found.json', 'utf8'));
+          const missing = JSON.parse(fs.readFileSync('release-artifacts/missing.json', 'utf8'));
+          const manifestPaths = fs.readFileSync('release-artifacts/manifest-paths.txt', 'utf8')
+            .split('\n')
+            .map((line) => line.trim())
+            .filter(Boolean);
+
+          const includedLines = [];
+
+          for (const manifestPath of manifestPaths) {
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            const label = `${manifest.platform} ${manifest.arch}`;
+            const types = (manifest.artifacts || []).map((item) => item.format.toUpperCase()).join(', ');
+            includedLines.push(`- **${label}** — ${types || 'artifacts detected'}`);
+          }
+
+          const pendingLines = (missing || [])
+            .filter((item) => item)
+            .map((item) => `- ${item.platform} ${item.arch}`);
+
+          const releaseBodyParts = [
+            `## Included builds`,
+            includedLines.length ? includedLines.join('\n') : '- None',
+            '',
+            pendingLines.length ? '## Pending builds\n' + pendingLines.join('\n') : '',
+            '',
+            '## Notes',
+            '- Installers and packages are currently unsigned. Expect operating system prompts during installation.'
+          ].filter(Boolean);
+
+          const releaseBody = releaseBodyParts.join('\n');
+          fs.writeFileSync('release-artifacts/release-body.md', `${releaseBody.trim()}\n`);
+
+          const changelogSections = [
+            'Included builds:',
+            includedLines.length ? includedLines.join('\n') : '- None',
+          ];
+          if (pendingLines.length) {
+            changelogSections.push('\nPending builds:');
+            changelogSections.push(pendingLines.join('\n'));
+          }
+          changelogSections.push('\nNotes:\n- Installers remain unsigned and may trigger OS warnings.');
+
+          fs.writeFileSync('release-artifacts/changelog.md', `${changelogSections.join('\n').trim()}\n`);
+          NODE
+
+      - name: Create release
+        if: steps.check_release.outputs.exists == 'false' && steps.gather.outputs.found != '0'
+        id: create_release
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="v${VERSION}"
+          title="VibeMD ${VERSION}"
+          mapfile -t upload_files < release-artifacts/upload-list.txt
+          if [ "${#upload_files[@]}" -eq 0 ]; then
+            echo "No files available to upload; aborting release."
+            exit 1
+          fi
+          gh release create "$tag" "${upload_files[@]}" --title "$title" --notes-file release-artifacts/release-body.md
+
+      - name: Prepare docs payload
+        if: steps.check_release.outputs.exists == 'false' && steps.create_release.outcome == 'success'
+        id: docs_payload
+        run: |
+          set -euo pipefail
+          changelog_b64=$(base64 -w0 release-artifacts/changelog.md)
+          release_date=$(date -u +%Y-%m-%d)
+          echo "changelog_b64=$changelog_b64" >> "$GITHUB_OUTPUT"
+          echo "release_date=$release_date" >> "$GITHUB_OUTPUT"
+
+  docs:
+    needs: release
+    if: needs.release.outputs.release_created == 'true'
+    uses: ./.github/workflows/update-docs.yml
+    with:
+      version: ${{ needs.release.outputs.version }}
+      changelog_b64: ${{ needs.release.outputs.changelog_b64 }}
+      release_date: ${{ needs.release.outputs.release_date }}
+    secrets: inherit

@@ -16,7 +16,7 @@ export function useKeyboardShortcuts() {
       
       if (isCtrlOrCmd) {
         switch (event.key) {
-          case 'n':
+          case 'n': {
             event.preventDefault();
             const id = await fileService.createNewFile();
             const newDoc: Document = {
@@ -30,8 +30,8 @@ export function useKeyboardShortcuts() {
             };
             addDocument(newDoc);
             break;
-            
-          case 'o':
+          }
+          case 'o': {
             event.preventDefault();
             const result = await fileService.openFile();
             if (result) {
@@ -43,11 +43,13 @@ export function useKeyboardShortcuts() {
               addDocument(doc);
             }
             break;
-            
-          case 's':
+          }
+          case 's': {
             event.preventDefault();
             const doc = getActiveDocument();
-            if (!doc) return;
+            if (!doc) {
+              return;
+            }
 
             if (!doc.filepath) {
               const filepath = await fileService.saveFileAs(doc.content);
@@ -61,12 +63,14 @@ export function useKeyboardShortcuts() {
               markAsSaved(doc.id);
             }
             break;
-            
-          case 'p':
+          }
+          case 'p': {
             event.preventDefault();
             // Print functionality
             const printDoc = getActiveDocument();
-            if (!printDoc) return;
+            if (!printDoc) {
+              return;
+            }
             
             try {
               const htmlContent = await marked(printDoc.content);
@@ -75,7 +79,7 @@ export function useKeyboardShortcuts() {
               console.error('[Keyboard] Error printing document:', error);
             }
             break;
-            
+          }
           case ',':
             event.preventDefault();
             toggleSettingsDialog();
@@ -118,7 +122,6 @@ export function useKeyboardShortcuts() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [addDocument, getActiveDocument, updateDocument, markAsSaved, toggleSettingsDialog]);
 }
-
 
 
 

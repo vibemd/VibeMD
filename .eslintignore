@@ -1,0 +1,10 @@
+out/
+dist/
+node_modules/
+build/
+*.config.js
+*.config.ts
+webpack.*.config.ts
+forge.config.ts
+webpack.rules.ts
+webpack.plugins.ts
