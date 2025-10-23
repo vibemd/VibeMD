@@ -111,7 +111,12 @@ jobs:
         shell: bash
         run: |
           NEW_VER='${{ needs.determine-version.outputs.version }}'
-          npm version "$NEW_VER" --no-git-tag-version
+          CUR_VER=$(node -e "console.log(require('./package.json').version)") || CUR_VER=""
+          if [ "$CUR_VER" = "$NEW_VER" ]; then
+            echo "package.json already at $NEW_VER; skipping version bump"
+          else
+            npm version "$NEW_VER" --no-git-tag-version
+          fi
 
       - name: Commit and push docs
         env:
