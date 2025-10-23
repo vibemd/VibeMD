@@ -40,6 +40,21 @@ Releases are automated via GitHub Actions (`.github/workflows/release.yml`). Fro
 
 Assets are named consistently by platform/arch/version and attached to the GitHub Release.
 
+## Install Locations
+
+- Windows (MSI)
+  - Default: `C:\Program Files\VibeMD` (x64) and appropriate Program Files folder on ARM64 Windows
+  - Start menu: shortcut created under “Start > VibeMD” (no Desktop shortcut)
+  - Portable ZIP: no installation; extract and run `VibeMD.exe` from the extracted folder
+
+- macOS (DMG/ZIP)
+  - DMG: open the `.dmg` and drag `VibeMD.app` into `/Applications`
+  - ZIP: extract and move `VibeMD.app` into `/Applications`
+
+- Linux (DEB/RPM)
+  - Installs system‑wide (typical locations under `/usr/lib` and desktop entry under `/usr/share/applications`)
+  - A launcher entry is added to your desktop environment; a command is made available (e.g., `VibeMD`)
+
 ### Choose Your Platform
 
 - **macOS Apple Silicon (M1/M2/M3/M4)**: Download `VibeMD-darwin-arm64-*.zip`
