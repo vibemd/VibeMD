@@ -172,6 +172,12 @@ jobs:
           path: out/make/zip/darwin/arm64/*.zip
           if-no-files-found: error
           retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VibeMD-darwin-arm64-dmg
+          path: out/make/dmg/darwin/arm64/*.dmg
+          if-no-files-found: error
+          retention-days: 30
 
   build-macos-x64:
     name: Build macOS x64
@@ -196,6 +202,12 @@ jobs:
         with:
           name: VibeMD-darwin-x64-zip
           path: out/make/zip/darwin/x64/*.zip
+          if-no-files-found: error
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VibeMD-darwin-x64-dmg
+          path: out/make/dmg/darwin/x64/*.dmg
           if-no-files-found: error
           retention-days: 30
 
