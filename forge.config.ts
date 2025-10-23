@@ -54,7 +54,24 @@ const config: ForgeConfig = {
       OriginalFilename: 'VibeMD.exe',
       ProductName: 'VibeMD',
       InternalName: 'VibeMD'
-    }
+    },
+    // macOS code signing and notarization (only if env provided)
+    osxSign: process.env.MAC_CODESIGN_IDENTITY
+      ? {
+          identity: process.env.MAC_CODESIGN_IDENTITY,
+          hardenedRuntime: true,
+          entitlements: './entitlements.plist',
+          entitlementsInherit: './entitlements.plist',
+        }
+      : undefined,
+    osxNotarize:
+      process.env.APPLE_ID && process.env.APPLE_APP_SPECIFIC_PASSWORD && process.env.APPLE_TEAM_ID
+        ? {
+            appleId: process.env.APPLE_ID,
+            appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
+            teamId: process.env.APPLE_TEAM_ID,
+          }
+        : undefined,
   },
   rebuildConfig: {},
   makers: [
@@ -62,6 +79,8 @@ const config: ForgeConfig = {
       setupIcon: './build/icons/icon.ico',
       // Keep MSI handled by WiX; Squirrel provides EXE for convenience
       noMsi: true,
+      certificateFile: process.env.WINDOWS_CERT_PATH,
+      certificatePassword: process.env.WINDOWS_CERT_PASSWORD,
     }),
     new MakerWix({
       name: 'VibeMD',
@@ -77,7 +96,9 @@ const config: ForgeConfig = {
       features: {
         autoUpdate: false,
         autoLaunch: false
-      }
+      },
+      certificateFile: process.env.WINDOWS_CERT_PATH,
+      certificatePassword: process.env.WINDOWS_CERT_PASSWORD,
     }),
     new MakerZIP({}, ['darwin', 'win32']),
     new MakerRpm({
