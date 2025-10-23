@@ -39,6 +39,7 @@ const electronAPI = {
   // App operations
   checkUnsavedChanges: () => ipcRenderer.invoke('app:checkUnsavedChanges'),
   showCloseConfirmation: () => ipcRenderer.invoke('app:showCloseConfirmation'),
+  getAppVersion: () => ipcRenderer.invoke('app:getVersion'),
   
   // Menu event handling
   onMenuEvent: (callback: (event: any, menuAction: string) => void) => {

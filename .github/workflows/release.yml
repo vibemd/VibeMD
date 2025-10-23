@@ -1,10 +1,10 @@
-name: Release
+name: Release (Assemble Only)
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release (e.g., 1.0.3). If omitted, uses package.json or next available.'
+        description: 'Version to release (e.g., 1.0.10). If omitted, uses package.json.'
         required: false
         type: string
       prerelease:
@@ -12,31 +12,13 @@ on:
         required: false
         type: boolean
         default: false
-      build_macos:
-        description: 'Build macOS (ZIP, DMG)'
-        required: false
-        type: boolean
-        default: true
-      build_windows:
-        description: 'Build Windows (ZIP, EXE, MSI)'
-        required: false
-        type: boolean
-        default: true
-      build_linux:
-        description: 'Build Linux (DEB, RPM)'
-        required: false
-        type: boolean
-        default: true
-  push:
-    tags:
-      - 'v*'
 
 permissions:
   contents: write
 
 jobs:
-  determine-version:
-    name: Determine version/tag
+  resolve-version:
+    name: Resolve version/tag
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.set.outputs.version }}
@@ -45,7 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Resolve version and ensure tag availability
+      - name: Resolve version
         id: set
         uses: actions/github-script@v7
         with:
@@ -53,274 +35,32 @@ jobs:
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
             const inputVersion = core.getInput('version');
-            let desiredVersion = '';
-            if (context.ref && context.ref.startsWith('refs/tags/v')) {
-              desiredVersion = context.ref.replace('refs/tags/v', '');
-            } else if (inputVersion) {
-              desiredVersion = inputVersion.replace(/^v/, '');
-            } else {
-              desiredVersion = pkg.version;
-            }
-
-            // Check if a release with this tag exists; if so, bump patch until available (immutable releases)
-            function parseSemver(v) {
-              const m = v.match(/^(\d+)\.(\d+)\.(\d+)(?:-.+)?$/);
-              if (!m) return null;
-              return { major: +m[1], minor: +m[2], patch: +m[3] };
-            }
-            const sv = parseSemver(desiredVersion);
-            if (!sv) {
-              core.setFailed(`Invalid semantic version: ${desiredVersion}`);
+            const version = (inputVersion && inputVersion.trim()) ? inputVersion.replace(/^v/, '') : pkg.version;
+            if (!/^\d+\.\d+\.\d+(?:-.+)?$/.test(version)) {
+              core.setFailed(`Invalid semantic version: ${version}`);
               return;
             }
-
-            async function tagExists(tag) {
-              try {
-                await github.rest.repos.getReleaseByTag({ owner: context.repo.owner, repo: context.repo.repo, tag });
-                return true;
-              } catch (e) {
-                if (e.status === 404) return false;
-                throw e;
-              }
-            }
-
-            let candidate = `${sv.major}.${sv.minor}.${sv.patch}`;
-            let attempts = 0;
-            while (await tagExists(`v${candidate}`)) {
-              sv.patch += 1;
-              candidate = `${sv.major}.${sv.minor}.${sv.patch}`;
-              if (++attempts > 100) throw new Error('Unable to find next available version');
-            }
-
-            core.setOutput('version', candidate);
-            core.setOutput('tag', `v${candidate}`);
-            core.info(`Using version ${candidate}`);
-
-  update-docs:
-    name: Update docs with version
-    runs-on: ubuntu-latest
-    needs: determine-version
-    steps:
-      - name: Checkout main
-        uses: actions/checkout@v4
-        with:
-          ref: main
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Update docs version text
-        shell: bash
-        run: |
-          NEW_VER='${{ needs.determine-version.outputs.version }}'
-          echo "New version: $NEW_VER"
-          for f in README.md docs/USER_GUIDE.md docs/ARCHITECTURE_GUIDE.md; do
-            if [ -f "$f" ]; then
-              sed -E -i.bak "s/(\*\*Version:\*\*) [0-9]+\.[0-9]+\.[0-9]+/\1 ${NEW_VER}/" "$f" || true
-              rm -f "$f.bak"
-            fi
-          done
-
-      - name: Bump package.json version
-        shell: bash
-        run: |
-          NEW_VER='${{ needs.determine-version.outputs.version }}'
-          CUR_VER=$(node -e "console.log(require('./package.json').version)") || CUR_VER=""
-          if [ "$CUR_VER" = "$NEW_VER" ]; then
-            echo "package.json already at $NEW_VER; skipping version bump"
-          else
-            npm version "$NEW_VER" --no-git-tag-version
-          fi
-
-      - name: Commit and push docs
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
-          git add -A
-          if git diff --cached --quiet; then
-            echo "No doc changes to commit"
-          else
-            git commit -m "chore(docs): update version to ${{ needs.determine-version.outputs.version }}"
-            git push
-          fi
-
-  build-macos-arm64:
-    name: Build macOS ARM64
-    runs-on: macos-latest
-    needs: [determine-version, update-docs]
-    if: ${{ fromJSON(inputs.build_macos) }}
-    env:
-      MAC_CODESIGN_IDENTITY: ${{ secrets.MAC_CODESIGN_IDENTITY }}
-      APPLE_ID: ${{ secrets.APPLE_ID }}
-      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm install --no-audit --no-fund
-      - name: Build macOS ARM64
-        run: npm run build:mac-arm64
-      - uses: actions/upload-artifact@v4
-        with:
-          name: VibeMD-darwin-arm64-zip
-          path: out/make/zip/darwin/arm64/*.zip
-          if-no-files-found: error
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: VibeMD-darwin-arm64-dmg
-          path: out/make/**/*.dmg
-          if-no-files-found: warn
-          retention-days: 30
-
-  build-macos-x64:
-    name: Build macOS x64
-    runs-on: macos-latest
-    needs: [determine-version, update-docs]
-    if: ${{ fromJSON(inputs.build_macos) }}
-    env:
-      MAC_CODESIGN_IDENTITY: ${{ secrets.MAC_CODESIGN_IDENTITY }}
-      APPLE_ID: ${{ secrets.APPLE_ID }}
-      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm install --no-audit --no-fund
-      - name: Build macOS x64
-        run: npm run build:mac-x64
-      - uses: actions/upload-artifact@v4
-        with:
-          name: VibeMD-darwin-x64-zip
-          path: out/make/zip/darwin/x64/*.zip
-          if-no-files-found: error
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: VibeMD-darwin-x64-dmg
-          path: out/make/**/*.dmg
-          if-no-files-found: warn
-          retention-days: 30
-
-  build-linux-deb:
-    name: Build Linux DEB
-    runs-on: ubuntu-latest
-    needs: [determine-version, update-docs]
-    if: ${{ fromJSON(inputs.build_linux) }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm install --no-audit --no-fund
-      - name: Build Linux x64
-        run: npm run build:linux-x64
-      - uses: actions/upload-artifact@v4
-        with:
-          name: VibeMD-linux-x64-deb
-          path: out/make/deb/x64/*.deb
-          if-no-files-found: error
-          retention-days: 30
-
-  build-linux-rpm:
-    name: Build Linux RPM
-    runs-on: ubuntu-latest
-    needs: [determine-version, update-docs]
-    if: ${{ fromJSON(inputs.build_linux) }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm install --no-audit --no-fund
-      - name: Build Linux x64
-        run: npm run build:linux-x64
-      - uses: actions/upload-artifact@v4
-        with:
-          name: VibeMD-linux-x64-rpm
-          path: out/make/rpm/x64/*.rpm
-          if-no-files-found: error
-          retention-days: 30
-
-  build-windows-x64:
-    name: Build Windows x64
-    needs: [determine-version, update-docs]
-    uses: vibemd/VibeMD/.github/workflows/build-windows-x64.yml@main
-    if: ${{ fromJSON(inputs.build_windows) }}
-    with:
-      version: ${{ needs.determine-version.outputs.version }}
-
-  build-windows-arm64:
-    name: Build Windows ARM64
-    needs: [determine-version, update-docs]
-    uses: vibemd/VibeMD/.github/workflows/build-windows-arm64.yml@main
-    if: ${{ fromJSON(inputs.build_windows) }}
-    with:
-      version: ${{ needs.determine-version.outputs.version }}
+            core.setOutput('version', version);
+            core.setOutput('tag', `v${version}`);
 
   create-release:
-    name: Create GitHub Release
+    name: Create or update GitHub Release (no assets)
     runs-on: ubuntu-latest
-    needs:
-      - determine-version
-      - update-docs
-      - build-macos-arm64
-      - build-macos-x64
-      - build-linux-deb
-      - build-linux-rpm
-      - build-windows-x64
-      - build-windows-arm64
+    needs: resolve-version
     steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: dist-artifacts
-
-      - name: Display downloaded files
-        run: |
-          ls -R dist-artifacts || true
-
-      - name: Prepare assets with unique names
-        shell: bash
-        run: |
-          set -euo pipefail
-          VER='${{ needs.determine-version.outputs.version }}'
-          mkdir -p upload
-          shopt -s nullglob
-          # Windows MSIs (rename to include arch)
-          for f in dist-artifacts/VibeMD-win32-x64-msi/*.msi; do cp "$f" "upload/VibeMD-win32-x64-${VER}.msi"; done
-          for f in dist-artifacts/VibeMD-win32-arm64-msi/*.msi; do cp "$f" "upload/VibeMD-win32-arm64-${VER}.msi"; done
-          # Windows ZIPs (rename to include arch and version)
-          for f in dist-artifacts/VibeMD-win32-x64-zip/*.zip; do cp "$f" "upload/VibeMD-win32-x64-${VER}.zip"; done
-          for f in dist-artifacts/VibeMD-win32-arm64-zip/*.zip; do cp "$f" "upload/VibeMD-win32-arm64-${VER}.zip"; done
-          # macOS ZIPs
-          for f in dist-artifacts/VibeMD-darwin-x64-zip/*.zip; do cp "$f" "upload/VibeMD-darwin-x64-${VER}.zip"; done
-          for f in dist-artifacts/VibeMD-darwin-arm64-zip/*.zip; do cp "$f" "upload/VibeMD-darwin-arm64-${VER}.zip"; done
-          # macOS DMGs
-          for f in dist-artifacts/VibeMD-darwin-x64-dmg/*.dmg; do cp "$f" "upload/VibeMD-darwin-x64-${VER}.dmg"; done
-          for f in dist-artifacts/VibeMD-darwin-arm64-dmg/*.dmg; do cp "$f" "upload/VibeMD-darwin-arm64-${VER}.dmg"; done
-          # Linux packages (standardize names)
-          for f in dist-artifacts/VibeMD-linux-x64-deb/*.deb; do cp "$f" "upload/vibemd_${VER}_amd64.deb"; done
-          for f in dist-artifacts/VibeMD-linux-x64-rpm/*.rpm; do cp "$f" "upload/vibemd-${VER}-x86_64.rpm"; done
-          echo "Prepared assets:" && ls -l upload
-
-      - name: Create release with assets (immutable-safe)
+      - name: Create or update release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG='${{ needs.determine-version.outputs.tag }}'
-          TITLE='VibeMD ${{ needs.determine-version.outputs.version }}'
-          PRERELEASE='' ; if [ "${{ inputs.prerelease }}" = "true" ]; then PRERELEASE='--prerelease'; fi
-          echo "Creating release $TAG with assets"
-          gh release create -R "${{ github.repository }}" "$TAG" upload/* --title "$TITLE" --generate-notes $PRERELEASE
+          set -euo pipefail
+          TAG='${{ needs.resolve-version.outputs.tag }}'
+          TITLE='VibeMD ${{ needs.resolve-version.outputs.version }}'
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG exists. Updating title/notes (no assets)."
+            gh release edit "$TAG" --title "$TITLE" --latest
+          else
+            echo "Creating release $TAG (no assets)"
+            PRERELEASE='' ; if [ "${{ inputs.prerelease }}" = "true" ]; then PRERELEASE='--prerelease'; fi
+            gh release create "$TAG" --title "$TITLE" --generate-notes $PRERELEASE
+          fi
+

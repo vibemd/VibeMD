@@ -23,6 +23,7 @@ export interface ElectronAPI {
   printDocument: (htmlContent: string) => Promise<void>;
   checkUnsavedChanges: () => Promise<boolean>;
   showCloseConfirmation: () => Promise<boolean>;
+  getAppVersion: () => Promise<string>;
   testPing: () => Promise<string>;
   onMenuEvent: (callback: (event: any, menuAction: string) => void) => void;
   removeMenuEventListener: (callback: (event: any, menuAction: string) => void) => void;

@@ -1,0 +1,10 @@
+{
+  "git.autofetch": true,
+  "git.autofetchPeriod": 120,
+  "git.autofetchTags": true,
+  "git.pruneOnFetch": true,
+  "git.pullRebase": true,
+  // Allow the auto task we added to run on folder open
+  "task.allowAutomaticTasks": "on"
+}
+

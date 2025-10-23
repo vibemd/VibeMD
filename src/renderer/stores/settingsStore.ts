@@ -48,10 +48,18 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
     // Get the user's documents path from the OS
     const userDocumentsPath = await window.electronAPI.getUserDocumentsPath();
+    // Get app version from main process
+    const appVersion = await window.electronAPI.getAppVersion();
 
     if (loadedSettings) {
       // Merge loaded settings with defaults
       const mergedSettings = { ...defaultSettings, ...loadedSettings };
+      // Ensure about info reflects current build
+      mergedSettings.about = {
+        ...mergedSettings.about,
+        version: appVersion,
+        buildDate: new Date().toISOString(),
+      };
 
       // Auto-initialize paths if they are null (first run or reset scenario)
       if (mergedSettings.files.defaultSavePath === null) {
@@ -70,12 +78,18 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       }
     } else {
       // First run - initialize with OS defaults
-      const initialSettings = {
+      const initialSettings: Settings = {
         ...defaultSettings,
         files: {
           defaultSavePath: userDocumentsPath,
           templatesLocation: `${userDocumentsPath}/VibeMD/Templates`,
         },
+      };
+      // Stamp version/build info
+      initialSettings.about = {
+        ...defaultSettings.about,
+        version: appVersion,
+        buildDate: new Date().toISOString(),
       };
 
       set({ settings: initialSettings });

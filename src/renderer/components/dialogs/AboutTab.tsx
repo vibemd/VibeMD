@@ -1,4 +1,7 @@
+import { useSettingsStore } from '@/stores/settingsStore';
+
 export function AboutTab() {
+  const { settings } = useSettingsStore();
   const thirdPartyComponents = [
     {
       name: "Electron",
@@ -196,7 +199,7 @@ export function AboutTab() {
         <div className="space-y-4">
           <div>
             <h4 className="font-medium">Version</h4>
-            <p className="text-sm text-muted-foreground">1.0.0</p>
+            <p className="text-sm text-muted-foreground">{settings.about.version}</p>
           </div>
           
           <div>

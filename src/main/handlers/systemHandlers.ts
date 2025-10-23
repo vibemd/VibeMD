@@ -1,4 +1,4 @@
-import { ipcMain, dialog, BrowserWindow } from 'electron';
+import { ipcMain, dialog, BrowserWindow, app } from 'electron';
 import { readdir, stat, readFile } from 'fs/promises';
 import { join, extname } from 'path';
 
@@ -73,3 +73,7 @@ ipcMain.handle('app:showCloseConfirmation', async () => {
   return result.response === 0; // 0 = No (allow close), 1 = Yes (cancel close)
 });
 
+// App info
+ipcMain.handle('app:getVersion', async () => {
+  return app.getVersion();
+});
