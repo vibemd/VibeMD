@@ -1,6 +1,6 @@
 # VibeMD
 
-**Version:** 1.0.8 **A modern, cross-platform markdown editor with WYSIWYG editing, LaTeX math support, and seamless native OS integration.**
+**Version:** 1.0.9 **A modern, cross-platform markdown editor with WYSIWYG editing, LaTeX math support, and seamless native OS integration.**
 
 * * *
 
