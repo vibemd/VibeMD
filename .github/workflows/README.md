@@ -1,4 +1,4 @@
-# GitHub Actions Workflows
+ï»¿# GitHub Actions Workflows
 
 This directory contains GitHub Actions workflows for automated building and releasing of VibeMD.
 
@@ -52,11 +52,11 @@ Every push to `main` triggers builds for all platforms. Artifacts are available 
 From the Actions tab, run the `Release` workflow.
 
 Inputs:
-- `version` (optional) – desired version (e.g., `1.2.3`)
-- `prerelease` (optional) – mark the release as pre-release
-- `build_macos` (optional, default true) – build macOS (ZIP, DMG)
-- `build_windows` (optional, default true) – build Windows (ZIP, EXE, MSI)
-- `build_linux` (optional, default true) – build Linux (DEB, RPM)
+- `version` (optional) ï¿½ desired version (e.g., `1.2.3`)
+- `prerelease` (optional) ï¿½ mark the release as pre-release
+- `build_macos` (optional, default true) ï¿½ build macOS (ZIP, DMG)
+- `build_windows` (optional, default true) ï¿½ build Windows (ZIP, EXE, MSI)
+- `build_linux` (optional, default true) ï¿½ build Linux (DEB, RPM)
 
 The workflow updates docs and `package.json`, builds the selected platforms, and publishes a release with assets. If the tag already exists as a release, it auto-bumps the patch.
 
@@ -93,7 +93,7 @@ Release asset names are standardized:
 
 ## Windows Installer Creation
 
-On Windows runners, the workflow automatically enables the Squirrel maker by uncommenting the relevant sections in `forge.config.ts`. This allows proper .exe and .msi installer creation without Wine dependency issues.
+On Windows runners, MSI installers are created via WiX. The MSI builds create a Start Menu shortcut for VibeMD (no Desktop shortcut). EXE (Squirrel) installers are not produced.
 
 ## Notes
 
@@ -122,5 +122,6 @@ Ensure:
 
 - GITHUB_TOKEN with `contents: write` for release creation
 - Optional secrets for signing and notarization (see README)
+
 
 

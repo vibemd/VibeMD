@@ -85,6 +85,9 @@ const config: ForgeConfig = {
       // Ensure 64-bit installs go to Program Files (not Program Files (x86))
       // and arm64 builds target the correct architecture. We infer from npm_config_arch when provided.
       arch: (process.env.npm_config_arch || process.arch).toLowerCase(),
+      // Shortcuts: force Start Menu shortcut; do not create Desktop shortcut
+      shortcutName: 'VibeMD',
+      shortcutFolderName: 'VibeMD',
       ui: {
         chooseDirectory: true,
         enabled: true

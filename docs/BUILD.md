@@ -262,6 +262,7 @@ npm run package -- --platform=win32 --arch=ia32
 ### Windows
 
 - Installer (MSI): `VibeMD-win32-{arch}-{version}.msi`
+  - Creates a Start Menu shortcut for VibeMD (no Desktop shortcut)
 - Portable ZIP: `VibeMD-win32-{arch}-{version}.zip`
 
 ### macOS
