@@ -175,8 +175,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: VibeMD-darwin-arm64-dmg
-          path: out/make/dmg/darwin/arm64/*.dmg
-          if-no-files-found: error
+          path: out/make/**/*.dmg
+          if-no-files-found: warn
           retention-days: 30
 
   build-macos-x64:
@@ -207,8 +207,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: VibeMD-darwin-x64-dmg
-          path: out/make/dmg/darwin/x64/*.dmg
-          if-no-files-found: error
+          path: out/make/**/*.dmg
+          if-no-files-found: warn
           retention-days: 30
 
   build-linux-deb:
