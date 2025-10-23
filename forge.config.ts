@@ -82,6 +82,9 @@ const config: ForgeConfig = {
       appIconPath: './build/icons/icon.ico',
       language: 1033, // English
       programFilesFolderName: 'VibeMD',
+      // Ensure 64-bit installs go to Program Files (not Program Files (x86))
+      // and arm64 builds target the correct architecture. We infer from npm_config_arch when provided.
+      arch: (process.env.npm_config_arch || process.arch).toLowerCase(),
       ui: {
         chooseDirectory: true,
         enabled: true
