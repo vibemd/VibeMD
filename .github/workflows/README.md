@@ -4,12 +4,12 @@ This directory contains GitHub Actions workflows for automated building and rele
 
 ## Workflows
 
-### `release.yml` â€“ Build and Release (All Platforms)
+### `release.yml` - Build and Release (All Platforms)
 
 Orchestrates end-to-end releases:
 
 - Determines the next available version (bumps patch if the tag already exists) or uses an input version.
-- Updates docsâ€™ Version labels and bumps `package.json`.
+- Updates docs' Version labels and bumps `package.json`.
 - Builds macOS x64/arm64 (ZIP, DMG), Windows x64/arm64 (ZIP, EXE, MSI), and Linux DEB/RPM.
 - Creates a GitHub Release and uploads assets with standardized names.
 
@@ -23,17 +23,17 @@ Signing and notarization are enabled if secrets are set (see README Signing & No
 
 ### Aggregate Builds
 
-- `build-windows-all.yml` â€“ Runs both Windows reusable workflows
-- `build-macos-linux-all.yml` â€“ Builds macOS x64/arm64 and Linux DEB/RPM
+- `build-windows-all.yml` - Runs both Windows reusable workflows
+- `build-macos-linux-all.yml` - Builds macOS x64/arm64 and Linux DEB/RPM
 
 ### Reusable Workflows
 
-- `build-windows-x64.yml` â€“ Windows x64 build (ZIP, EXE, MSI)
-- `build-windows-arm64.yml` â€“ Windows ARM64 build (ZIP, EXE, MSI)
-- `build-macos-intel.yml` â€“ macOS x64 build (ZIP, DMG)
-- `build-macos-silicon.yml` â€“ macOS arm64 build (ZIP, DMG)
-- `build-linux-deb.yml` â€“ Linux DEB (x64)
-- `build-linux-rpm.yml` â€“ Linux RPM (x64)
+- `build-windows-x64.yml` - Windows x64 build (ZIP, EXE, MSI)
+- `build-windows-arm64.yml` - Windows ARM64 build (ZIP, EXE, MSI)
+- `build-macos-intel.yml` - macOS x64 build (ZIP, DMG)
+- `build-macos-silicon.yml` - macOS arm64 build (ZIP, DMG)
+- `build-linux-deb.yml` - Linux DEB (x64)
+- `build-linux-rpm.yml` - Linux RPM (x64)
 
 These can be invoked from other workflows via:
 
@@ -63,7 +63,7 @@ The workflow updates docs and `package.json`, builds the selected platforms, and
 ### Manual Workflow Dispatch
 
 You can manually trigger builds from the Actions tab:
-1. Go to Actions â†’ Build VibeMD
+1. Go to Actions -> Build VibeMD
 2. Click "Run workflow"
 3. Select branch
 4. Click "Run workflow"
@@ -97,7 +97,7 @@ On Windows runners, the workflow automatically enables the Squirrel maker by unc
 
 ## Notes
 
-- Build time: ~10â€“15 minutes for all platforms
+- Build time: ~10-15 minutes for all platforms
 - macOS, Windows, and Linux build in parallel
 - Node.js: 20.x with npm caching enabled
 - Dependencies installed via `npm install --no-audit --no-fund`
