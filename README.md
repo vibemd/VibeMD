@@ -29,6 +29,17 @@ VibeMD is an Electron-based desktop markdown editor that combines the simplicity
 
 **[📥 Download the latest release](https://github.com/vibemd/VibeMD/releases/latest)**
 
+## Releases
+
+Releases are automated via GitHub Actions (`.github/workflows/release.yml`). From the Actions tab, run “Release” and optionally set:
+- `version` – desired version (e.g., 1.2.3); will auto‑bump if the tag exists
+- `prerelease` – publish as a pre‑release
+- `build_macos` – build macOS (ZIP, DMG)
+- `build_windows` – build Windows (ZIP, EXE, MSI)
+- `build_linux` – build Linux (DEB, RPM)
+
+Assets are named consistently by platform/arch/version and attached to the GitHub Release.
+
 ### Choose Your Platform
 
 - **macOS Apple Silicon (M1/M2/M3/M4)**: Download `VibeMD-darwin-arm64-*.zip`

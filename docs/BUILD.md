@@ -278,9 +278,14 @@ npm run package -- --platform=win32 --arch=ia32
 
 For automated builds and releases, use these workflows:
 
-- `release.yml` – determines next available version, updates docs and package.json, builds all platforms, and creates a GitHub Release with assets.
+- `release.yml` – determines next available version, updates docs and package.json, builds selected platforms (via inputs), and creates a GitHub Release with standardized assets.
 - `build-windows-all.yml` – runs Windows x64 + ARM64 reusable workflows.
 - `build-macos-linux-all.yml` – runs macOS x64 + arm64 and Linux DEB/RPM builds.
+
+Release inputs (platform toggles):
+- `build_macos` (default true): macOS ZIP + DMG
+- `build_windows` (default true): Windows ZIP + EXE + MSI
+- `build_linux` (default true): Linux DEB + RPM
 
 Windows build jobs are reusable workflows referenced via `uses: vibemd/VibeMD/.github/workflows/...@main`.
 

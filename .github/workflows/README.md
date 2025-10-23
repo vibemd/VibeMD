@@ -1,15 +1,15 @@
-# GitHub Actions Workflows
+﻿# GitHub Actions Workflows
 
 This directory contains GitHub Actions workflows for automated building and releasing of VibeMD.
 
 ## Workflows
 
-### `release.yml` – Build and Release (All Platforms)
+### `release.yml` â€“ Build and Release (All Platforms)
 
 Orchestrates end-to-end releases:
 
 - Determines the next available version (bumps patch if the tag already exists) or uses an input version.
-- Updates docs’ Version labels and bumps `package.json`.
+- Updates docsâ€™ Version labels and bumps `package.json`.
 - Builds macOS x64/arm64 (ZIP, DMG), Windows x64/arm64 (ZIP, EXE, MSI), and Linux DEB/RPM.
 - Creates a GitHub Release and uploads assets with standardized names.
 
@@ -23,17 +23,17 @@ Signing and notarization are enabled if secrets are set (see README Signing & No
 
 ### Aggregate Builds
 
-- `build-windows-all.yml` – Runs both Windows reusable workflows
-- `build-macos-linux-all.yml` – Builds macOS x64/arm64 and Linux DEB/RPM
+- `build-windows-all.yml` â€“ Runs both Windows reusable workflows
+- `build-macos-linux-all.yml` â€“ Builds macOS x64/arm64 and Linux DEB/RPM
 
 ### Reusable Workflows
 
-- `build-windows-x64.yml` – Windows x64 build (ZIP, EXE, MSI)
-- `build-windows-arm64.yml` – Windows ARM64 build (ZIP, EXE, MSI)
-- `build-macos-intel.yml` – macOS x64 build (ZIP, DMG)
-- `build-macos-silicon.yml` – macOS arm64 build (ZIP, DMG)
-- `build-linux-deb.yml` – Linux DEB (x64)
-- `build-linux-rpm.yml` – Linux RPM (x64)
+- `build-windows-x64.yml` â€“ Windows x64 build (ZIP, EXE, MSI)
+- `build-windows-arm64.yml` â€“ Windows ARM64 build (ZIP, EXE, MSI)
+- `build-macos-intel.yml` â€“ macOS x64 build (ZIP, DMG)
+- `build-macos-silicon.yml` â€“ macOS arm64 build (ZIP, DMG)
+- `build-linux-deb.yml` â€“ Linux DEB (x64)
+- `build-linux-rpm.yml` â€“ Linux RPM (x64)
 
 These can be invoked from other workflows via:
 
@@ -54,13 +54,16 @@ From the Actions tab, run the `Release` workflow.
 Inputs:
 - `version` (optional) – desired version (e.g., `1.2.3`)
 - `prerelease` (optional) – mark the release as pre-release
+- `build_macos` (optional, default true) – build macOS (ZIP, DMG)
+- `build_windows` (optional, default true) – build Windows (ZIP, EXE, MSI)
+- `build_linux` (optional, default true) – build Linux (DEB, RPM)
 
-The workflow updates docs and `package.json`, builds all platforms, and publishes a release with assets. If the tag already exists as a release, it auto-bumps the patch.
+The workflow updates docs and `package.json`, builds the selected platforms, and publishes a release with assets. If the tag already exists as a release, it auto-bumps the patch.
 
 ### Manual Workflow Dispatch
 
 You can manually trigger builds from the Actions tab:
-1. Go to Actions → Build VibeMD
+1. Go to Actions â†’ Build VibeMD
 2. Click "Run workflow"
 3. Select branch
 4. Click "Run workflow"
@@ -69,10 +72,11 @@ You can manually trigger builds from the Actions tab:
 
 | Platform | Architecture | Runner | Output |
 |----------|-------------|--------|--------|
-| macOS | arm64 | macos-latest | ZIP |
-| macOS | x64 | macos-latest | ZIP |
+| macOS | arm64 | macos-latest | ZIP + DMG |
+| macOS | x64 | macos-latest | ZIP + DMG |
 | Windows | x64 | windows-latest | ZIP + EXE + MSI |
 | Windows | arm64 | windows-latest | ZIP + EXE + MSI |
+| Linux | x64 | ubuntu-latest | DEB + RPM |
 
 ## Artifacts
 
@@ -82,12 +86,10 @@ Build artifacts are automatically uploaded and available for:
 
 ### Artifact Names
 
-- `VibeMD-darwin-arm64` - macOS Apple Silicon ZIP
-- `VibeMD-darwin-x64` - macOS Intel ZIP
-- `VibeMD-win32-x64-zip` - Windows x64 portable ZIP
-- `VibeMD-win32-arm64-zip` - Windows ARM64 portable ZIP
-- `VibeMD-win32-x64-installer` - Windows x64 installers
-- `VibeMD-win32-arm64-installer` - Windows ARM64 installers
+Release asset names are standardized:
+- macOS: `VibeMD-darwin-{arch}-{version}.{zip,dmg}`
+- Windows: `VibeMD-win32-{arch}-{version}.{zip,exe,msi}`
+- Linux: `vibemd_{version}_amd64.deb`, `vibemd-{version}-x86_64.rpm`
 
 ## Windows Installer Creation
 
@@ -95,7 +97,7 @@ On Windows runners, the workflow automatically enables the Squirrel maker by unc
 
 ## Notes
 
-- Build time: ~10–15 minutes for all platforms
+- Build time: ~10â€“15 minutes for all platforms
 - macOS, Windows, and Linux build in parallel
 - Node.js: 20.x with npm caching enabled
 - Dependencies installed via `npm install --no-audit --no-fund`
@@ -120,3 +122,4 @@ Ensure:
 
 - GITHUB_TOKEN with `contents: write` for release creation
 - Optional secrets for signing and notarization (see README)
+
