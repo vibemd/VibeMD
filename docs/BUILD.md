@@ -67,7 +67,7 @@ npm run build:win-arm64
 ```
 
 Notes:
-- Windows EXE (Squirrel) and MSI (WiX) are produced on Windows only.
+- Windows MSI (WiX) is produced on Windows only (EXE builds are disabled).
 - On non-Windows hosts, Windows ZIPs can be produced; installers are skipped.
 - Output locations under `out/make/` follow Electron Forge conventions (e.g., `zip/win32/x64`, `wix/x64`, `squirrel.windows/x64`).
 
@@ -222,9 +222,9 @@ Contains:
 
 ## Troubleshooting
 
-### Windows installers missing on non-Windows hosts
+### Windows installers on non-Windows hosts
 
-Expected: installers are only built on Windows runners. Use GitHub Actions (Windows) to produce EXE/MSI.
+Expected: installers are only built on Windows runners. Use GitHub Actions (Windows) to produce MSI.
 
 ### Icon Not Showing
 
@@ -262,7 +262,6 @@ npm run package -- --platform=win32 --arch=ia32
 ### Windows
 
 - Installer (MSI): `VibeMD-win32-{arch}-{version}.msi`
-- Installer (EXE): `VibeMD-win32-{arch}-{version}.exe`
 - Portable ZIP: `VibeMD-win32-{arch}-{version}.zip`
 
 ### macOS

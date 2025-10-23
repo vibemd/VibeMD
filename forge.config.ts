@@ -1,6 +1,5 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerWix } from '@electron-forge/maker-wix';
-import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDMG } from '@electron-forge/maker-dmg';
 import { MakerDeb } from '@electron-forge/maker-deb';
@@ -76,13 +75,6 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerSquirrel({
-      setupIcon: './build/icons/icon.ico',
-      // Keep MSI handled by WiX; Squirrel provides EXE for convenience
-      noMsi: true,
-      certificateFile: process.env.WINDOWS_CERT_PATH,
-      certificatePassword: process.env.WINDOWS_CERT_PASSWORD,
-    }),
     new MakerWix({
       name: 'VibeMD',
       description: 'A modern, cross-platform desktop markdown editor',

@@ -35,7 +35,7 @@ Releases are automated via GitHub Actions (`.github/workflows/release.yml`). Fro
 - `version` – desired version (e.g., 1.2.3); will auto‑bump if the tag exists
 - `prerelease` – publish as a pre‑release
 - `build_macos` – build macOS (ZIP, DMG)
-- `build_windows` – build Windows (ZIP, EXE, MSI)
+- `build_windows` – build Windows (ZIP, MSI)
 - `build_linux` – build Linux (DEB, RPM)
 
 Assets are named consistently by platform/arch/version and attached to the GitHub Release.
@@ -570,6 +570,7 @@ To enable signed installers and notarized macOS apps, configure these repository
   - `APPLE_TEAM_ID` – Apple Developer Team ID
 
 No secrets set → unsigned builds. Once set, Windows EXE/MSI and macOS apps are signed; macOS is notarized.
+
 
 
 

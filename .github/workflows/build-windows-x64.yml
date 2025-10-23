@@ -53,13 +53,6 @@ jobs:
       - name: Build Windows x64
         run: npm run build:win-x64
 
-      - name: Upload Squirrel EXE artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: VibeMD-win32-x64-exe
-          path: out/make/squirrel.windows/x64/*.exe
-          if-no-files-found: error
-          retention-days: 30
 
       - name: Upload ZIP artifacts
         uses: actions/upload-artifact@v4

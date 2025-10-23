@@ -1,4 +1,4 @@
-ï»¿# GitHub Actions Workflows
+# GitHub Actions Workflows
 
 This directory contains GitHub Actions workflows for automated building and releasing of VibeMD.
 
@@ -28,7 +28,7 @@ Signing and notarization are enabled if secrets are set (see README Signing & No
 
 ### Reusable Workflows
 
-- `build-windows-x64.yml` - Windows x64 build (ZIP, EXE, MSI)
+- `build-windows-x64.yml` - Windows x64 build (ZIP, MSI)
 - `build-windows-arm64.yml` - Windows ARM64 build (ZIP, EXE, MSI)
 - `build-macos-intel.yml` - macOS x64 build (ZIP, DMG)
 - `build-macos-silicon.yml` - macOS arm64 build (ZIP, DMG)
@@ -52,11 +52,11 @@ Every push to `main` triggers builds for all platforms. Artifacts are available 
 From the Actions tab, run the `Release` workflow.
 
 Inputs:
-- `version` (optional) â€“ desired version (e.g., `1.2.3`)
-- `prerelease` (optional) â€“ mark the release as pre-release
-- `build_macos` (optional, default true) â€“ build macOS (ZIP, DMG)
-- `build_windows` (optional, default true) â€“ build Windows (ZIP, EXE, MSI)
-- `build_linux` (optional, default true) â€“ build Linux (DEB, RPM)
+- `version` (optional) – desired version (e.g., `1.2.3`)
+- `prerelease` (optional) – mark the release as pre-release
+- `build_macos` (optional, default true) – build macOS (ZIP, DMG)
+- `build_windows` (optional, default true) – build Windows (ZIP, EXE, MSI)
+- `build_linux` (optional, default true) – build Linux (DEB, RPM)
 
 The workflow updates docs and `package.json`, builds the selected platforms, and publishes a release with assets. If the tag already exists as a release, it auto-bumps the patch.
 
@@ -74,8 +74,8 @@ You can manually trigger builds from the Actions tab:
 |----------|-------------|--------|--------|
 | macOS | arm64 | macos-latest | ZIP + DMG |
 | macOS | x64 | macos-latest | ZIP + DMG |
-| Windows | x64 | windows-latest | ZIP + EXE + MSI |
-| Windows | arm64 | windows-latest | ZIP + EXE + MSI |
+| Windows | x64 | windows-latest | ZIP + MSI |
+| Windows | arm64 | windows-latest | ZIP + MSI |
 | Linux | x64 | ubuntu-latest | DEB + RPM |
 
 ## Artifacts
@@ -88,7 +88,7 @@ Build artifacts are automatically uploaded and available for:
 
 Release asset names are standardized:
 - macOS: `VibeMD-darwin-{arch}-{version}.{zip,dmg}`
-- Windows: `VibeMD-win32-{arch}-{version}.{zip,exe,msi}`
+- Windows: `VibeMD-win32-{arch}-{version}.{zip,msi}`
 - Linux: `vibemd_{version}_amd64.deb`, `vibemd-{version}-x86_64.rpm`
 
 ## Windows Installer Creation
@@ -122,4 +122,5 @@ Ensure:
 
 - GITHUB_TOKEN with `contents: write` for release creation
 - Optional secrets for signing and notarization (see README)
+
 
