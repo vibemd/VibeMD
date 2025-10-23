@@ -100,6 +100,7 @@ npm run make -- --platform=darwin --arch=arm64   # Apple Silicon
 This will create:
 - `.app` bundle
 - `.zip` archive
+- `.dmg` installer (when MakerDMG is enabled)
 
 Note: Universal builds are not currently configured. Build per-arch ZIPs instead.
 
@@ -109,7 +110,7 @@ Output location: `out/make/zip/darwin/`
 
 macOS signing and notarization and Windows code signing are enabled automatically in CI if secrets are present. For local builds, provide environment variables as needed:
 
-macOS (notarization): `MAC_CODESIGN_IDENTITY`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID`
+macOS (signing + notarization): `MAC_CODESIGN_IDENTITY`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID`
 
 Windows (code signing): `WINDOWS_CERT_BASE64`, `WINDOWS_CERT_PASSWORD`
 ```typescript

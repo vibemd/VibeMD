@@ -46,3 +46,11 @@ jobs:
           path: out/make/zip/darwin/arm64/*.zip
           if-no-files-found: error
           retention-days: 30
+
+      - name: Upload DMG artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: VibeMD-darwin-arm64-dmg
+          path: out/make/dmg/darwin/arm64/*.dmg
+          if-no-files-found: error
+          retention-days: 30

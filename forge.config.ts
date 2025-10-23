@@ -2,6 +2,7 @@ import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerWix } from '@electron-forge/maker-wix';
 import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
+import { MakerDMG } from '@electron-forge/maker-dmg';
 import { MakerDeb } from '@electron-forge/maker-deb';
 import { MakerRpm } from '@electron-forge/maker-rpm';
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives';
@@ -124,6 +125,9 @@ const config: ForgeConfig = {
         categories: ['Office'],
         mimeType: ['text/markdown', 'text/x-markdown', 'application/x-vibe']
       }
+    }),
+    new MakerDMG({
+      icon: './build/icons/icon.icns',
     }),
   ],
   plugins: [

@@ -10,7 +10,7 @@ Orchestrates end-to-end releases:
 
 - Determines the next available version (bumps patch if the tag already exists) or uses an input version.
 - Updates docs’ Version labels and bumps `package.json`.
-- Builds macOS x64/arm64, Windows x64/arm64, and Linux DEB/RPM.
+- Builds macOS x64/arm64 (ZIP, DMG), Windows x64/arm64 (ZIP, EXE, MSI), and Linux DEB/RPM.
 - Creates a GitHub Release and uploads assets with standardized names.
 
 Artifacts are named with platform, arch, and version, for example:
@@ -30,8 +30,8 @@ Signing and notarization are enabled if secrets are set (see README Signing & No
 
 - `build-windows-x64.yml` – Windows x64 build (ZIP, EXE, MSI)
 - `build-windows-arm64.yml` – Windows ARM64 build (ZIP, EXE, MSI)
-- `build-macos-intel.yml` – macOS x64 build (ZIP)
-- `build-macos-silicon.yml` – macOS arm64 build (ZIP)
+- `build-macos-intel.yml` – macOS x64 build (ZIP, DMG)
+- `build-macos-silicon.yml` – macOS arm64 build (ZIP, DMG)
 - `build-linux-deb.yml` – Linux DEB (x64)
 - `build-linux-rpm.yml` – Linux RPM (x64)
 

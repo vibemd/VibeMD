@@ -12,6 +12,21 @@ on:
         required: false
         type: boolean
         default: false
+      build_macos:
+        description: 'Build macOS (ZIP, DMG)'
+        required: false
+        type: boolean
+        default: true
+      build_windows:
+        description: 'Build Windows (ZIP, EXE, MSI)'
+        required: false
+        type: boolean
+        default: true
+      build_linux:
+        description: 'Build Linux (DEB, RPM)'
+        required: false
+        type: boolean
+        default: true
   push:
     tags:
       - 'v*'
@@ -136,6 +151,7 @@ jobs:
     name: Build macOS ARM64
     runs-on: macos-latest
     needs: [determine-version, update-docs]
+    if: ${{ fromJSON(inputs.build_macos) }}
     env:
       MAC_CODESIGN_IDENTITY: ${{ secrets.MAC_CODESIGN_IDENTITY }}
       APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -161,6 +177,7 @@ jobs:
     name: Build macOS x64
     runs-on: macos-latest
     needs: [determine-version, update-docs]
+    if: ${{ fromJSON(inputs.build_macos) }}
     env:
       MAC_CODESIGN_IDENTITY: ${{ secrets.MAC_CODESIGN_IDENTITY }}
       APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -186,6 +203,7 @@ jobs:
     name: Build Linux DEB
     runs-on: ubuntu-latest
     needs: [determine-version, update-docs]
+    if: ${{ fromJSON(inputs.build_linux) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -206,6 +224,7 @@ jobs:
     name: Build Linux RPM
     runs-on: ubuntu-latest
     needs: [determine-version, update-docs]
+    if: ${{ fromJSON(inputs.build_linux) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -226,6 +245,7 @@ jobs:
     name: Build Windows x64
     needs: [determine-version, update-docs]
     uses: vibemd/VibeMD/.github/workflows/build-windows-x64.yml@main
+    if: ${{ fromJSON(inputs.build_windows) }}
     with:
       version: ${{ needs.determine-version.outputs.version }}
 
@@ -233,6 +253,7 @@ jobs:
     name: Build Windows ARM64
     needs: [determine-version, update-docs]
     uses: vibemd/VibeMD/.github/workflows/build-windows-arm64.yml@main
+    if: ${{ fromJSON(inputs.build_windows) }}
     with:
       version: ${{ needs.determine-version.outputs.version }}
 
@@ -242,12 +263,6 @@ jobs:
     needs:
       - determine-version
       - update-docs
-      - build-macos-arm64
-      - build-macos-x64
-      - build-linux-deb
-      - build-linux-rpm
-      - build-windows-x64
-      - build-windows-arm64
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -277,6 +292,9 @@ jobs:
           # macOS ZIPs
           for f in dist-artifacts/VibeMD-darwin-x64-zip/*.zip; do cp "$f" "upload/VibeMD-darwin-x64-${VER}.zip"; done
           for f in dist-artifacts/VibeMD-darwin-arm64-zip/*.zip; do cp "$f" "upload/VibeMD-darwin-arm64-${VER}.zip"; done
+          # macOS DMGs
+          for f in dist-artifacts/VibeMD-darwin-x64-dmg/*.dmg; do cp "$f" "upload/VibeMD-darwin-x64-${VER}.dmg"; done
+          for f in dist-artifacts/VibeMD-darwin-arm64-dmg/*.dmg; do cp "$f" "upload/VibeMD-darwin-arm64-${VER}.dmg"; done
           # Linux packages (standardize names)
           for f in dist-artifacts/VibeMD-linux-x64-deb/*.deb; do cp "$f" "upload/vibemd_${VER}_amd64.deb"; done
           for f in dist-artifacts/VibeMD-linux-x64-rpm/*.rpm; do cp "$f" "upload/vibemd-${VER}-x86_64.rpm"; done

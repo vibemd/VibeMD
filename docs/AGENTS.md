@@ -30,7 +30,7 @@ This document gives agents the minimum, reliable context to work on builds and r
 
 ## Artifacts & Naming
 - Windows: `VibeMD-win32-{arch}-{version}.{exe,msi,zip}`
-- macOS: `VibeMD-darwin-{arch}-{version}.zip`
+- macOS: `VibeMD-darwin-{arch}-{version}.{zip,dmg}`
 - Linux: `vibemd_{version}_amd64.deb`, `vibemd-{version}-x86_64.rpm`
 - Release workflow copies/renames artifacts into a stable `upload/` set before publishing.
 
@@ -54,10 +54,7 @@ This document gives agents the minimum, reliable context to work on builds and r
 - Don’t modify `release.yml` to overwrite existing releases; rely on auto‑bump.
 
 ## Forge Makers (Current)
-- ZIP (darwin, win32), WiX (MSI), Squirrel (EXE), DEB, RPM are enabled.
-- macOS DMG not included yet. To add later:
-  - Add `@electron-forge/maker-dmg`, register `MakerDMG` for darwin
-  - Upload `*.dmg` in macOS jobs and include in release packaging with name `VibeMD-darwin-{arch}-{version}.dmg`
+- ZIP (darwin, win32), DMG (darwin), WiX (MSI), Squirrel (EXE), DEB, RPM are enabled.
 
 ## Common Paths
 - Windows: `out/make/zip/win32/{arch}/*.zip`, `out/make/wix/{arch}/*.msi`, `out/make/squirrel.windows/{arch}/*.exe`
@@ -70,4 +67,3 @@ This document gives agents the minimum, reliable context to work on builds and r
 3) Workflow updates docs and package.json, builds, publishes release with standardized assets
 
 If something fails, prefer adjusting the smallest workflow step or asset glob rather than changing the conventions above.
-
