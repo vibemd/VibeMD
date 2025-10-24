@@ -118,14 +118,36 @@ jobs:
             unzip -q "$zip_path" -d "release-artifacts/unpacked/${id}"
           done
 
+      - name: Assemble releases directory
+        if: steps.check_release.outputs.exists == 'false' && steps.gather.outputs.found != '0'
+        run: |
+          set -euo pipefail
+          releases_root="release-artifacts/staged-releases"
+          mkdir -p "$releases_root"
+          found=0
+          while IFS= read -r -d '' dir; do
+            rel="${dir#*releases/}"
+            dest="$releases_root/$rel"
+            mkdir -p "$dest"
+            cp -a "$dir/." "$dest/"
+            found=$((found + 1))
+          done < <(find release-artifacts/unpacked -type d -path "*/releases/*" -print0)
+          if [ "$found" -eq 0 ]; then
+            echo "No staged release assets were discovered under releases/ in downloaded artifacts." >&2
+            exit 1
+          fi
+          echo "Staged release assets under $releases_root:"
+          find "$releases_root" -maxdepth 3 -type f
+
       - name: Prepare release notes and asset list
         if: steps.check_release.outputs.exists == 'false' && steps.gather.outputs.found != '0'
         env:
           VERSION: ${{ steps.meta.outputs.version }}
         run: |
           set -euo pipefail
-          find release-artifacts/unpacked -type f -name 'manifest.json' -print > release-artifacts/manifest-paths.txt
-          find release-artifacts/unpacked -type f \( -name '*.msi' -o -name '*.zip' -o -name '*.dmg' -o -name '*.deb' -o -name '*.rpm' -o -name 'manifest.json' \) -print > release-artifacts/upload-list.txt
+          releases_root="release-artifacts/staged-releases"
+          find "$releases_root" -type f -name 'manifest.json' -print > release-artifacts/manifest-paths.txt
+          find "$releases_root" -type f \( -name '*.msi' -o -name '*.zip' -o -name '*.dmg' -o -name '*.deb' -o -name '*.rpm' -o -name 'manifest.json' \) -print > release-artifacts/upload-list.txt
 
           node <<'NODE'
           const fs = require('fs');

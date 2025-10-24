@@ -58,25 +58,25 @@ jobs:
       - name: Build installers
         run: npm run build:win-${{ matrix.arch }}
 
-      - name: Gather artifacts
-        id: gather
+      - name: Validate staged release assets
+        id: staged
         shell: bash
         run: |
           set -euo pipefail
-          artifact_dir="ci-artifacts/windows-${{ matrix.arch }}"
-          mkdir -p "$artifact_dir"
-          mapfile -t files < <(find out/make -type f \( -name '*.msi' -o -name '*.zip' \))
-          if [ "${#files[@]}" -eq 0 ]; then
-            echo "No MSI or ZIP artifacts found in out/make" >&2
+          release_dir="releases/windows/${{ matrix.arch }}"
+          if [ ! -d "$release_dir" ]; then
+            echo "Release directory missing: $release_dir" >&2
             exit 1
           fi
-          for file in "${files[@]}"; do
-            cp "$file" "$artifact_dir/"
-          done
-          mapfile -t copied < <(find "$artifact_dir" -maxdepth 1 -type f -print)
-          printf '%s\n' "${copied[@]}" > "$artifact_dir/filelist.txt"
-          echo "dir=$artifact_dir" >> "$GITHUB_OUTPUT"
-          echo "filelist=$artifact_dir/filelist.txt" >> "$GITHUB_OUTPUT"
+          mapfile -t files < <(find "$release_dir" -maxdepth 1 -type f \( -name '*.msi' -o -name '*.zip' \))
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No MSI or ZIP artifacts staged under $release_dir" >&2
+            exit 1
+          fi
+          filelist_path="$release_dir/.filelist.txt"
+          printf '%s\n' "${files[@]}" > "$filelist_path"
+          echo "dir=$release_dir" >> "$GITHUB_OUTPUT"
+          echo "filelist=$filelist_path" >> "$GITHUB_OUTPUT"
 
       - name: Create manifest
         shell: bash
@@ -84,14 +84,16 @@ jobs:
           ARTIFACT_VERSION: ${{ steps.meta.outputs.version }}
           ARTIFACT_PLATFORM: windows
           ARTIFACT_ARCH: ${{ matrix.arch }}
-          ARTIFACT_FILELIST_PATH: ${{ steps.gather.outputs.filelist }}
-          ARTIFACT_MANIFEST_PATH: ${{ steps.gather.outputs.dir }}/manifest.json
-        run: node scripts/create-artifact-manifest.js
+          ARTIFACT_FILELIST_PATH: ${{ steps.staged.outputs.filelist }}
+          ARTIFACT_MANIFEST_PATH: ${{ steps.staged.outputs.dir }}/manifest.json
+        run: |
+          node scripts/create-artifact-manifest.js
+          rm -f "${{ steps.staged.outputs.filelist }}"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-windows-${{ matrix.arch }}-v${{ steps.meta.outputs.version }}
-          path: ${{ steps.gather.outputs.dir }}
+          path: ${{ steps.staged.outputs.dir }}
           if-no-files-found: error
           retention-days: 21
