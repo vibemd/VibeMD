@@ -163,13 +163,15 @@ ${renderHeader('Local Build Steps', 2)}
 3. Build for your platform:
    - Windows x64: \`npm run build:win-x64\`
    - Windows ARM64: \`npm run build:win-arm64\`
-   - macOS universal: \`npm run build:mac-universal\`
+   - macOS arm64: \`npm run build:mac-arm64\`
+   - macOS x64: \`npm run build:mac-x64\`
    - Linux x64: \`npm run build:linux-x64\`
 
 ${renderHeader('CI/CD Strategy', 2)}
 
 - **Windows Build Workflow:** Runs on Windows runners, produces MSI and ZIP for x64 and ARM64, and uploads artifacts with manifests.
-- **macOS Build Workflow:** Runs on macOS runners, produces DMG/ZIP for macOS (both arches) and DEB/RPM for Linux, using Homebrew-installed packaging tools.
+- **macOS Build Workflow:** Runs on macOS runners, producing DMG/ZIP for Apple Silicon and Intel in separate jobs so each architecture can ship independently.
+- **Linux Build Workflow:** Runs on macOS runners, installs Homebrew packaging dependencies, produces DEB/RPM assets via the custom RPM maker, and stages manifests for release orchestration.
 - **Nightly Release Workflow:** Checks for a new semantic version, downloads ready artifacts, cuts a GitHub release, and invokes the documentation workflow.
 - **Documentation Workflow:** Generates README, guides, release notes, and this build strategy document, committing updates directly to \`main\`.
 
@@ -204,9 +206,10 @@ ${renderHeader('Goals', 2)}
 ${renderHeader('Workflows', 2)}
 
 1. **build-windows.yml** — Windows-hosted runners build MSI and ZIP installers for x64 and ARM64.
-2. **build-macos-linux.yml** — macOS-hosted runners build DMG/ZIP for Apple Silicon and Intel, plus Linux DEB/RPM packages using Homebrew toolchains.
-3. **release-nightly.yml** — Nightly scheduler checks for unreleased versions, downloads ready build artifacts, publishes a GitHub release, and invokes docs updates.
-4. **update-docs.yml** — Regenerates README and all guides, committing directly to main with release metadata supplied by the caller.
+2. **build-macos.yml** — macOS-hosted runners build DMG/ZIP for Apple Silicon and Intel in discrete jobs so architectures can release on separate cadences.
+3. **build-linux.yml** — macOS-hosted runners install Homebrew packaging tooling and produce DEB/RPM outputs using the custom RPM maker.
+4. **release-nightly.yml** — Nightly scheduler checks for unreleased versions, downloads ready build artifacts, publishes a GitHub release, and invokes docs updates.
+5. **update-docs.yml** — Regenerates README and all guides, committing directly to main with release metadata supplied by the caller.
 
 ${renderHeader('Artifact Management', 2)}
 

@@ -2,7 +2,7 @@
 
 **Application:** VibeMD  
 **Version:** 1.0.9  
-**Updated:** 2025-10-23
+**Updated:** 2025-10-24
 
 ## Prerequisites
 
@@ -20,13 +20,15 @@
 3. Build for your platform:
    - Windows x64: `npm run build:win-x64`
    - Windows ARM64: `npm run build:win-arm64`
-   - macOS universal: `npm run build:mac-universal`
+   - macOS arm64: `npm run build:mac-arm64`
+   - macOS x64: `npm run build:mac-x64`
    - Linux x64: `npm run build:linux-x64`
 
 ## CI/CD Strategy
 
 - **Windows Build Workflow:** Runs on Windows runners, produces MSI and ZIP for x64 and ARM64, and uploads artifacts with manifests.
-- **macOS Build Workflow:** Runs on macOS runners, produces DMG/ZIP for macOS (both arches) and DEB/RPM for Linux, using Homebrew-installed packaging tools.
+- **macOS Build Workflow:** Runs on macOS runners, producing DMG/ZIP for Apple Silicon and Intel in separate jobs so each architecture can ship independently.
+- **Linux Build Workflow:** Runs on macOS runners, installs Homebrew packaging dependencies, produces DEB/RPM assets via the custom RPM maker, and stages manifests for release orchestration.
 - **Nightly Release Workflow:** Checks for a new semantic version, downloads ready artifacts, cuts a GitHub release, and invokes the documentation workflow.
 - **Documentation Workflow:** Generates README, guides, release notes, and this build strategy document, committing updates directly to `main`.
 

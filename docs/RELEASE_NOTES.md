@@ -1,6 +1,6 @@
 # Release Notes
 
-## v1.0.9 — 2025-10-23
+## v1.0.9 — 2025-10-24
 
 - Incremental improvements and stability fixes.
 

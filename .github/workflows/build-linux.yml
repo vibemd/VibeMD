@@ -1,4 +1,4 @@
-name: Build macOS and Linux Artifacts
+name: Build Linux Packages
 
 on:
   push:
@@ -12,27 +12,14 @@ permissions:
 
 jobs:
   build:
-    name: Build ${{ matrix.id }}
+    name: Build ${{ matrix.arch }}
     runs-on: macos-14
     strategy:
       fail-fast: false
       matrix:
         include:
-          - id: mac-arm64
-            platform: macos
-            arch: arm64
-            command: build:mac-arm64
-            extensions: "dmg zip"
-          - id: mac-x64
-            platform: macos
-            arch: x64
-            command: build:mac-x64
-            extensions: "dmg zip"
-          - id: linux-x64
-            platform: linux
-            arch: x64
+          - arch: x64
             command: build:linux-x64
-            extensions: "deb rpm"
     env:
       npm_config_arch: ${{ matrix.arch }}
       ELECTRON_CACHE: ${{ runner.temp }}/electron
@@ -48,7 +35,6 @@ jobs:
           cache: npm
 
       - name: Install Homebrew packaging tools
-        if: matrix.platform == 'linux'
         run: brew install dpkg rpm
 
       - name: Install dependencies
@@ -82,18 +68,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          artifact_dir="ci-artifacts/${{ matrix.platform }}-${{ matrix.arch }}"
+          artifact_dir="ci-artifacts/linux-${{ matrix.arch }}"
           mkdir -p "$artifact_dir"
-          IFS=' ' read -r -a exts <<< "${{ matrix.extensions }}"
-          find_args=()
-          for ext in "${exts[@]}"; do
-            find_args+=(-name "*.${ext}")
-            find_args+=(-o)
-          done
-          unset 'find_args[${#find_args[@]}-1]'
-          mapfile -t files < <(find out/make -type f \( "${find_args[@]}" \))
+          mapfile -t files < <(find out/make -type f \( -name "*.deb" -o -name "*.rpm" \))
           if [ "${#files[@]}" -eq 0 ]; then
-            echo "No artifacts found in out/make for extensions: ${exts[*]}" >&2
+            echo "No DEB or RPM artifacts found in out/make" >&2
             exit 1
           fi
           for file in "${files[@]}"; do
@@ -108,7 +87,7 @@ jobs:
         shell: bash
         env:
           ARTIFACT_VERSION: ${{ steps.meta.outputs.version }}
-          ARTIFACT_PLATFORM: ${{ matrix.platform }}
+          ARTIFACT_PLATFORM: linux
           ARTIFACT_ARCH: ${{ matrix.arch }}
           ARTIFACT_FILELIST_PATH: ${{ steps.gather.outputs.filelist }}
           ARTIFACT_MANIFEST_PATH: ${{ steps.gather.outputs.dir }}/manifest.json
@@ -117,7 +96,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ matrix.platform }}-${{ matrix.arch }}-v${{ steps.meta.outputs.version }}
+          name: build-linux-${{ matrix.arch }}-v${{ steps.meta.outputs.version }}
           path: ${{ steps.gather.outputs.dir }}
           if-no-files-found: error
           retention-days: 21

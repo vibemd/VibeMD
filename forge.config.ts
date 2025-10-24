@@ -3,7 +3,7 @@ import { MakerWix } from '@electron-forge/maker-wix';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDMG } from '@electron-forge/maker-dmg';
 import { MakerDeb } from '@electron-forge/maker-deb';
-import { MakerRpm } from '@electron-forge/maker-rpm';
+import CustomMakerRpm from './scripts/custom-maker-rpm';
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives';
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
@@ -100,11 +100,12 @@ const config: ForgeConfig = {
       certificatePassword: process.env.WINDOWS_CERT_PASSWORD,
     }),
     new MakerZIP({}, ['darwin', 'win32']),
-    new MakerRpm({
+    new CustomMakerRpm({
       options: {
         name: 'vibemd',
         productName: 'VibeMD',
         bin: 'VibeMD',
+        platform: 'linux',
         genericName: 'Markdown Editor',
         description: 'A modern, cross-platform desktop markdown editor',
         icon: './build/icons/icon.svg',

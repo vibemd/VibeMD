@@ -2,7 +2,7 @@
 
 **Application:** VibeMD  
 **Version:** 1.0.9  
-**Documented:** 2025-10-23
+**Documented:** 2025-10-24
 
 ## Goals
 
@@ -13,9 +13,10 @@
 ## Workflows
 
 1. **build-windows.yml** — Windows-hosted runners build MSI and ZIP installers for x64 and ARM64.
-2. **build-macos-linux.yml** — macOS-hosted runners build DMG/ZIP for Apple Silicon and Intel, plus Linux DEB/RPM packages using Homebrew toolchains.
-3. **release-nightly.yml** — Nightly scheduler checks for unreleased versions, downloads ready build artifacts, publishes a GitHub release, and invokes docs updates.
-4. **update-docs.yml** — Regenerates README and all guides, committing directly to main with release metadata supplied by the caller.
+2. **build-macos.yml** — macOS-hosted runners build DMG/ZIP for Apple Silicon and Intel in discrete jobs so architectures can release on separate cadences.
+3. **build-linux.yml** — macOS-hosted runners install Homebrew packaging tooling and produce DEB/RPM outputs using the custom RPM maker.
+4. **release-nightly.yml** — Nightly scheduler checks for unreleased versions, downloads ready build artifacts, publishes a GitHub release, and invokes docs updates.
+5. **update-docs.yml** — Regenerates README and all guides, committing directly to main with release metadata supplied by the caller.
 
 ## Artifact Management
 
