@@ -93,6 +93,7 @@ const config: ForgeConfig = {
       manufacturer: 'ONLY1 Pty Ltd',
       // electron-wix-msi expects `iconPath` for shortcut/installer icon
       iconPath: './build/icons/icon.ico',
+      appIconPath: './build/icons/icon.ico',
       language: 1033, // English
       programFilesFolderName: 'VibeMD',
       // Ensure 64-bit installs go to Program Files (not Program Files (x86))
