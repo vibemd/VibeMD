@@ -1,8 +1,8 @@
 # Build Strategy
 
 **Application:** VibeMD  
-**Version:** 1.0.9  
-**Documented:** 2025-10-24
+**Version:** 1.0.11  
+**Documented:** 2025-10-25
 
 ## Goals
 
@@ -12,22 +12,21 @@
 
 ## Workflows
 
-1. **build-windows.yml** — Windows-hosted runners build MSI and ZIP installers for x64 and ARM64, staging results under `releases/windows/<arch>`.
-2. **build-macos.yml** — macOS-hosted runners build DMG/ZIP for Apple Silicon and Intel in discrete jobs, staging results under `releases/macos/<arch>` so architectures can release on separate cadences.
-3. **build-linux.yml** — macOS-hosted runners install Homebrew packaging tooling, produce DEB/RPM outputs using the custom RPM maker, and stage them under `releases/linux/<arch>`.
+1. **build-windows.yml** — Windows-hosted runners build MSI and ZIP installers for x64 and ARM64.
+2. **build-macos.yml** — macOS-hosted runners build DMG/ZIP for Apple Silicon and Intel in discrete jobs so architectures can release on separate cadences.
+3. **build-linux.yml** — macOS-hosted runners install Homebrew packaging tooling and produce DEB/RPM outputs using the custom RPM maker.
 4. **release-nightly.yml** — Nightly scheduler checks for unreleased versions, downloads ready build artifacts, publishes a GitHub release, and invokes docs updates.
 5. **update-docs.yml** — Regenerates README and all guides, committing directly to main with release metadata supplied by the caller.
 
 ## Artifact Management
 
-- Each build job stages outputs into `releases/<platform>/<arch>` before publishing CI artifacts.
-- Each staged directory emits a manifest (`manifest.json`) containing version, platform, architecture, formats, checksums, and unsigned status.
+- Each build job emits a manifest (`manifest.json`) containing version, platform, architecture, formats, checksums, and unsigned status.
 - Artifact names follow `build-<platform>-<arch>-v<version>` for easy discovery via the GitHub Actions API.
-- Release workflow reconstructs the staged `releases` tree and only publishes artifacts whose manifests match the target version, enabling partial releases.
+- Release workflow only publishes artifacts whose manifests match the target version, enabling partial releases.
 
 ## Testing
 
-- `scripts/run-smoke-tests.js` runs linting, type-checking, and release folder verification in CI.
+- `scripts/run-smoke-tests.js` runs linting and renderer bundle checks in CI.
 - Future enhancements can expand test coverage without altering the release pipeline design.
 
 ## Documentation Updates

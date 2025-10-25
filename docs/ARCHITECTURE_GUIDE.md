@@ -1,8 +1,8 @@
 # Architecture Guide
 
 **Application:** VibeMD  
-**Version:** 1.0.9  
-**Updated:** 2025-10-24
+**Version:** 1.0.11  
+**Updated:** 2025-10-25
 
 ## Overview
 
