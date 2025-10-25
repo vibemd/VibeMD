@@ -22,6 +22,8 @@ import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
 import { preloadConfig } from './webpack.preload.config';
 
+const enableWix = process.platform === 'win32' && process.env.SKIP_WIX !== '1';
+
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
@@ -84,6 +86,7 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
+    ...(enableWix ? [
     new MakerWix({
       name: 'VibeMD',
       description: 'A modern, cross-platform desktop markdown editor',
@@ -109,6 +112,7 @@ const config: ForgeConfig = {
       certificateFile: process.env.WINDOWS_CERT_PATH,
       certificatePassword: process.env.WINDOWS_CERT_PASSWORD,
     }),
+    ] : []),
     // Enable ZIPs for macOS and Windows (Node 20 + cross-zip >=4)
     new MakerZIP({}, ['darwin', 'win32']),
     // Only add the RPM maker on Linux hosts where its dependencies exist
