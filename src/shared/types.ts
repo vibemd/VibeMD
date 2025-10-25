@@ -8,6 +8,8 @@ export interface NewFileFromTemplateDialogData {
   createNewTemplate: boolean;
 }
 
+import type { IpcRendererEvent } from 'electron';
+
 export interface ElectronAPI {
   fileNew: () => Promise<string>;
   fileOpen: (defaultPath?: string) => Promise<{ filepath: string; filename: string; content: string; isTemplate: boolean } | null>;
@@ -25,10 +27,10 @@ export interface ElectronAPI {
   showCloseConfirmation: () => Promise<boolean>;
   getAppVersion: () => Promise<string>;
   testPing: () => Promise<string>;
-  onMenuEvent: (callback: (event: any, menuAction: string) => void) => void;
-  removeMenuEventListener: (callback: (event: any, menuAction: string) => void) => void;
-  onOpenFileFromAssociation: (callback: (event: any, filepath: string) => void) => void;
-  removeOpenFileFromAssociationListener: (callback: (event: any, filepath: string) => void) => void;
+  onMenuEvent: (callback: (event: IpcRendererEvent, menuAction: string) => void) => void;
+  removeMenuEventListener: (callback: (event: IpcRendererEvent, menuAction: string) => void) => void;
+  onOpenFileFromAssociation: (callback: (event: IpcRendererEvent, filepath: string) => void) => void;
+  removeOpenFileFromAssociationListener: (callback: (event: IpcRendererEvent, filepath: string) => void) => void;
 }
 
 export interface Document {
@@ -71,6 +73,8 @@ export interface Settings {
     buildDate: string;
   };
 }
+
+export type SerializableSettings = Record<string, unknown>;
 
 declare global {
   interface Window {

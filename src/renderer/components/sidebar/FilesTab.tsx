@@ -1,4 +1,4 @@
-import { FileText, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
   Dialog,
@@ -15,7 +15,7 @@ import { fileService } from '@/services/fileService';
 import { editorService } from '@/services/editorService';
 import { Document, NewDocumentDialogData } from '@shared/types';
 import { cn } from '@/lib/utils';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { NewDocumentDialog } from '@/components/dialogs/NewDocumentDialog';
 
 export function FilesTab() {
@@ -28,8 +28,7 @@ export function FilesTab() {
     addDocument,
     addTemplate,
     updateDocument,
-    markAsSaved,
-    getActiveDocument
+    markAsSaved
   } = useDocumentStore();
   const { setSidebarTab } = useUIStore();
   const { settings } = useSettingsStore();

@@ -45,7 +45,6 @@ echo ""
 # Parse arguments
 BUILD_MAC=true
 BUILD_WINDOWS=true
-BUILD_UNIVERSAL=true
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -57,17 +56,12 @@ while [[ $# -gt 0 ]]; do
             BUILD_MAC=false
             shift
             ;;
-        --no-universal)
-            BUILD_UNIVERSAL=false
-            shift
-            ;;
         --help)
             echo "Usage: ./build-all.sh [OPTIONS]"
             echo ""
             echo "Options:"
             echo "  --mac-only        Build macOS only"
             echo "  --windows-only    Build Windows only"
-            echo "  --no-universal    Build separate arch instead of universal"
             echo "  --help            Show this help"
             echo ""
             echo "Default: Builds all platforms and architectures"
@@ -87,19 +81,13 @@ if [ "$BUILD_MAC" = true ]; then
     echo -e "${BLUE}Building macOS...${NC}"
     echo -e "${BLUE}======================================${NC}"
 
-    if [ "$BUILD_UNIVERSAL" = true ]; then
-        echo -e "${BLUE}Building Universal macOS (arm64 + x64)...${NC}"
-        npm run build:mac-universal
-        echo -e "${GREEN}✓ macOS Universal build complete${NC}"
-    else
-        echo -e "${BLUE}Building macOS Apple Silicon (arm64)...${NC}"
-        npm run build:mac-arm64
-        echo -e "${GREEN}✓ macOS arm64 build complete${NC}"
+    echo -e "${BLUE}Building macOS Apple Silicon (arm64)...${NC}"
+    npm run build:mac-arm64
+    echo -e "${GREEN}✓ macOS arm64 build complete${NC}"
 
-        echo -e "${BLUE}Building macOS Intel (x64)...${NC}"
-        npm run build:mac-x64
-        echo -e "${GREEN}✓ macOS x64 build complete${NC}"
-    fi
+    echo -e "${BLUE}Building macOS Intel (x64)...${NC}"
+    npm run build:mac-x64
+    echo -e "${GREEN}✓ macOS x64 build complete${NC}"
     echo ""
 fi
 

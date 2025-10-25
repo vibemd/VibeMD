@@ -8,7 +8,15 @@ export class AppService {
   }
 }
 
+declare global {
+  interface Window {
+    appService?: typeof AppService;
+  }
+}
+
 // Expose to window for main process access
 if (typeof window !== 'undefined') {
-  (window as any).appService = AppService;
+  window.appService = AppService;
 }
+
+export {};

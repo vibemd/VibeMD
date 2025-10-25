@@ -1,16 +1,15 @@
 import { useEffect } from 'react';
+import type { IpcRendererEvent } from 'electron';
 import { useDocumentStore } from '../stores/documentStore';
-import { useUIStore } from '../stores/uiStore';
 import { fileService } from './fileService';
 import { Document } from '@shared/types';
 import { marked } from 'marked';
 
 export function useMenuService() {
   const { addDocument, getActiveDocument, updateDocument, markAsSaved } = useDocumentStore();
-  const { toggleSettingsDialog } = useUIStore();
 
   useEffect(() => {
-    const handleMenuEvent = async (event: any, menuAction: string) => {
+    const handleMenuEvent = async (event: IpcRendererEvent, menuAction: string) => {
       console.log('[Menu] Received menu event:', menuAction);
       
       switch (menuAction) {
@@ -101,5 +100,5 @@ export function useMenuService() {
         window.electronAPI.removeMenuEventListener(handleMenuEvent);
       }
     };
-  }, [addDocument, getActiveDocument, updateDocument, markAsSaved, toggleSettingsDialog]);
+  }, [addDocument, getActiveDocument, updateDocument, markAsSaved]);
 }

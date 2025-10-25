@@ -1,7 +1,6 @@
-import { ipcMain, dialog } from 'electron';
+import { ipcMain, dialog, app } from 'electron';
 import { writeFile, readFile } from 'fs/promises';
 import { join } from 'path';
-import { app } from 'electron';
 
 // File operations
 ipcMain.handle('file:new', async () => {
@@ -54,12 +53,12 @@ ipcMain.handle('file:saveAs', async (event, content: string, defaultPath?: strin
   console.log('[FileHandler] saveAs called with suggestedFilename:', suggestedFilename);
   const defaultFilename = suggestedFilename || 'untitled.md';
   console.log('[FileHandler] Using filename:', defaultFilename);
-  
+
   // Construct the full default path
   const documentsPath = app.getPath('documents');
   const fullDefaultPath = defaultPath ? join(defaultPath, defaultFilename) : join(documentsPath, defaultFilename);
   console.log('[FileHandler] Full default path:', fullDefaultPath);
-  
+
   const result = await dialog.showSaveDialog({
     defaultPath: fullDefaultPath,
     filters: [
@@ -110,4 +109,3 @@ ipcMain.handle('file:openFromPath', async (event, filepath: string) => {
     throw error;
   }
 });
-

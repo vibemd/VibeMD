@@ -10,7 +10,7 @@
 - npm 10.x
 - Platform toolchains:
   - **Windows:** WiX Toolset (pre-installed on GitHub-hosted runners)
-  - **macOS:** Xcode command line tools, Homebrew packages `dpkg` and `rpm`
+  - **macOS:** Xcode command line tools, Homebrew packages `dpkg`, `fakeroot`, and `rpm`
   - **Linux Builds:** Executed on macOS runners using the Homebrew toolchain
 
 ## Local Build Steps

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import type { IpcRendererEvent } from 'electron';
 import { Layout } from '@/components/layout/Layout';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useDocumentStore } from '@/stores/documentStore';
@@ -12,7 +13,6 @@ function App() {
   const loadSettings = useSettingsStore((state) => state.loadSettings);
   const loading = useSettingsStore((state) => state.loading);
   const addDocument = useDocumentStore((state) => state.addDocument);
-  const setActiveDocument = useDocumentStore((state) => state.setActiveDocument);
 
   // Apply theme changes
   useTheme();
@@ -26,7 +26,7 @@ function App() {
 
   // Handle file opening from file association (double-click, "Open With", etc.)
   useEffect(() => {
-    const handleOpenFileFromAssociation = async (_event: any, filepath: string) => {
+    const handleOpenFileFromAssociation = async (_event: IpcRendererEvent, filepath: string) => {
       console.log('[File Association] Received file to open:', filepath);
 
       try {
@@ -62,7 +62,7 @@ function App() {
     return () => {
       window.electronAPI.removeOpenFileFromAssociationListener(handleOpenFileFromAssociation);
     };
-  }, [addDocument, setActiveDocument]);
+  }, [addDocument]);
   
   if (loading) {
     return (

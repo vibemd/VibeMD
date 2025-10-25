@@ -2,6 +2,7 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import { toString } from 'mdast-util-to-string';
 import { visit } from 'unist-util-visit';
+import type { Heading } from 'mdast';
 
 export interface OutlineNode {
   depth: number;
@@ -25,7 +26,7 @@ export class MarkdownService {
       const tree = unified().use(remarkParse).parse(markdown);
       const headings: OutlineNode[] = [];
       
-      visit(tree, 'heading', (node: any, index?: number, parent?: any) => {
+      visit(tree, 'heading', (node: Heading) => {
         const text = toString(node);
         const line = node.position?.start?.line || 0;
         const id = this.generateHeadingId(text);

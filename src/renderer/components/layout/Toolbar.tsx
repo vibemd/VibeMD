@@ -18,10 +18,9 @@ import { useDocumentStore } from '@/stores/documentStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { fileService } from '@/services/fileService';
-import { Document } from '@shared/types';
+import { Document, NewDocumentDialogData } from '@shared/types';
 import { useState } from 'react';
 import { NewDocumentDialog } from '@/components/dialogs/NewDocumentDialog';
-import { NewDocumentDialogData } from '@shared/types';
 import { marked } from 'marked';
 
 export function Toolbar() {

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import type { Editor as TiptapEditor } from '@tiptap/react';
+import StarterKitExtension from '@tiptap/starter-kit';
 import { Link } from '@tiptap/extension-link';
 import { Image } from '@tiptap/extension-image';
 import { BulletList } from '@tiptap/extension-bullet-list';
@@ -41,19 +42,13 @@ import {
   CheckSquare,
   Superscript as SuperscriptIcon,
   Subscript as SubscriptIcon,
-  ChevronDown,
   Minus as HorizontalRuleIcon,
   Indent,
   Outdent,
   AlignLeft,
   AlignCenter,
   AlignRight,
-  SquareFunction,
-  SquarePower,
-  Plus,
-  Minus,
-  X,
-  Divide
+  SquareFunction
 } from 'lucide-react';
 import { MathDialog } from '../dialogs/MathDialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -72,12 +67,12 @@ export function TipTapEditor() {
   const setScrollToHeadingHandler = useNavigationStore((state) => state.setScrollToHeadingHandler);
 
   // Dialog state
-  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
-  const [imageDialogOpen, setImageDialogOpen] = useState(false);
+  const [linkDialogOpen, setLinkDialogOpen] = React.useState(false);
+  const [imageDialogOpen, setImageDialogOpen] = React.useState(false);
 
   // Context menu state
-  const [contextMenuOpen, setContextMenuOpen] = useState(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+  const [contextMenuOpen, setContextMenuOpen] = React.useState(false);
+  const [contextMenuPosition, setContextMenuPosition] = React.useState({ x: 0, y: 0 });
 
   // Flag to prevent circular updates
   const isUpdatingFromEditor = React.useRef(false);
@@ -315,7 +310,7 @@ export function TipTapEditor() {
           let hasHeaderRow = false;
 
           // Process each row
-          rows.forEach((row, rowIndex) => {
+          rows.forEach((row) => {
             const headerCells = Array.from(row.querySelectorAll('th'));
             const dataCells = Array.from(row.querySelectorAll('td'));
             const allCells = [...headerCells, ...dataCells];
@@ -367,7 +362,7 @@ export function TipTapEditor() {
           return node.nodeName === 'UL' &&
                  (node as HTMLElement).getAttribute('data-type') === 'taskList';
         },
-        replacement: function (content, node) {
+        replacement: function (content) {
           return '\n' + content;
         }
       });
@@ -419,12 +414,10 @@ export function TipTapEditor() {
 
       // Add text alignment support - check both style and text-align attribute
       turndownService.addRule('textAlign', {
-        filter: function (node, options) {
+        filter: function (node) {
           if (node.nodeName === 'P') {
             const elem = node as HTMLElement;
             const styleAlign = elem.style?.textAlign;
-            const attrAlign = elem.getAttribute('style')?.includes('text-align');
-
             // Match if has text-align style (center or right)
             return !!(styleAlign && styleAlign !== 'left' && (styleAlign === 'center' || styleAlign === 'right'));
           }
@@ -447,7 +440,7 @@ export function TipTapEditor() {
       // Keep headings as markdown, but preserve alignment
       turndownService.addRule('headingWithAlignment', {
         filter: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-        replacement: function (content, node, options) {
+        replacement: function (content, node) {
           const hLevel = parseInt(node.nodeName.charAt(1));
           const hPrefix = '#'.repeat(hLevel);
           const align = (node as HTMLElement).style?.textAlign;
@@ -595,7 +588,7 @@ export function TipTapEditor() {
         textAlign: {
           default: 'left',
           parseHTML: (element: HTMLElement) => element.style.textAlign || 'left',
-          renderHTML: (attributes: any) => {
+          renderHTML: (attributes: { textAlign?: string }) => {
             if (!attributes.textAlign || attributes.textAlign === 'left') {
               return {};
             }
@@ -607,7 +600,7 @@ export function TipTapEditor() {
         colspan: {
           default: 1,
           parseHTML: (element: HTMLElement) => parseInt(element.getAttribute('colspan') || '1'),
-          renderHTML: (attributes: any) => {
+          renderHTML: (attributes: { colspan?: number }) => {
             if (!attributes.colspan || attributes.colspan === 1) {
               return {};
             }
@@ -619,7 +612,7 @@ export function TipTapEditor() {
         rowspan: {
           default: 1,
           parseHTML: (element: HTMLElement) => parseInt(element.getAttribute('rowspan') || '1'),
-          renderHTML: (attributes: any) => {
+          renderHTML: (attributes: { rowspan?: number }) => {
             if (!attributes.rowspan || attributes.rowspan === 1) {
               return {};
             }
@@ -667,7 +660,7 @@ export function TipTapEditor() {
     addKeyboardShortcuts() {
       return {
         // Override default arrow key behavior to prevent navigation errors
-        'ArrowUp': ({ editor }: { editor: any }) => {
+        'ArrowUp': ({ editor }: { editor: TiptapEditor }) => {
           if (editor.isActive('table')) {
             // Use safer navigation method
             try {
@@ -679,7 +672,7 @@ export function TipTapEditor() {
           }
           return false;
         },
-        'ArrowDown': ({ editor }: { editor: any }) => {
+        'ArrowDown': ({ editor }: { editor: TiptapEditor }) => {
           if (editor.isActive('table')) {
             // Use safer navigation method
             try {
@@ -698,7 +691,7 @@ export function TipTapEditor() {
   const editor = useEditor({
     extensions: [
       // Core extensions (CommonMark compliant)
-      StarterKit.configure({
+      StarterKitExtension.configure({
         // Exclude conflicting extensions
         bulletList: false,
         orderedList: false,
@@ -789,7 +782,7 @@ export function TipTapEditor() {
         }, 50);
       }
     },
-    onSelectionUpdate: ({ editor }) => {
+    onSelectionUpdate: () => {
       // Update toolbar state when selection changes
       setUpdateTrigger(prev => prev + 1);
     },
@@ -1592,9 +1585,6 @@ export function TipTapEditor() {
               fontSize: `${settings.editor.fontSize}px`,
               fontFamily: settings.editor.fontFamily || 'Arial'
             } as React.CSSProperties}
-            onWheel={(e) => {
-              // Allow scrolling without preventing default
-            }}
             onContextMenu={handleContextMenu}
           />
         </div>

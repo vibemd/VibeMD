@@ -35,7 +35,7 @@ jobs:
           cache: npm
 
       - name: Install Homebrew packaging tools
-        run: brew install dpkg rpm
+        run: brew install dpkg fakeroot rpm
 
       - name: Install dependencies
         run: npm ci

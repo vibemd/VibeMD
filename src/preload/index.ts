@@ -1,4 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import type { IpcRendererEvent } from 'electron';
+import type { SerializableSettings } from '@shared/types';
 
 // Simple preload script without any Node.js globals
 const electronAPI = {
@@ -25,7 +27,7 @@ const electronAPI = {
   
   // Settings operations
   loadSettings: () => ipcRenderer.invoke('settings:load'),
-  saveSettings: (settings: any) => 
+  saveSettings: (settings: SerializableSettings) => 
     ipcRenderer.invoke('settings:save', settings),
   
   // Print operations
@@ -42,18 +44,18 @@ const electronAPI = {
   getAppVersion: () => ipcRenderer.invoke('app:getVersion'),
   
   // Menu event handling
-  onMenuEvent: (callback: (event: any, menuAction: string) => void) => {
+  onMenuEvent: (callback: (event: IpcRendererEvent, menuAction: string) => void) => {
     ipcRenderer.on('menu-event', callback);
   },
-  removeMenuEventListener: (callback: (event: any, menuAction: string) => void) => {
+  removeMenuEventListener: (callback: (event: IpcRendererEvent, menuAction: string) => void) => {
     ipcRenderer.removeListener('menu-event', callback);
   },
 
   // File association handling
-  onOpenFileFromAssociation: (callback: (event: any, filepath: string) => void) => {
+  onOpenFileFromAssociation: (callback: (event: IpcRendererEvent, filepath: string) => void) => {
     ipcRenderer.on('open-file-from-association', callback);
   },
-  removeOpenFileFromAssociationListener: (callback: (event: any, filepath: string) => void) => {
+  removeOpenFileFromAssociationListener: (callback: (event: IpcRendererEvent, filepath: string) => void) => {
     ipcRenderer.removeListener('open-file-from-association', callback);
   },
 };

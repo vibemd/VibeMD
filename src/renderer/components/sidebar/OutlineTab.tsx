@@ -88,7 +88,7 @@ export function OutlineTab() {
         </div>
         {hasChildren && !isCollapsed && (
           <div>
-            {node.children!.map(child => renderOutlineNode(child, level + 1))}
+            {(node.children ?? []).map(child => renderOutlineNode(child, level + 1))}
           </div>
         )}
       </div>

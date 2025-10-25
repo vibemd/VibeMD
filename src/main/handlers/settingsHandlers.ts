@@ -1,6 +1,7 @@
 import { ipcMain, app, BrowserWindow } from 'electron';
 import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
+import type { SerializableSettings } from '@shared/types';
 
 console.log('[Main] Settings handlers module loaded');
 
@@ -31,7 +32,7 @@ ipcMain.handle('settings:load', async () => {
   }
 });
 
-ipcMain.handle('settings:save', async (event, settings: any) => {
+ipcMain.handle('settings:save', async (event, settings: SerializableSettings) => {
   try {
     const settingsPath = join(app.getPath('userData'), 'settings.json');
     await writeFile(settingsPath, JSON.stringify(settings, null, 2), 'utf-8');
@@ -150,4 +151,3 @@ ipcMain.handle('print:document', async (event, htmlContent: string) => {
     throw error;
   }
 });
-
