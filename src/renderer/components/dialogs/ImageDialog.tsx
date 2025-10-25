@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '../ui/dialog';
 import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import { Input } from '@/components/ui/input';
 
 interface ImageDialogProps {
   open: boolean;
@@ -77,4 +77,3 @@ export const ImageDialog: React.FC<ImageDialogProps> = ({
     </Dialog>
   );
 };
-

@@ -4,6 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useTheme } from '@/hooks/useTheme';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useMenuService } from '@/services/menuService';
 import { Document } from '@shared/types';
 import './services/appService'; // Initialize app service
@@ -19,6 +20,7 @@ function App() {
 
   // Initialize menu service
   useMenuService();
+  useKeyboardShortcuts();
 
   useEffect(() => {
     loadSettings();
