@@ -125,7 +125,9 @@ function main() {
   const releaseDir = path.join(repoRoot, 'releases', platform, arch);
   cleanDir(releaseDir);
 
-  const version = require(path.join(repoRoot, 'package.json')).version;
+  const pkg = require(path.join(repoRoot, 'package.json'));
+  const version = pkg.version;
+  const productName = pkg.productName || pkg.name || 'app';
   const staged = [];
   const matched = [];
   const skipped = [];
@@ -149,7 +151,13 @@ function main() {
     if (!allowedExts.includes(ext)) {
       return;
     }
-    const baseName = path.basename(filePath);
+    let baseName = path.basename(filePath);
+    if (platform === 'windows' && ext === 'msi') {
+      // Standardize MSI filenames to include version and arch
+      // e.g., VibeMD-1.0.10-x64.msi
+      const safeName = String(productName).replace(/[^A-Za-z0-9._-]+/g, '');
+      baseName = `${safeName}-${version}-${arch}.msi`;
+    }
     const destination = path.join(releaseDir, baseName);
     fs.copyFileSync(filePath, destination);
     staged.push({

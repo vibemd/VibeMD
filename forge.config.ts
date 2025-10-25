@@ -3,7 +3,16 @@ import { MakerWix } from '@electron-forge/maker-wix';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDMG } from '@electron-forge/maker-dmg';
 import { MakerDeb } from '@electron-forge/maker-deb';
-import CustomMakerRpm from './scripts/custom-maker-rpm';
+// Avoid importing the custom RPM maker on non-Linux hosts to prevent
+// requiring linux-only dependencies (electron-installer-redhat) during
+// Windows/macOS builds.
+let CustomMakerRpm: any;
+const isLinuxHost = process.platform === 'linux';
+if (isLinuxHost) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const mod = require('./scripts/custom-maker-rpm');
+  CustomMakerRpm = mod?.default ?? mod;
+}
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives';
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
@@ -79,7 +88,8 @@ const config: ForgeConfig = {
       name: 'VibeMD',
       description: 'A modern, cross-platform desktop markdown editor',
       manufacturer: 'ONLY1 Pty Ltd',
-      appIconPath: './build/icons/icon.ico',
+      // electron-wix-msi expects `iconPath` for shortcut/installer icon
+      iconPath: './build/icons/icon.ico',
       language: 1033, // English
       programFilesFolderName: 'VibeMD',
       // Ensure 64-bit installs go to Program Files (not Program Files (x86))
@@ -99,20 +109,26 @@ const config: ForgeConfig = {
       certificateFile: process.env.WINDOWS_CERT_PATH,
       certificatePassword: process.env.WINDOWS_CERT_PASSWORD,
     }),
+    // Enable ZIPs for macOS and Windows (Node 20 + cross-zip >=4)
     new MakerZIP({}, ['darwin', 'win32']),
-    new CustomMakerRpm({
-      options: {
-        name: 'vibemd',
-        productName: 'VibeMD',
-        bin: 'VibeMD',
-        platform: 'linux',
-        genericName: 'Markdown Editor',
-        description: 'A modern, cross-platform desktop markdown editor',
-        icon: './build/icons/icon.svg',
-        categories: ['Office'],
-        mimeType: ['text/markdown', 'text/x-markdown', 'application/x-vibe']
-      }
-    }),
+    // Only add the RPM maker on Linux hosts where its dependencies exist
+    ...(isLinuxHost
+      ? [
+          new CustomMakerRpm({
+            options: {
+              name: 'vibemd',
+              productName: 'VibeMD',
+              bin: 'VibeMD',
+              platform: 'linux',
+              genericName: 'Markdown Editor',
+              description: 'A modern, cross-platform desktop markdown editor',
+              icon: './build/icons/icon.svg',
+              categories: ['Office'],
+              mimeType: ['text/markdown', 'text/x-markdown', 'application/x-vibe']
+            }
+          })
+        ]
+      : []),
     new MakerDeb({
       options: {
         name: 'vibemd',
