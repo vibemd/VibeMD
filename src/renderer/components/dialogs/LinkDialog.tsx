@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '../ui/dialog';
 import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 
 interface LinkDialogProps {
   open: boolean;
@@ -43,12 +44,12 @@ export const LinkDialog: React.FC<LinkDialogProps> = ({
             <label htmlFor="url" className="text-right">
               URL
             </label>
-            <input
+            <Input
               id="url"
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md"
+              className="col-span-3"
               placeholder="https://example.com"
             />
           </div>
@@ -56,12 +57,12 @@ export const LinkDialog: React.FC<LinkDialogProps> = ({
             <label htmlFor="text" className="text-right">
               Text
             </label>
-            <input
+            <Input
               id="text"
               type="text"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md"
+              className="col-span-3"
               placeholder="Link text"
             />
           </div>

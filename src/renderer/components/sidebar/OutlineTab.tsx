@@ -63,7 +63,7 @@ export function OutlineTab() {
         >
           {hasChildren && (
             <button
-              className="mr-1 p-0.5 hover:bg-gray-200 rounded"
+              className="mr-1 p-0.5 hover:bg-accent hover:text-accent-foreground rounded"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleCollapse(nodeId);
@@ -81,7 +81,7 @@ export function OutlineTab() {
             'flex-1',
             node.depth === 1 && 'font-semibold text-base',
             node.depth === 2 && 'font-medium text-sm',
-            node.depth >= 3 && 'text-sm text-gray-600'
+            node.depth >= 3 && 'text-sm text-muted-foreground'
           )}>
             {node.text}
           </span>

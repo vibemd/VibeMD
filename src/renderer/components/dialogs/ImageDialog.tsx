@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '../ui/dialog';
 import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 
 interface ImageDialogProps {
   open: boolean;
@@ -43,12 +44,12 @@ export const ImageDialog: React.FC<ImageDialogProps> = ({
             <label htmlFor="imageUrl" className="text-right">
               URL
             </label>
-            <input
+            <Input
               id="imageUrl"
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md"
+              className="col-span-3"
               placeholder="https://example.com/image.jpg"
             />
           </div>
@@ -56,12 +57,12 @@ export const ImageDialog: React.FC<ImageDialogProps> = ({
             <label htmlFor="alt" className="text-right">
               Alt Text
             </label>
-            <input
+            <Input
               id="alt"
               type="text"
               value={alt}
               onChange={(e) => setAlt(e.target.value)}
-              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md"
+              className="col-span-3"
               placeholder="Image description"
             />
           </div>

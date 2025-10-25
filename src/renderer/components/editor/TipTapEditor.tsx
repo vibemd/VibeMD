@@ -1356,7 +1356,7 @@ export function TipTapEditor() {
           <TooltipTrigger asChild>
             <button
               onClick={() => editor?.chain().focus().setHorizontalRule().run()}
-              className="p-2 rounded hover:bg-gray-100"
+              className="p-2 rounded hover:bg-accent hover:text-accent-foreground text-foreground"
             >
               <HorizontalRuleIcon className="h-4 w-4" />
             </button>
@@ -1592,7 +1592,7 @@ export function TipTapEditor() {
         {/* Context Menu */}
         {contextMenuOpen && editor?.isActive('table') && (
           <div
-            className="fixed bg-white border border-gray-300 rounded shadow-lg z-50"
+            className="fixed bg-popover text-popover-foreground border rounded shadow-lg z-50"
             style={{
               left: `${contextMenuPosition.x}px`,
               top: `${contextMenuPosition.y}px`,
@@ -1600,7 +1600,7 @@ export function TipTapEditor() {
             }}
           >
             {/* Row Operations */}
-            <div className="px-4 py-2 text-xs font-bold text-gray-600 border-b">
+            <div className="px-4 py-2 text-xs font-bold text-muted-foreground border-b">
               Rows
             </div>
             <button
@@ -1608,7 +1608,7 @@ export function TipTapEditor() {
                 editor?.chain().focus().addRowBefore().run();
                 setContextMenuOpen(false);
               }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+              className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer"
             >
               Insert Row Above
             </button>
@@ -1617,7 +1617,7 @@ export function TipTapEditor() {
                 editor?.chain().focus().addRowAfter().run();
                 setContextMenuOpen(false);
               }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+              className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer"
             >
               Insert Row Below
             </button>
@@ -1628,13 +1628,13 @@ export function TipTapEditor() {
                 }
                 setContextMenuOpen(false);
               }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer text-red-600"
+              className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer text-destructive"
             >
               Delete Row
             </button>
 
             {/* Column Operations */}
-            <div className="px-4 py-2 text-xs font-bold text-gray-600 border-b">
+            <div className="px-4 py-2 text-xs font-bold text-muted-foreground border-b">
               Columns
             </div>
             <button
@@ -1642,7 +1642,7 @@ export function TipTapEditor() {
                 editor?.chain().focus().addColumnBefore().run();
                 setContextMenuOpen(false);
               }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+              className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer"
             >
               Insert Column Left
             </button>
@@ -1651,7 +1651,7 @@ export function TipTapEditor() {
                 editor?.chain().focus().addColumnAfter().run();
                 setContextMenuOpen(false);
               }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+              className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer"
             >
               Insert Column Right
             </button>
@@ -1662,13 +1662,13 @@ export function TipTapEditor() {
                 }
                 setContextMenuOpen(false);
               }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer text-red-600"
+              className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer text-destructive"
             >
               Delete Column
             </button>
 
             {/* Table Operations */}
-            <div className="px-4 py-2 text-xs font-bold text-gray-600 border-b border-red-300">
+            <div className="px-4 py-2 text-xs font-bold text-destructive border-b border-destructive">
               Table
             </div>
             <button
@@ -1678,7 +1678,7 @@ export function TipTapEditor() {
                 }
                 setContextMenuOpen(false);
               }}
-              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
+              className="w-full text-left px-4 py-2 text-sm text-destructive hover:bg-accent hover:text-accent-foreground cursor-pointer"
             >
               Delete Table
             </button>
