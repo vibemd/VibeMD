@@ -7,8 +7,8 @@ import { MakerDeb } from '@electron-forge/maker-deb';
 // requiring linux-only dependencies (electron-installer-redhat) during
 // Windows/macOS builds.
 let CustomMakerRpm: any;
-const isLinuxHost = process.platform === 'linux';
-if (isLinuxHost) {
+const enableRpmMaker = process.platform === 'linux' || process.env.FORCE_RPM === '1';
+if (enableRpmMaker) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const mod = require('./scripts/custom-maker-rpm');
   CustomMakerRpm = mod?.default ?? mod;
@@ -117,7 +117,7 @@ const config: ForgeConfig = {
     // Enable ZIPs for macOS and Windows (Node 20 + cross-zip >=4)
     new MakerZIP({}, ['darwin', 'win32']),
     // Only add the RPM maker on Linux hosts where its dependencies exist
-    ...(isLinuxHost
+    ...(enableRpmMaker
       ? [
           new CustomMakerRpm({
             options: {
