@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+import { spawnSync } from 'child_process';
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerWix } from '@electron-forge/maker-wix';
 import { MakerZIP } from '@electron-forge/maker-zip';
@@ -23,6 +26,54 @@ import { rendererConfig } from './webpack.renderer.config';
 import { preloadConfig } from './webpack.preload.config';
 
 const enableWix = process.platform === 'win32' && process.env.SKIP_WIX !== '1';
+const macSignIdentity = process.env.MAC_CODESIGN_IDENTITY;
+const macEntitlementsPath = './entitlements.plist';
+const macSignConfig = macSignIdentity
+  ? {
+      identity: macSignIdentity,
+      hardenedRuntime: true,
+      entitlements: macEntitlementsPath,
+      entitlementsInherit: macEntitlementsPath,
+      gatekeeperAssess: false,
+    }
+  : undefined;
+const fallbackMacIdentity = macSignIdentity ?? '-';
+
+function runCodeSign(appPath: string) {
+  if (process.platform !== 'darwin') {
+    return;
+  }
+  if (!fs.existsSync(appPath) || !fs.statSync(appPath).isDirectory()) {
+    return;
+  }
+  const identity = fallbackMacIdentity;
+  console.log(`[codesign] Signing ${appPath} with identity "${identity}".`);
+  const baseArgs = ['--force', '--deep', '--sign', identity];
+  if (macSignIdentity) {
+    baseArgs.push('--options', 'runtime', '--entitlements', macEntitlementsPath);
+  }
+  const signResult = spawnSync('codesign', [...baseArgs, appPath], {
+    stdio: 'pipe',
+    encoding: 'utf8',
+  });
+  if (signResult.status !== 0) {
+    throw new Error(
+      `codesign failed for ${appPath}: ${(signResult.stderr || '').toString().trim() || 'Unknown error'}`
+    );
+  }
+
+  const verifyArgs = ['--verify', '--deep', '--strict', appPath];
+  const verifyResult = spawnSync('codesign', verifyArgs, {
+    stdio: 'pipe',
+    encoding: 'utf8',
+  });
+  if (verifyResult.status !== 0) {
+    throw new Error(
+      `codesign verification failed for ${appPath}: ${(verifyResult.stderr || '').toString().trim() || 'Unknown error'}`
+    );
+  }
+  console.log(`[codesign] Verification succeeded for ${appPath}.`);
+}
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -67,14 +118,7 @@ const config: ForgeConfig = {
       InternalName: 'VibeMD'
     },
     // macOS code signing and notarization (only if env provided)
-    osxSign: process.env.MAC_CODESIGN_IDENTITY
-      ? {
-          identity: process.env.MAC_CODESIGN_IDENTITY,
-          hardenedRuntime: true,
-          entitlements: './entitlements.plist',
-          entitlementsInherit: './entitlements.plist',
-        }
-      : undefined,
+    osxSign: macSignConfig,
     osxNotarize:
       process.env.APPLE_ID && process.env.APPLE_APP_SPECIFIC_PASSWORD && process.env.APPLE_TEAM_ID
         ? {
@@ -150,6 +194,31 @@ const config: ForgeConfig = {
       icon: './build/icons/icon.icns',
     }),
   ],
+  hooks: {
+    async postPackage(_forgeConfig, packageResult) {
+      if (packageResult.platform !== 'darwin' || process.platform !== 'darwin') {
+        return;
+      }
+      packageResult.outputPaths.forEach((outputPath) => {
+        if (!fs.existsSync(outputPath)) {
+          return;
+        }
+        const stats = fs.statSync(outputPath);
+        if (stats.isDirectory() && outputPath.endsWith('.app')) {
+          runCodeSign(outputPath);
+          return;
+        }
+        if (!stats.isDirectory()) {
+          return;
+        }
+        const appCandidates = fs
+          .readdirSync(outputPath)
+          .filter((entry) => entry.endsWith('.app'))
+          .map((entry) => path.join(outputPath, entry));
+        appCandidates.forEach((appPath) => runCodeSign(appPath));
+      });
+    },
+  },
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
