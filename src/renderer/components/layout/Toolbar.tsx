@@ -18,6 +18,7 @@ import { useDocumentStore } from '@/stores/documentStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { fileService } from '@/services/fileService';
+import { editorService } from '@/services/editorService';
 import { Document, NewDocumentDialogData } from '@shared/types';
 import { useState } from 'react';
 import { NewDocumentDialog } from '@/components/dialogs/NewDocumentDialog';
@@ -26,7 +27,7 @@ import { marked } from 'marked';
 export function Toolbar() {
   const { addDocument, addTemplate, getActiveDocument, setActiveDocument, updateDocument, markAsSaved, isActiveDocumentTemplate } =
     useDocumentStore();
-  const { toggleSettingsDialog, setSidebarTab } = useUIStore();
+  const { toggleSettingsDialog, setSidebarTab, editorMode, setEditorMode } = useUIStore();
   const { settings } = useSettingsStore();
   
   const [newDocumentDialogOpen, setNewDocumentDialogOpen] = useState(false);
@@ -198,120 +199,158 @@ export function Toolbar() {
   console.log('[Toolbar] activeDoc:', activeDoc);
   console.log('[Toolbar] Print button disabled:', !activeDoc);
 
+  const plainTextEnabled = settings.editor.enablePlainTextEditing;
+  const hasActiveDocument = !!activeDoc;
+  const canUsePlainText = plainTextEnabled && hasActiveDocument;
+
+  const handleEditorModeChange = (mode: 'wysiwyg' | 'plain') => {
+    if (editorMode === mode) return;
+    if (mode === 'plain' && !plainTextEnabled) return;
+    editorService.saveCurrentContent();
+    setEditorMode(mode);
+  };
+
   return (
     <TooltipProvider delayDuration={300} skipDelayDuration={100}>
-      <div className="h-14 border-b flex items-center px-4 gap-2 bg-background">
-        {/* Left side - File operations */}
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleNew}
-              className="gap-2 toolbar-button"
-            >
-              <FileText className="h-4 w-4" />
-              New
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>New Document (Ctrl+N)</p>
-          </TooltipContent>
-        </Tooltip>
+      <div className="h-14 border-b flex items-center px-4 gap-4 bg-background">
+        <div className="flex items-center gap-2">
+          {/* Left side - File operations */}
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleNew}
+                className="gap-2 toolbar-button"
+              >
+                <FileText className="h-4 w-4" />
+                New
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>New Document (Ctrl+N)</p>
+            </TooltipContent>
+          </Tooltip>
 
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleOpen}
-              className="gap-2 toolbar-button"
-            >
-              <FolderOpen className="h-4 w-4" />
-              Open
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Open Document (Ctrl+O)</p>
-          </TooltipContent>
-        </Tooltip>
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleOpen}
+                className="gap-2 toolbar-button"
+              >
+                <FolderOpen className="h-4 w-4" />
+                Open
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Open Document (Ctrl+O)</p>
+            </TooltipContent>
+          </Tooltip>
 
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleSave}
-              className="gap-2 toolbar-button"
-              disabled={!hasUnsavedChanges}
-            >
-              <Save className="h-4 w-4" />
-              Save
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Save Document (Ctrl+S)</p>
-          </TooltipContent>
-        </Tooltip>
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSave}
+                className="gap-2 toolbar-button"
+                disabled={!hasUnsavedChanges}
+              >
+                <Save className="h-4 w-4" />
+                Save
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Save Document (Ctrl+S)</p>
+            </TooltipContent>
+          </Tooltip>
 
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleSaveAs}
-              className="gap-2 toolbar-button"
-              disabled={!activeDoc || isTemplate}
-            >
-              <Download className="h-4 w-4" />
-              Save As
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{isTemplate ? 'Save As not available for templates' : 'Save Document As (Ctrl+Shift+S)'}</p>
-          </TooltipContent>
-        </Tooltip>
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSaveAs}
+                className="gap-2 toolbar-button"
+                disabled={!activeDoc || isTemplate}
+              >
+                <Download className="h-4 w-4" />
+                Save As
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{isTemplate ? 'Save As not available for templates' : 'Save Document As (Ctrl+Shift+S)'}</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
 
-        {/* Spacer */}
-        <div className="flex-1" />
+        <div className="flex-1 flex justify-center">
+          {plainTextEnabled && (
+            <div className="inline-flex items-center gap-1 rounded-md border bg-muted/40 p-1">
+              <Button
+                variant={editorMode === 'wysiwyg' ? 'secondary' : 'ghost'}
+                size="sm"
+                className="px-3"
+                onClick={() => handleEditorModeChange('wysiwyg')}
+                disabled={!hasActiveDocument}
+                aria-pressed={editorMode === 'wysiwyg'}
+              >
+                WYSIWYG
+              </Button>
+              <Button
+                variant={editorMode === 'plain' ? 'secondary' : 'ghost'}
+                size="sm"
+                className="px-3"
+                onClick={() => handleEditorModeChange('plain')}
+                disabled={!canUsePlainText}
+                aria-pressed={editorMode === 'plain'}
+              >
+                Plain Text
+              </Button>
+            </div>
+          )}
+        </div>
 
-        {/* Right side - Utility actions */}
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handlePrint}
-              className="gap-2 toolbar-button"
-              disabled={!activeDoc}
-            >
-              <Printer className="h-4 w-4" />
-              Print
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Print Document (Ctrl+P)</p>
-          </TooltipContent>
-        </Tooltip>
+        <div className="flex items-center gap-2">
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handlePrint}
+                className="gap-2 toolbar-button"
+                disabled={!activeDoc}
+              >
+                <Printer className="h-4 w-4" />
+                Print
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Print Document (Ctrl+P)</p>
+            </TooltipContent>
+          </Tooltip>
 
-        <Separator orientation="vertical" className="h-6" />
-        
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleSettings}
-              className="gap-2 toolbar-button"
-            >
-              <Settings className="h-4 w-4" />
-              Settings
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Settings (Ctrl+,)</p>
-          </TooltipContent>
-        </Tooltip>
+          <Separator orientation="vertical" className="h-6" />
+          
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSettings}
+                className="gap-2 toolbar-button"
+              >
+                <Settings className="h-4 w-4" />
+                Settings
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Settings (Ctrl+,)</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </div>
       
       {/* New document dialog */}

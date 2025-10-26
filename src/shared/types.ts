@@ -67,6 +67,7 @@ export interface Settings {
     fontSize: number;
     fontFamily: string;
     lineNumbers: boolean;
+    enablePlainTextEditing: boolean;
   };
   about: {
     version: string;

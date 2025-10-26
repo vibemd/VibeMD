@@ -1,3 +1,4 @@
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Settings } from '@shared/types';
 
@@ -60,6 +61,20 @@ export function EditorSettings({ settings, onChange }: EditorSettingsProps) {
               Sets the base font size for normal text. All other formatting scales from this value.
             </p>
           </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="enable-plain-text"
+              checked={settings.editor.enablePlainTextEditing}
+              onCheckedChange={(checked) => updateEditor({ enablePlainTextEditing: !!checked })}
+            />
+            <label htmlFor="enable-plain-text" className="text-sm font-medium">
+              Enable editing in plain text
+            </label>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Plain text always uses Courier New; font settings above apply to the WYSIWYG editor.
+          </p>
         </div>
       </div>
     </div>

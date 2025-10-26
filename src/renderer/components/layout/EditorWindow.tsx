@@ -1,11 +1,24 @@
+import * as React from 'react';
 import { TipTapEditor } from '@/components/editor/TipTapEditor';
+import { PlainTextEditor } from '@/components/editor/PlainTextEditor';
 import { useDocumentStore } from '@/stores/documentStore';
+import { useUIStore } from '@/stores/uiStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 import { FileText } from 'lucide-react';
 
 export function EditorWindow() {
   const hasActiveDocument = useDocumentStore(
     (state) => state.activeDocumentId !== null
   );
+  const editorMode = useUIStore((state) => state.editorMode);
+  const setEditorMode = useUIStore((state) => state.setEditorMode);
+  const plainTextEnabled = useSettingsStore((state) => state.settings.editor.enablePlainTextEditing);
+
+  React.useEffect(() => {
+    if (!plainTextEnabled && editorMode === 'plain') {
+      setEditorMode('wysiwyg');
+    }
+  }, [plainTextEnabled, editorMode, setEditorMode]);
 
   if (!hasActiveDocument) {
     return (
@@ -25,7 +38,7 @@ export function EditorWindow() {
 
   return (
     <div className="flex-1 flex flex-col">
-      <TipTapEditor />
+      {plainTextEnabled && editorMode === 'plain' ? <PlainTextEditor /> : <TipTapEditor />}
     </div>
   );
 }

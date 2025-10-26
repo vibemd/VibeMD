@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type EditorMode = 'wysiwyg' | 'split' | 'preview';
+type EditorMode = 'wysiwyg' | 'split' | 'preview' | 'plain';
 type SidebarTab = 'files' | 'outline' | 'templates';
 
 interface UIStore {
@@ -28,7 +28,6 @@ export const useUIStore = create<UIStore>((set) => ({
   toggleSidebar: () => 
     set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
 }));
-
 
 
 
