@@ -1,6 +1,6 @@
 # VibeMD User Guide
 
-**Application:** VibeMD **Version:** 1.0.11 **Release Date:** 2025-10-26 **License:** MIT
+**Application:** VibeMD **Version:** 1.0.12 **Release Date:** 2025-10-27 **License:** MIT
 
 ## Overview
 
@@ -719,4 +719,4 @@ Developed by ONLY1 Pty Ltd
 
 * * *
 
-**Version:** 1.0.11 **Release Date:** 2025-10-26 **License:** MIT
+**Version:** 1.0.12 **Release Date:** 2025-10-27 **License:** MIT

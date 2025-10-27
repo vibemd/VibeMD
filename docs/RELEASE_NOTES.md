@@ -1,9 +1,57 @@
 # VibeMD Release Notes
 
 **Application:** VibeMD
-**Current Version:** 1.0.11
-**Release Date:** 2025-10-26
+**Current Version:** 1.0.12
+**Release Date:** 2025-10-27
 **License:** MIT
+
+---
+
+## v1.0.12 — 2025-10-27
+
+### Highlights
+
+**Editor Experience**
+- Plain text (CodeMirror) view no longer hides the scrollbar thumb or repositions the caret incorrectly after switching back from WYSIWYG.
+- Outline navigation automatically flips from plain text to WYSIWYG, waits for the editor to mount, and focuses the chosen heading reliably.
+- Added regression coverage for the navigation store plus `data-testid` hooks to keep smoke tests green.
+
+**macOS User Experience**
+- Forced Chromium to use the mock keychain and basic password store so unsigned builds stop prompting for keychain access.
+- Updated build instructions so macOS DMG/ZIP artifacts carry the new keychain behaviour.
+
+**Release Automation**
+- New `get-next-release-version` script increments from the latest Git tag, keeping CI builds in sync even when package.json lags.
+- Staging script now honours explicit `RELEASE_VERSION` overrides, reducing manual rename work.
+- Refreshed marketing site content to match the 1.0.12 feature set.
+
+**Documentation**
+- Updated release notes to reflect the latest fixes and behaviour.
+
+### Technical Details
+
+- **Platform Support:** Windows (x64, ARM64), macOS (Apple Silicon, Intel), Linux (x64, ARM64)
+- **Installers:** MSI/ZIP (Windows), DMG/ZIP (macOS), DEB (Linux)
+- **Electron Version:** 38.2.2
+- **React Version:** 19.2.0
+- **Tiptap Version:** 3.7.1
+
+### Known Issues
+
+- Installers remain unsigned; users must approve OS security prompts (see Installation Notes).
+- Windows 1.0.12 binaries still need to be rebuilt and uploaded before final release.
+- Code signing and notarisation work is ongoing.
+
+### Installation Notes
+
+> ⚠️ **Security Notice**
+> Installers and packages are currently **unsigned**. This is expected behaviour until code signing certificates are provisioned. You will need to explicitly allow installation:
+>
+> - **Windows:** Click "More info" then "Run anyway" when SmartScreen appears.
+> - **macOS:** Control-click the app and select "Open" to bypass Gatekeeper.
+> - **Linux:** Use `--force-overwrite` if the package manager warns about unsigned packages.
+>
+> Code signing will be implemented in a future release.
 
 ---
 
@@ -220,6 +268,7 @@ For maintainers preparing new releases:
 
 | Version | Release Date | Highlights |
 |---------|--------------|------------|
+| 1.0.12  | 2025-10-27   | Plain text editor stability, outline navigation reliability, macOS keychain workaround |
 | 1.0.11  | 2025-10-26   | Dark mode improvements, enhanced shortcuts, build fixes |
 | 1.0.10  | 2025-10-24   | Multi-document editing, templates, comprehensive features |
 | 1.0.9   | 2025-10-23   | Initial public release with core editor |
@@ -249,6 +298,6 @@ VibeMD is released under the MIT License. See [LICENSE](../LICENSE) for details.
 
 ---
 
-**Version:** 1.0.11
-**Release Date:** 2025-10-26
+**Version:** 1.0.12
+**Release Date:** 2025-10-27
 **Developed by:** ONLY1 Pty Ltd
