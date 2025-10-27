@@ -17,16 +17,16 @@ To overcome the security warnings, follow these instructions:
 
 -   Install the software by opening the ZIP archive, or double-clicking the DMG file and dragging the VibeMD app into the Applications folder:
     
-    ![macOS-1](/site/images/macOS-install_warning-1.png)
+    ![macOS-1](/site/images/macOS-install-warning-1.png)
 -   After installation, open the application. macOS may prompt with a warning that the app cannot be opened - Click 'Done':
     
-    ![macOS-1](/site/images/macOS-install_warning-2.png)
+    ![macOS-1](/site/images/macOS-install-warning-2.png)
 -   Open macOS Settings | Privacy & Security and scroll down til you see **"VibeMD" was blocked to protect your Mac.** Click 'Open Anyway':
     
-    ![macOS-1](/site/images/macOS-install_warning-3.png)
+    ![macOS-1](/site/images/macOS-install-warning-3.png)
 -   macOS will then prompt that it is unable to verify that the app is free from malware (it is!) - Click 'Open Anyway':
     
-    ![macOS-1](/site/images/macOS-install_warning-4.png)
+    ![macOS-1](/site/images/macOS-install-warning-4.png)
 
 ## Linux
 
