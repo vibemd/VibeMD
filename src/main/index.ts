@@ -66,6 +66,10 @@ app.setName('VibeMD');
 
 // Set dock icon for macOS
 if (process.platform === 'darwin') {
+  // Avoid macOS keychain prompts when unsigned by using Chromium's mock keychain
+  // Until we ship fully signed builds, we don't need encrypted cookie storage.
+  app.commandLine.appendSwitch('use-mock-keychain');
+
   const iconPath = path.join(app.getAppPath(), 'build', 'icons', 'icon.png');
   console.log('Attempting to set dock icon from:', iconPath);
   console.log('Icon file exists:', fs.existsSync(iconPath));
