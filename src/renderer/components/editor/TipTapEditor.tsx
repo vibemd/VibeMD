@@ -65,6 +65,7 @@ export function TipTapEditor() {
   const markAsModified = useDocumentStore((state) => state.markAsModified);
   const settings = useSettingsStore((state) => state.settings);
   const setScrollToHeadingHandler = useNavigationStore((state) => state.setScrollToHeadingHandler);
+  const clearScrollToHeadingHandler = useNavigationStore((state) => state.clearScrollToHeadingHandler);
 
   // Dialog state
   const [linkDialogOpen, setLinkDialogOpen] = React.useState(false);
@@ -904,33 +905,39 @@ export function TipTapEditor() {
 
   // Set up navigation handler for outline-to-editor navigation
   React.useEffect(() => {
-    if (editor) {
-      const scrollToHeading = (headingId: string) => {
-        // Find the heading element in the editor
-        const headingElement = editor.view.dom.querySelector(`h1[id="${headingId}"], h2[id="${headingId}"], h3[id="${headingId}"], h4[id="${headingId}"], h5[id="${headingId}"], h6[id="${headingId}"]`);
-        
-        if (headingElement) {
-          // Scroll to the heading
-          headingElement.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start',
-            inline: 'nearest'
-          });
-          
-          // Focus the editor and position cursor at the heading
-          editor.commands.focus();
-          
-          // Find the position of the heading in the editor
-          const pos = editor.view.posAtDOM(headingElement, 0);
-          if (pos !== null) {
-            editor.commands.setTextSelection(pos);
-          }
-        }
-      };
-      
-      setScrollToHeadingHandler(scrollToHeading);
+    if (!editor) {
+      return;
     }
-  }, [editor, setScrollToHeadingHandler]);
+
+    const scrollToHeading = (headingId: string) => {
+      // Find the heading element in the editor
+      const headingElement = editor.view.dom.querySelector(`h1[id="${headingId}"], h2[id="${headingId}"], h3[id="${headingId}"], h4[id="${headingId}"], h5[id="${headingId}"], h6[id="${headingId}"]`);
+      
+      if (headingElement) {
+        // Scroll to the heading
+        headingElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start',
+          inline: 'nearest'
+        });
+        
+        // Focus the editor and position cursor at the heading
+        editor.commands.focus();
+        
+        // Find the position of the heading in the editor
+        const pos = editor.view.posAtDOM(headingElement, 0);
+        if (pos !== null) {
+          editor.commands.setTextSelection(pos);
+        }
+      }
+    };
+    
+    setScrollToHeadingHandler(scrollToHeading);
+
+    return () => {
+      clearScrollToHeadingHandler();
+    };
+  }, [editor, setScrollToHeadingHandler, clearScrollToHeadingHandler]);
 
   // Get current heading level for dropdown
   const getCurrentHeading = () => {
