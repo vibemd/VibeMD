@@ -25,6 +25,14 @@ import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
 import { preloadConfig } from './webpack.preload.config';
 
+// Avoid dev-server port collisions on developer machines
+const parsePort = (val: string | undefined, fallback: number) => {
+  const n = Number(val);
+  return Number.isInteger(n) && n >= 1024 && n <= 65535 ? n : fallback;
+};
+const devPort = parsePort(process.env.WEBPACK_DEV_PORT, 3001);
+const devLoggerPort = parsePort(process.env.WEB_LOGGER_PORT, 9015);
+
 const enableWix = process.platform === 'win32' && process.env.SKIP_WIX !== '1';
 const macSignIdentity = process.env.MAC_CODESIGN_IDENTITY;
 const macEntitlementsPath = './entitlements.plist';
@@ -80,7 +88,10 @@ const config: ForgeConfig = {
     asar: true,
     name: 'VibeMD',
     executableName: 'VibeMD',
-    icon: './build/icons/icon',
+    // Ensure correct platform icon is embedded in the executable/app bundle.
+    // On Windows we must pass a .ico explicitly for the EXE resources.
+    // On macOS, Electron Packager expects .icns.
+    icon: process.platform === 'win32' ? './build/icons/icon.ico' : './build/icons/icon',
     appCopyright: 'Copyright © 2025 ONLY1 Pty Ltd',
     appBundleId: 'com.vibemd.app',
     // Let the webpack plugin handle ignore patterns automatically
@@ -138,6 +149,8 @@ const config: ForgeConfig = {
       // electron-wix-msi expects `iconPath` for shortcut/installer icon
       iconPath: './build/icons/icon.ico',
       appIconPath: './build/icons/icon.ico',
+      // Explicitly set stub exe icon used by electron-wix-msi (avoids extractor fallback)
+      icon: './build/icons/icon.ico',
       language: 1033, // English
       programFilesFolderName: 'VibeMD',
       // Ensure 64-bit installs go to Program Files (not Program Files (x86))
@@ -224,6 +237,9 @@ const config: ForgeConfig = {
     new WebpackPlugin({
       mainConfig,
       devContentSecurityPolicy: `default-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-eval' 'unsafe-inline' data:; style-src 'self' 'unsafe-inline'`,
+      // Configure dev server ports to prevent EADDRINUSE clashes
+      port: devPort,
+      loggerPort: devLoggerPort,
       renderer: {
         config: rendererConfig,
         entryPoints: [

@@ -22,8 +22,21 @@ function parseArgs(argv) {
 }
 
 function removeDir(targetPath) {
-  if (fs.existsSync(targetPath)) {
+  if (!fs.existsSync(targetPath)) return;
+  try {
     fs.rmSync(targetPath, { recursive: true, force: true });
+  } catch (err) {
+    // On Windows, locked files (e.g., MSI held by AV/Explorer) can throw EPERM.
+    // Best-effort: rename the directory to a temp name so fresh output is clean,
+    // and continue without failing the build.
+    try {
+      const parent = path.dirname(targetPath);
+      const fallback = path.join(parent, `${path.basename(targetPath)}.old-${Date.now()}`);
+      fs.renameSync(targetPath, fallback);
+      console.warn(`[clean-build-output] Could not remove ${targetPath} (${err.code}). Renamed to ${fallback}`);
+    } catch (renameErr) {
+      console.warn(`[clean-build-output] Failed to cleanup ${targetPath}: ${renameErr.message}`);
+    }
   }
 }
 
