@@ -27,6 +27,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -40,7 +43,9 @@ jobs:
       - name: Determine version
         id: meta
         shell: bash
-        run: echo "version=$(node -p \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
+        run: |
+          git fetch --tags --force
+          echo "version=$(node scripts/get-next-release-version.js)" >> "$GITHUB_OUTPUT"
 
       - name: Ensure version is unreleased
         shell: bash
@@ -59,6 +64,8 @@ jobs:
 
       - name: Build installers
         run: npm run build:win-${{ matrix.arch }}
+        env:
+          RELEASE_VERSION: ${{ steps.meta.outputs.version }}
 
       - name: Validate staged release assets
         id: staged

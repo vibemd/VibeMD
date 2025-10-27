@@ -125,8 +125,16 @@ function main() {
   const releaseDir = path.join(repoRoot, 'releases', platform, arch);
   cleanDir(releaseDir);
 
+  const versionOverride =
+    args.version ||
+    process.env.RELEASE_VERSION ||
+    process.env.ARTIFACT_VERSION ||
+    process.env.PACKAGE_VERSION_OVERRIDE;
   const pkg = require(path.join(repoRoot, 'package.json'));
-  const version = pkg.version;
+  const version = versionOverride || pkg.version;
+  if (!version) {
+    fail('Unable to determine version. Provide --version or set RELEASE_VERSION/ARTIFACT_VERSION.');
+  }
   const productName = pkg.productName || pkg.name || 'app';
   const staged = [];
   const matched = [];
