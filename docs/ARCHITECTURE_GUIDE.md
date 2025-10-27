@@ -1,8 +1,8 @@
 # VibeMD Architecture Guide
 
 **Application:** VibeMD
-**Version:** 1.0.11
-**Release Date:** 2025-10-26
+**Version:** 1.0.12
+**Release Date:** 2025-10-27
 **License:** MIT
 
 ## Overview
@@ -779,6 +779,6 @@ To add a new Tiptap extension:
 
 ---
 
-**Version:** 1.0.11
-**Release Date:** 2025-10-26
+**Version:** 1.0.12
+**Release Date:** 2025-10-27
 **License:** MIT

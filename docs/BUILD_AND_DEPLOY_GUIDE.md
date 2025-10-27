@@ -1,8 +1,8 @@
 # VibeMD Build and Deploy Guide
 
 **Application:** VibeMD
-**Version:** 1.0.11
-**Release Date:** 2025-10-26
+**Version:** 1.0.12
+**Release Date:** 2025-10-27
 **License:** MIT
 
 ## Overview
@@ -707,6 +707,6 @@ Before creating a new release:
 
 ---
 
-**Version:** 1.0.11
-**Release Date:** 2025-10-26
+**Version:** 1.0.12
+**Release Date:** 2025-10-27
 **License:** MIT
