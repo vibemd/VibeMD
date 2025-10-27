@@ -15,6 +15,7 @@
                     "make":  "electron-forge make",
                     "publish":  "electron-forge publish",
                     "lint":  "eslint --ext .ts,.tsx .",
+                    "test":  "node --test tests/navigationService.test.js",
                     "build:mac-arm64":  "node scripts/clean-build-output.js --platform macos --arch arm64 \u0026\u0026 electron-forge make --platform=darwin --arch=arm64 \u0026\u0026 node scripts/stage-release-assets.js --platform macos --arch arm64 --types dmg,zip",
                     "build:mac-x64":  "node scripts/clean-build-output.js --platform macos --arch x64 \u0026\u0026 electron-forge make --platform=darwin --arch=x64 \u0026\u0026 node scripts/stage-release-assets.js --platform macos --arch x64 --types dmg,zip",
                     "build:win-x64":  "node scripts/clean-build-output.js --platform windows --arch x64 \u0026\u0026 electron-forge make --platform=win32 --arch=x64 \u0026\u0026 node scripts/stage-release-assets.js --platform windows --arch x64 --types msi,zip",

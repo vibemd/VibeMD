@@ -96,6 +96,7 @@ export function PlainTextEditor() {
           fontFamily: '"Courier New", Courier, monospace',
           fontWeight: 'normal',
           textDecoration: 'none',
+          minHeight: '100%',
         },
         '.cm-line': {
           fontFamily: '"Courier New", Courier, monospace',
@@ -112,7 +113,9 @@ export function PlainTextEditor() {
         '.cm-scroller': {
           overflow: 'auto',
           maxHeight: '100%',
-          flexGrow: 1,
+          height: '100%',
+          minHeight: '100%',
+          flex: '1 1 auto',
         },
         '.cm-line span': {
           fontWeight: 'inherit',
@@ -177,6 +180,11 @@ export function PlainTextEditor() {
 
     viewRef.current = view;
     lastDocumentId.current = activeDocument?.id ?? null;
+    requestAnimationFrame(() => {
+      if (viewRef.current) {
+        viewRef.current.scrollDOM.scrollTop = 0;
+      }
+    });
 
     return () => {
       if (viewRef.current && lastDocumentId.current) {
@@ -244,7 +252,7 @@ export function PlainTextEditor() {
     <div className="flex-1 flex flex-col min-h-0">
       <div
         ref={editorContainerRef}
-        className="flex-1 min-h-0 rounded-md border border-border bg-background"
+        className="flex-1 min-h-0 rounded-md border border-border bg-background overflow-hidden"
       />
     </div>
   );

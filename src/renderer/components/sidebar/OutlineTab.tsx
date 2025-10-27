@@ -154,6 +154,8 @@ export function OutlineTab() {
             node.depth === 5 && 'ml-16',
             node.depth === 6 && 'ml-20'
           )}
+          data-testid={node.id ? `outline-item-${node.id}` : 'outline-item'}
+          data-heading-id={node.id ?? ''}
           onClick={() => handleHeadingClick(node)}
         >
           {hasChildren && (
