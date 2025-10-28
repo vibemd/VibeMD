@@ -1,27 +1,92 @@
 # Release Notes
 
+**Application:** VibeMD
+**Latest Version:** 1.0.16
+**Updated:** 2025-10-28
+**License:** MIT © 2025 ONLY1 Pty Ltd
+
+---
+
+## v1.0.16 — 2025-10-28
+
+### Highlights
+
+**Major Release:** Complete documentation review and refresh for v1.0.16 as baseline release
+
+- **Comprehensive Documentation Overhaul** — All docs rewritten from ground up to reflect current v1.0.16 architecture and features
+- **README.md Expansion** — Enhanced with feature details, technology stack, and development workflow
+- **User Guide** — Complete rewrite with installation steps, features reference, keyboard shortcuts, and troubleshooting
+- **Architecture Guide** — Detailed technical documentation with diagrams, process architecture, and extensibility patterns
+- **Build & Deploy Guide** — Step-by-step local build instructions, platform-specific guidance, and CI/CD pipeline documentation
+- **Build Strategy** — Comprehensive overview of GitHub Actions workflows, artifact management, and release processes
+- **Installation Security Guide** — OS-specific bypass instructions for unsigned installers with verification methods
+- **Plain Text Editor** — CodeMirror 6 integration with syntax highlighting and seamless WYSIWYG/Code toggle
+- **Autosave** — Cross-platform autosave with configurable intervals (default 5 minutes)
+- **Template System** — Pre-formatted `.vibe` file support for reusable document structures
+- **Settings Persistence** — Theme, editor, and file preferences saved across sessions
+- **File Associations** — Double-click markdown files to open in VibeMD
+
+### Included Builds
+
+| Platform | Architectures | Formats |
+|----------|---------------|---------|
+| Windows | x64, ARM64 | MSI, ZIP |
+| macOS | arm64, x64 | DMG, ZIP |
+| Linux | x64 | DEB, RPM |
+
+### Technical Improvements
+
+- **Electron 38.2.2** with Forge 7.10.2 for robust cross-platform builds
+- **React 19.2.0** with TypeScript 5.6.3 for type-safe UI
+- **Tiptap 3.7.1** WYSIWYG editor + **CodeMirror 6** markdown editor
+- **Zustand 5.0.8** state management for documents, settings, templates
+- **Tailwind CSS 3.4.18** with Radix UI components
+- **KaTeX** for mathematical formula support
+- **Full TypeScript** coverage across main, preload, and renderer processes
+- **Webpack 5** with source maps and CSS processing
+- **Electron Fuses** security hardening (ASAR validation, context isolation)
+
+### Breaking Changes
+
+None — v1.0.16 is the baseline release establishing current feature set.
+
+### Known Issues
+
+- Installers are **unsigned** — Expected security warnings on installation (see [INSTALLATION_SECURITY_WARNINGS.md](INSTALLATION_SECURITY_WARNINGS.md))
+- Code signing certificates not yet provisioned
+- Notification system not implemented
+- Syntax highlighting for code blocks is basic
+
+### Installation
+
+See [INSTALLATION_SECURITY_WARNINGS.md](INSTALLATION_SECURITY_WARNINGS.md) for OS-specific security warning resolution.
+
+> ⚠️ **Security Notice**
+> Installers and packages are currently **unsigned**. This is expected. VibeMD is safe, free of malware, and does not collect user data. See installation guide for bypass instructions.
+
+---
+
 ## v1.0.13 — 2025-10-28
 
-## Highlights
+### Highlights
 - Documented the mobile strategy experiment for upcoming tablet builds and shared prerequisites.
 - Updated the About dialog to list core editor dependencies including ProseMirror and CodeMirror.
 - Regenerated architecture and build guides to reflect the streamlined documentation workflow.
 
-## Included builds
+### Included Builds
+- **Windows x64:** MSI, ZIP
+- **Windows ARM64:** MSI, ZIP
 - **macOS arm64:** DMG, ZIP
 - **macOS x64:** DMG, ZIP
-- **Linux x64:** DEB
-- **Linux arm64:** DEB
+- **Linux x64:** DEB, RPM
 
-## Installation Notes
+### Installation Notes
 Installers remain unsigned. You may see security prompts:
-- Windows: click "More info" then "Run anyway".
-- macOS: Control-click the app and choose "Open".
-- Linux: use `--force-overwrite` if your package manager warns about unsigned packages.
+- **Windows:** Click "More info" then "Run anyway"
+- **macOS:** Control-click the app and choose "Open"
+- **Linux:** Use standard package manager installation
 
-Windows installers for this version are distributed separately once upstream build machines finish staging artifacts.
-
-> ⚠️ **Security notice**
+> ⚠️ **Security Notice**
 > Installers and packages are currently unsigned. Expect operating system prompts during installation until code signing certificates are issued.
 
 ## v1.0.12 — 2025-10-27
