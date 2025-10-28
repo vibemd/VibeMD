@@ -1,6 +1,6 @@
 # VibeMD installation - Resolving security warnings
 
-**Application:** VibeMD **Version:** 1.0.12 **Release Date:** 2025-10-27 **License:** MIT
+**Application:** VibeMD **Version:** 1.0.13 **Release Date:** 2025-10-28 **License:** MIT
 
 ## Overview
 

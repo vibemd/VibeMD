@@ -1,7 +1,30 @@
 # Release Notes
 
-## v1.0.12 — 2025-10-27
+## v1.0.13 — 2025-10-28
 
+## Highlights
+- Documented the mobile strategy experiment for upcoming tablet builds and shared prerequisites.
+- Updated the About dialog to list core editor dependencies including ProseMirror and CodeMirror.
+- Regenerated architecture and build guides to reflect the streamlined documentation workflow.
+
+## Included builds
+- **macOS arm64:** DMG, ZIP
+- **macOS x64:** DMG, ZIP
+- **Linux x64:** DEB
+- **Linux arm64:** DEB
+
+## Installation Notes
+Installers remain unsigned. You may see security prompts:
+- Windows: click "More info" then "Run anyway".
+- macOS: Control-click the app and choose "Open".
+- Linux: use `--force-overwrite` if your package manager warns about unsigned packages.
+
+Windows installers for this version are distributed separately once upstream build machines finish staging artifacts.
+
+> ⚠️ **Security notice**
+> Installers and packages are currently unsigned. Expect operating system prompts during installation until code signing certificates are issued.
+
+## v1.0.12 — 2025-10-27
 ## Highlights
 - Introduced plain text editing interface (CodeMirror 6) with toggle on/off in Settings
 - Plain text editor scroll thumb now starts at the top and preserves caret position when toggling views.
@@ -24,14 +47,12 @@ Installers are currently unsigned. You may see security prompts:
 - Linux: use `--force-overwrite` if your package manager warns about unsigned packages.
 
 Code signing and notarisation are planned for a future release.
-
 > ⚠️ **Security notice**
 > Installers and packages are currently unsigned. Expect operating system prompts during installation until code signing certificates are issued.
-
 # VibeMD Release Notes
 **Application:** VibeMD
-**Current Version:** 1.0.12
-**Release Date:** 2025-10-27
+**Current Version:** 1.0.13
+**Release Date:** 2025-10-28
 **License:** MIT
 ---
 ## v1.0.11 — 2025-10-26
@@ -219,6 +240,6 @@ When reporting issues, please include:
 ## License
 VibeMD is released under the MIT License. See [LICENSE](../LICENSE) for details.
 ---
-**Version:** 1.0.12
-**Release Date:** 2025-10-27
+**Version:** 1.0.13
+**Release Date:** 2025-10-28
 **Developed by:** ONLY1 Pty Ltd
