@@ -6,6 +6,7 @@ import { useDocumentStore } from '@/stores/documentStore';
 import { useTheme } from '@/hooks/useTheme';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useMenuService } from '@/services/menuService';
+import { useAutosave } from '@/hooks/useAutosave';
 import { Document } from '@shared/types';
 import './services/appService'; // Initialize app service
 import './styles/globals.css';
@@ -20,6 +21,7 @@ function App() {
 
   // Initialize menu service
   useMenuService();
+  useAutosave();
   useKeyboardShortcuts();
 
   useEffect(() => {
