@@ -23,7 +23,7 @@ export function AboutTab() {
     },
     {
       name: "TypeScript",
-      version: "4.5.4",
+      version: "5.6.3",
       license: "Apache-2.0",
       description: "JavaScript with syntax for types"
     },
@@ -44,6 +44,18 @@ export function AboutTab() {
       version: "3.7.1",
       license: "MIT",
       description: "The headless editor framework for web artisans (includes Starter Kit and extensions for Hard Break, Horizontal Rule, Image, Link, Subscript, Superscript, Table, Task List)"
+    },
+    {
+      name: "ProseMirror",
+      version: "3.7.1",
+      license: "MIT",
+      description: "Collaborative editing framework (via @tiptap/pm)"
+    },
+    {
+      name: "CodeMirror",
+      version: "6.x",
+      license: "MIT",
+      description: "Versatile text editor for the browser (includes commands, markdown language support, language utilities, state management, and view components)"
     },
     {
       name: "Zustand",
