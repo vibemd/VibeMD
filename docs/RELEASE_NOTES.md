@@ -1,9 +1,50 @@
 # Release Notes
 
 **Application:** VibeMD
-**Latest Version:** 1.0.16
-**Updated:** 2025-10-28
+**Latest Version:** 1.0.17
+**Updated:** 2025-01-10
 **License:** MIT © 2025 ONLY1 Pty Ltd
+
+---
+
+## v1.0.17 — 2025-01-10
+
+### Highlights
+
+**New Feature: Find and Replace**
+
+- **Find Functionality** — Search for text across your document with real-time highlighting
+- **Sidebar Integration** — Find bar integrated at the bottom of the sidebar for easy access
+- **Dynamic Match Counter** — Live indicator showing the number of search results found
+- **Navigation Arrows** — Previous/Next buttons to traverse through all matches
+- **Dual Editor Support** — Works seamlessly in both WYSIWYG (TipTap) and Plain Text (CodeMirror) editor modes
+- **Keyboard Shortcuts** — 
+  - `Cmd/Ctrl+F` to open the find bar
+  - `Escape` to close the find bar
+  - `Enter` to navigate to next match
+  - `Shift+Enter` to navigate to previous match
+- **Visual Feedback** — Active match is highlighted differently from other matches
+- **Accurate Text Selection** — Precise position calculation for ProseMirror document structure ensures correct highlighting in WYSIWYG mode
+
+### Technical Improvements
+
+- **Editor Service Abstraction** — New `findService.ts` provides editor-agnostic search interface
+- **Position Mapping** — Accurate conversion from flat text positions to ProseMirror document positions
+- **Real-time Search** — Debounced search updates as you type
+- **State Management** — Integrated with Zustand UI store for find query, matches, and navigation state
+
+### Included Builds
+
+| Platform | Architectures | Formats |
+|----------|---------------|---------|
+| Windows | x64, ARM64 | MSI, ZIP |
+| macOS | arm64, x64 | DMG, ZIP |
+| Linux | x64, ARM64 | DEB, RPM |
+
+### Known Issues
+
+- Replace functionality not yet implemented (find-only in this release)
+- Installers are **unsigned** — Expected security warnings on installation (see [INSTALLATION_SECURITY_WARNINGS.md](INSTALLATION_SECURITY_WARNINGS.md))
 
 ---
 
@@ -264,7 +305,7 @@ For maintainers preparing new releases:
 - Command palette for quick actions
 - Recent files quick access
 - Drag-and-drop image uploads with local storage
-- Find and replace functionality
+- Replace functionality for find and replace (find implemented in v1.0.17)
 ### Infrastructure
 **Code Signing:**
 - Apple Developer certificate for macOS
@@ -285,6 +326,8 @@ For maintainers preparing new releases:
 ## Version History Summary
 | Version | Release Date | Highlights |
 |---------|--------------|------------|
+| 1.0.17  | 2025-01-10   | Find and Replace functionality with dual editor support |
+| 1.0.16  | 2025-10-28   | Comprehensive documentation overhaul, baseline release |
 | 1.0.12  | 2025-10-27   | Plain text editor stability, outline navigation reliability, macOS keychain workaround |
 | 1.0.11  | 2025-10-26   | Dark mode improvements, enhanced shortcuts, build fixes |
 | 1.0.10  | 2025-10-24   | Multi-document editing, templates, comprehensive features |
