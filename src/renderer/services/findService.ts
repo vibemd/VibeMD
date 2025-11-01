@@ -104,6 +104,137 @@ class FindService {
   private getWysiwygInterface(): EditorSearchInterface {
     const editor = this.wysiwygEditor!.editor;
     
+    // Helper function to select a match (shared by scrollToMatch and selectMatch)
+    const selectMatchHelper = (match: FindMatch) => {
+      try {
+        // Use stored ProseMirror positions if available (from findMatches)
+        const proseFrom = (match as any).proseFrom;
+        const proseTo = (match as any).proseTo;
+        
+        let fromPos = proseFrom;
+        let toPos = proseTo;
+        
+        // Fallback: convert character positions if ProseMirror positions not available
+        if (fromPos === undefined || toPos === undefined || fromPos < 0 || toPos < 0) {
+          console.warn('[FindService] ProseMirror positions not available, using fallback conversion');
+          const { from, to } = match;
+          let charPos = 0;
+          fromPos = -1;
+          toPos = -1;
+          
+          editor.state.doc.descendants((node: any, nodePos: number) => {
+            if (fromPos >= 0 && toPos >= 0) return false;
+            
+            if (node.isText && node.text) {
+              const nodeLength = node.text.length;
+              const nodeStart = charPos;
+              const nodeEnd = charPos + nodeLength;
+              
+              if (fromPos < 0 && from >= nodeStart && from < nodeEnd) {
+                fromPos = nodePos + 1 + (from - nodeStart);
+              }
+              
+              if (toPos < 0 && to >= nodeStart && to <= nodeEnd) {
+                toPos = nodePos + 1 + (to - nodeStart);
+              }
+              
+              charPos = nodeEnd;
+            }
+            return true;
+          });
+        }
+        
+        if (fromPos >= 0 && toPos >= 0 && toPos >= fromPos) {
+          const docSize = editor.state.doc.content.size;
+          console.log('[FindService] Attempting selection:', { 
+            fromPos, 
+            toPos, 
+            docSize, 
+            inBounds: fromPos <= docSize && toPos <= docSize,
+            matchCharFrom: match.from,
+            matchCharTo: match.to,
+            proseFrom: proseFrom,
+            proseTo: proseTo
+          });
+          
+          if (fromPos <= docSize && toPos <= docSize) {
+            try {
+              // Ensure editor is focused first
+              editor.commands.focus();
+              
+              // TipTap setTextSelection accepts either a single number or { from, to } object
+              // Try using the chain API which might be more reliable
+              let result = false;
+              
+              // First try with object format
+              try {
+                result = editor.chain()
+                  .focus()
+                  .setTextSelection({ from: fromPos, to: toPos })
+                  .scrollIntoView()
+                  .run();
+              } catch (err1) {
+                console.log('[FindService] Object format failed, trying range format:', err1);
+                // Try alternative format
+                try {
+                  result = editor.chain()
+                    .focus()
+                    .setTextSelection(fromPos)
+                    .setTextSelection({ from: fromPos, to: toPos })
+                    .scrollIntoView()
+                    .run();
+                } catch (err2) {
+                  console.error('[FindService] Both formats failed:', err2);
+                }
+              }
+              
+              console.log('[FindService] Selection command result:', result, 'Current selection:', {
+                from: editor.state.selection.from,
+                to: editor.state.selection.to,
+                anchor: editor.state.selection.anchor,
+                head: editor.state.selection.head
+              });
+              
+              // Verify the selection was set
+              setTimeout(() => {
+                const currentFrom = editor.state.selection.from;
+                const currentTo = editor.state.selection.to;
+                if (Math.abs(currentFrom - fromPos) > 1 || Math.abs(currentTo - toPos) > 1) {
+                  const actualText = editor.state.doc.textBetween(currentFrom, currentTo);
+                  const expectedText = editor.state.doc.textBetween(fromPos, toPos);
+                  const docText = editor.state.doc.textContent;
+                  console.warn('[FindService] Selection mismatch:', {
+                    expected: { fromPos, toPos, text: expectedText },
+                    actual: { from: currentFrom, to: currentTo, text: actualText },
+                    matchFromStore: (match as any).expectedText || docText.substring(match.from, match.to)
+                  });
+                  
+                  // Try alternative approach using ProseMirror selection directly
+                  try {
+                    const { TextSelection } = require('@tiptap/pm/state');
+                    const selection = TextSelection.create(editor.state.doc, fromPos, toPos);
+                    const tr = editor.state.tr.setSelection(selection);
+                    editor.view.dispatch(tr);
+                    editor.commands.scrollIntoView();
+                  } catch (pmErr) {
+                    console.error('[FindService] ProseMirror fallback failed:', pmErr);
+                  }
+                }
+              }, 50);
+            } catch (err) {
+              console.error('[FindService] Error in selection command:', err);
+            }
+          } else {
+            console.warn('[FindService] Positions out of bounds:', { fromPos, toPos, docSize });
+          }
+        } else {
+          console.warn('[FindService] Invalid positions:', { fromPos, toPos, match });
+        }
+      } catch (e) {
+        console.error('[FindService] Error selecting match:', e, match);
+      }
+    };
+    
     return {
       findMatches: (query: string): FindMatch[] => {
         if (!query.trim()) return [];
@@ -113,7 +244,7 @@ class FindService {
         const textNodes: Array<{ pos: number; text: string; charStart: number }> = [];
         let charOffset = 0;
         
-        editor.state.doc.descendants((node, pos) => {
+        editor.state.doc.descendants((node: any, pos: number) => {
           if (node.isText && node.text) {
             // In ProseMirror descendants, 'pos' is the position BEFORE the node
             // Text content starts at pos+1
@@ -351,136 +482,11 @@ class FindService {
       
       scrollToMatch: (match: FindMatch) => {
         // For TipTap, scrollToMatch and selectMatch are the same
-        this.selectMatch(match);
+        selectMatchHelper(match);
       },
       
       selectMatch: (match: FindMatch) => {
-        try {
-          // Use stored ProseMirror positions if available (from findMatches)
-          const proseFrom = (match as any).proseFrom;
-          const proseTo = (match as any).proseTo;
-          
-          let fromPos = proseFrom;
-          let toPos = proseTo;
-          
-          // Fallback: convert character positions if ProseMirror positions not available
-          if (fromPos === undefined || toPos === undefined || fromPos < 0 || toPos < 0) {
-            console.warn('[FindService] ProseMirror positions not available, using fallback conversion');
-            const { from, to } = match;
-            let charPos = 0;
-            fromPos = -1;
-            toPos = -1;
-            
-            editor.state.doc.descendants((node, nodePos) => {
-              if (fromPos >= 0 && toPos >= 0) return false;
-              
-              if (node.isText && node.text) {
-                const nodeLength = node.text.length;
-                const nodeStart = charPos;
-                const nodeEnd = charPos + nodeLength;
-                
-                if (fromPos < 0 && from >= nodeStart && from < nodeEnd) {
-                  fromPos = nodePos + 1 + (from - nodeStart);
-                }
-                
-                if (toPos < 0 && to >= nodeStart && to <= nodeEnd) {
-                  toPos = nodePos + 1 + (to - nodeStart);
-                }
-                
-                charPos = nodeEnd;
-              }
-              return true;
-            });
-          }
-          
-          if (fromPos >= 0 && toPos >= 0 && toPos >= fromPos) {
-            const docSize = editor.state.doc.content.size;
-            console.log('[FindService] Attempting selection:', { 
-              fromPos, 
-              toPos, 
-              docSize, 
-              inBounds: fromPos <= docSize && toPos <= docSize,
-              matchCharFrom: match.from,
-              matchCharTo: match.to,
-              proseFrom: proseFrom,
-              proseTo: proseTo
-            });
-            
-            if (fromPos <= docSize && toPos <= docSize) {
-              try {
-                // Ensure editor is focused first
-                editor.commands.focus();
-                
-                // TipTap setTextSelection accepts either a single number or { from, to } object
-                // Try using the chain API which might be more reliable
-                let result = false;
-                
-                // First try with object format
-                try {
-                  result = editor.chain()
-                    .focus()
-                    .setTextSelection({ from: fromPos, to: toPos })
-                    .scrollIntoView()
-                    .run();
-                } catch (err1) {
-                  console.log('[FindService] Object format failed, trying range format:', err1);
-                  // Try alternative format
-                  try {
-                    result = editor.chain()
-                      .focus()
-                      .setTextSelection(fromPos)
-                      .setTextSelection({ from: fromPos, to: toPos })
-                      .scrollIntoView()
-                      .run();
-                  } catch (err2) {
-                    console.error('[FindService] Both formats failed:', err2);
-                  }
-                }
-                
-                console.log('[FindService] Selection command result:', result, 'Current selection:', {
-                  from: editor.state.selection.from,
-                  to: editor.state.selection.to,
-                  anchor: editor.state.selection.anchor,
-                  head: editor.state.selection.head
-                });
-                
-                // Verify the selection was set
-                setTimeout(() => {
-                  const currentFrom = editor.state.selection.from;
-                  const currentTo = editor.state.selection.to;
-                  if (Math.abs(currentFrom - fromPos) > 1 || Math.abs(currentTo - toPos) > 1) {
-                    const actualText = editor.state.doc.textBetween(currentFrom, currentTo);
-                    const expectedText = editor.state.doc.textBetween(fromPos, toPos);
-                    console.warn('[FindService] Selection mismatch:', {
-                      expected: { fromPos, toPos, text: expectedText },
-                      actual: { from: currentFrom, to: currentTo, text: actualText },
-                      matchFromStore: (match as any).expectedText || text.substring(match.from, match.to)
-                    });
-                    
-                    // Try alternative approach using ProseMirror selection directly
-                    try {
-                      const { TextSelection } = require('@tiptap/pm/state');
-                      const selection = TextSelection.create(editor.state.doc, fromPos, toPos);
-                      const tr = editor.state.tr.setSelection(selection);
-                      editor.view.dispatch(tr);
-                      editor.commands.scrollIntoView();
-                    } catch (pmErr) {
-                      console.error('[FindService] ProseMirror fallback failed:', pmErr);
-                    }
-                  }
-                }, 50);
-              } catch (err) {
-                console.error('[FindService] Error in selection command:', err);
-              }
-            } else {
-              console.warn('[FindService] Positions out of bounds:', { fromPos, toPos, docSize });
-            }
-          } else {
-            console.warn('[FindService] Invalid positions:', { fromPos, toPos, match });
-          }
-        } catch (e) {
-          console.error('[FindService] Error selecting match:', e, match);
-        }
+        selectMatchHelper(match);
       },
     };
   }
