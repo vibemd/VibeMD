@@ -11,13 +11,17 @@ import {
   rectangularSelection,
   crosshairCursor,
   lineNumbers,
+  Decoration,
+  ViewPlugin,
 } from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { indentOnInput, syntaxHighlighting, defaultHighlightStyle, bracketMatching } from '@codemirror/language';
 import { markdown } from '@codemirror/lang-markdown';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { useUIStore, FindMatch } from '@/stores/uiStore';
 import { editorService } from '@/services/editorService';
+import { findService } from '@/services/findService';
 
 export function PlainTextEditor() {
   const editorContainerRef = React.useRef<HTMLDivElement | null>(null);
@@ -33,6 +37,11 @@ export function PlainTextEditor() {
   const updateDocument = useDocumentStore((state) => state.updateDocument);
   const markAsModified = useDocumentStore((state) => state.markAsModified);
   const settings = useSettingsStore((state) => state.settings);
+  
+  // Find state
+  const findMatches = useUIStore((state) => state.findMatches);
+  const currentMatchIndex = useUIStore((state) => state.currentMatchIndex);
+  const findQuery = useUIStore((state) => state.findQuery);
 
   const updateDocumentRef = React.useRef(updateDocument);
   const markAsModifiedRef = React.useRef(markAsModified);
@@ -57,6 +66,53 @@ export function PlainTextEditor() {
     })
   );
 
+  // Search highlighting extension - recreated when matches or current index change
+  const searchHighlightPlugin = React.useMemo(() => {
+    const highlightMark = Decoration.mark({ class: 'cm-search-highlight' });
+    const activeHighlightMark = Decoration.mark({ class: 'cm-search-highlight cm-search-active' });
+
+    return ViewPlugin.fromClass(
+      class {
+        decorations: any;
+        private query: string;
+        private matches: FindMatch[];
+        private activeIndex: number;
+
+        constructor(view: EditorView) {
+          this.query = findQuery;
+          this.matches = findMatches;
+          this.activeIndex = currentMatchIndex;
+          this.decorations = this.buildDecorations();
+        }
+
+        update(update: any) {
+          // Always rebuild on any update - the plugin will be recreated when state changes
+          this.query = findQuery;
+          this.matches = findMatches;
+          this.activeIndex = currentMatchIndex;
+          this.decorations = this.buildDecorations();
+        }
+
+        buildDecorations() {
+          if (!this.query || this.matches.length === 0) {
+            return Decoration.none;
+          }
+
+          const decorations: Array<{ from: number; to: number; value: any }> = [];
+          this.matches.forEach((match, index) => {
+            const mark = index === this.activeIndex ? activeHighlightMark : highlightMark;
+            decorations.push(mark.range(match.from, match.to) as any);
+          });
+
+          return Decoration.set(decorations as any);
+        }
+      },
+      {
+        decorations: (v) => v.decorations,
+      }
+    );
+  }, [findMatches, currentMatchIndex, findQuery]);
+
   const buildExtensions = React.useCallback((): Extension[] => {
     const extensions: Extension[] = [
       highlightActiveLineGutter(),
@@ -79,6 +135,7 @@ export function PlainTextEditor() {
       ]),
       markdown(),
       EditorView.lineWrapping,
+      searchHighlightPlugin,
     ];
 
     extensions.push(
@@ -91,6 +148,15 @@ export function PlainTextEditor() {
           fontSize: `${settings.editor.fontSize}px`,
           backgroundColor: 'transparent',
           color: 'hsl(var(--foreground))',
+        },
+        '.cm-search-highlight': {
+          backgroundColor: 'hsl(var(--primary) / 0.3)',
+          borderRadius: '2px',
+        },
+        '.cm-search-highlight.cm-search-active': {
+          backgroundColor: 'hsl(var(--primary) / 0.5)',
+          outline: '2px solid hsl(var(--primary))',
+          outlineOffset: '-1px',
         },
         '.cm-content': {
           fontFamily: '"Courier New", Courier, monospace',
@@ -142,7 +208,7 @@ export function PlainTextEditor() {
     );
 
     return extensions;
-  }, [settings.editor.fontSize]);
+  }, [settings.editor.fontSize, searchHighlightPlugin]);
 
   const saveCurrentContent = React.useCallback(() => {
     const view = viewRef.current;
@@ -180,6 +246,10 @@ export function PlainTextEditor() {
 
     viewRef.current = view;
     lastDocumentId.current = activeDocument?.id ?? null;
+    
+    // Register with find service
+    findService.registerPlainTextEditor(view);
+    
     requestAnimationFrame(() => {
       if (viewRef.current) {
         viewRef.current.scrollDOM.scrollTop = 0;
@@ -190,6 +260,7 @@ export function PlainTextEditor() {
       if (viewRef.current && lastDocumentId.current) {
         saveCurrentContent();
       }
+      findService.unregisterPlainTextEditor();
       view.destroy();
       viewRef.current = null;
       lastDocumentId.current = null;

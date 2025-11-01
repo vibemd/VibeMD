@@ -4,6 +4,7 @@ import { PanelLeft, PanelRight } from 'lucide-react';
 import { FilesTab } from '@/components/sidebar/FilesTab';
 import { OutlineTab } from '@/components/sidebar/OutlineTab';
 import { TemplatesTab } from '@/components/sidebar/TemplatesTab';
+import { FindBar } from '@/components/sidebar/FindBar';
 import { useUIStore } from '@/stores/uiStore';
 import { 
   Tooltip, 
@@ -81,6 +82,8 @@ export function Sidebar() {
             <TemplatesTab />
           </TabsContent>
         </Tabs>
+        
+        <FindBar />
       </div>
     </TooltipProvider>
   );

@@ -23,7 +23,9 @@ import { Extension } from '@tiptap/core';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useNavigationStore } from '@/services/navigationService';
+import { useUIStore, FindMatch } from '@/stores/uiStore';
 import { editorService } from '@/services/editorService';
+import { findService } from '@/services/findService';
 import { marked } from 'marked';
 import TurndownService from 'turndown';
 import { LinkDialog } from '../dialogs/LinkDialog';
@@ -66,6 +68,11 @@ export function TipTapEditor() {
   const settings = useSettingsStore((state) => state.settings);
   const setScrollToHeadingHandler = useNavigationStore((state) => state.setScrollToHeadingHandler);
   const clearScrollToHeadingHandler = useNavigationStore((state) => state.clearScrollToHeadingHandler);
+  
+  // Find state
+  const findMatches = useUIStore((state) => state.findMatches);
+  const currentMatchIndex = useUIStore((state) => state.currentMatchIndex);
+  const findQuery = useUIStore((state) => state.findQuery);
 
   // Dialog state
   const [linkDialogOpen, setLinkDialogOpen] = React.useState(false);
@@ -902,6 +909,46 @@ export function TipTapEditor() {
       editor.off('transaction', updateToolbar);
     };
   }, [editor]);
+
+  // Register editor with find service
+  React.useEffect(() => {
+    if (editor) {
+      findService.registerWysiwygEditor(editor);
+      return () => {
+        findService.unregisterWysiwygEditor();
+      };
+    }
+  }, [editor]);
+
+  // Handle search match highlighting and navigation for TipTap
+  React.useEffect(() => {
+    if (!editor || !findQuery || findMatches.length === 0) {
+      // Clear highlights
+      const elements = editor?.view.dom.querySelectorAll('.tiptap-search-highlight');
+      elements?.forEach(el => {
+        el.classList.remove('tiptap-search-highlight', 'tiptap-search-active');
+      });
+      return;
+    }
+
+    // Get text content and find matches in the editor DOM
+    const editorDOM = editor.view.dom;
+    const textContent = editor.state.doc.textContent;
+    
+    // Clear previous highlights
+    const existingHighlights = editorDOM.querySelectorAll('.tiptap-search-highlight');
+    existingHighlights.forEach(el => {
+      el.classList.remove('tiptap-search-highlight', 'tiptap-search-active');
+    });
+
+    // Note: For TipTap, we'll highlight via CSS based on text content
+    // The actual highlighting will be handled by the findService when selecting matches
+    // For now, we just ensure the active match is scrolled into view
+    if (currentMatchIndex >= 0 && currentMatchIndex < findMatches.length) {
+      const match = findMatches[currentMatchIndex];
+      // The findService.selectMatch will handle scrolling
+    }
+  }, [editor, findQuery, findMatches, currentMatchIndex]);
 
   // Set up navigation handler for outline-to-editor navigation
   React.useEffect(() => {

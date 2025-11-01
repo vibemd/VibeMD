@@ -8,7 +8,7 @@ import { marked } from 'marked';
 export function useKeyboardShortcuts() {
   const { addDocument, getActiveDocument, updateDocument, markAsSaved } = 
     useDocumentStore();
-  const { toggleSettingsDialog } = useUIStore();
+  const { toggleSettingsDialog, showFindBar, findBarVisible, hideFindBar } = useUIStore();
 
   useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {
@@ -80,6 +80,16 @@ export function useKeyboardShortcuts() {
             }
             break;
           }
+          case 'f': {
+            event.preventDefault();
+            // Toggle find bar
+            if (findBarVisible) {
+              hideFindBar();
+            } else {
+              showFindBar();
+            }
+            break;
+          }
           case ',':
             event.preventDefault();
             toggleSettingsDialog();
@@ -120,7 +130,7 @@ export function useKeyboardShortcuts() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [addDocument, getActiveDocument, updateDocument, markAsSaved, toggleSettingsDialog]);
+  }, [addDocument, getActiveDocument, updateDocument, markAsSaved, toggleSettingsDialog, showFindBar, findBarVisible, hideFindBar]);
 }
 
 
