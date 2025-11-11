@@ -46,7 +46,7 @@ export const useUIStore = create<UIStore>((set, get) => ({
   findQuery: '',
   findMatches: [],
   currentMatchIndex: -1,
-  findBarVisible: false,
+  findBarVisible: true,
 
   setEditorMode: (mode) => set({ editorMode: mode }),
   setSidebarTab: (tab) => set({ sidebarTab: tab }),
