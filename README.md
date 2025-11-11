@@ -2,7 +2,7 @@
 
 A modern, cross-platform desktop markdown editor with rich WYSIWYG editing, plain text markdown mode, templates, and native OS integration.
 
-**Current Version:** 1.0.18 | **License:** MIT © 2025 ONLY1 Pty Ltd
+**Current Version:** 1.0.17 | **License:** MIT © 2025 ONLY1 Pty Ltd
 
 - Website: [https://vibemd.app](https://vibemd.app)
 - Issues: [https://github.com/vibemd/VibeMD/issues](https://github.com/vibemd/VibeMD/issues)

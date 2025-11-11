@@ -1,32 +1,9 @@
 # Release Notes
 
 **Application:** VibeMD
-**Latest Version:** 1.0.18
-**Updated:** 2025-01-11
+**Latest Version:** 1.0.17
+**Updated:** 2025-01-10
 **License:** MIT © 2025 ONLY1 Pty Ltd
-
----
-
-## v1.0.18 — 2025-01-11
-
-### Highlights
-
-**Improved User Experience: Find Bar Now Open by Default**
-
-- **Find Bar Visibility** — The search/find bar now opens by default when you launch VibeMD, making it immediately accessible for quick document searches
-- **User Control** — Users can still close the find bar using the close button or `Escape` key, maintaining full control over their workspace
-- **Seamless Integration** — The find bar remains integrated at the bottom of the sidebar for easy access
-- **Keyboard Toggle** — `Cmd/Ctrl+F` continues to toggle the find bar on/off
-
-### Technical Improvements
-
-- **Default State Update** — Modified `findBarVisible` default from `false` to `true` in UI store (uiStore.ts:49)
-- **No Breaking Changes** — All existing find functionality remains unchanged
-
-### Known Issues
-
-- Replace functionality not yet implemented (find-only)
-- Installers are **unsigned** — Expected security warnings on installation (see [INSTALLATION_SECURITY_WARNINGS.md](INSTALLATION_SECURITY_WARNINGS.md))
 
 ---
 
@@ -38,11 +15,12 @@
 
 - **Find Functionality** — Search for text across your document with real-time highlighting
 - **Sidebar Integration** — Find bar integrated at the bottom of the sidebar for easy access
+- **Default Open** — Find bar is open by default when you launch VibeMD for immediate accessibility (users can close it manually)
 - **Dynamic Match Counter** — Live indicator showing the number of search results found
 - **Navigation Arrows** — Previous/Next buttons to traverse through all matches
 - **Dual Editor Support** — Works seamlessly in both WYSIWYG (TipTap) and Plain Text (CodeMirror) editor modes
-- **Keyboard Shortcuts** — 
-  - `Cmd/Ctrl+F` to open the find bar
+- **Keyboard Shortcuts** —
+  - `Cmd/Ctrl+F` to toggle the find bar on/off
   - `Escape` to close the find bar
   - `Enter` to navigate to next match
   - `Shift+Enter` to navigate to previous match
@@ -55,6 +33,7 @@
 - **Position Mapping** — Accurate conversion from flat text positions to ProseMirror document positions
 - **Real-time Search** — Debounced search updates as you type
 - **State Management** — Integrated with Zustand UI store for find query, matches, and navigation state
+- **Default State** — Modified `findBarVisible` default from `false` to `true` in UI store (uiStore.ts:49) for improved accessibility
 
 ### Included Builds
 
@@ -349,8 +328,7 @@ For maintainers preparing new releases:
 ## Version History Summary
 | Version | Release Date | Highlights |
 |---------|--------------|------------|
-| 1.0.18  | 2025-01-11   | Find bar now open by default for improved accessibility |
-| 1.0.17  | 2025-01-10   | Find and Replace functionality with dual editor support |
+| 1.0.17  | 2025-01-10   | Find and Replace functionality with dual editor support, default-open find bar |
 | 1.0.16  | 2025-10-28   | Comprehensive documentation overhaul, baseline release |
 | 1.0.12  | 2025-10-27   | Plain text editor stability, outline navigation reliability, macOS keychain workaround |
 | 1.0.11  | 2025-10-26   | Dark mode improvements, enhanced shortcuts, build fixes |
