@@ -2,7 +2,7 @@
 
 A modern, cross-platform desktop markdown editor with rich WYSIWYG editing, plain text markdown mode, templates, and native OS integration.
 
-**Current Version:** 1.0.16 | **License:** MIT © 2025 ONLY1 Pty Ltd
+**Current Version:** 1.0.18 | **License:** MIT © 2025 ONLY1 Pty Ltd
 
 - Website: [https://vibemd.app](https://vibemd.app)
 - Issues: [https://github.com/vibemd/VibeMD/issues](https://github.com/vibemd/VibeMD/issues)
@@ -35,6 +35,7 @@ VibeMD is a feature-rich Electron-based markdown editor designed for creative an
 - Open last document on startup (configurable)
 - Support for `.md`, `.markdown`, and `.vibe` file formats
 - File association: Double-click to open markdown files
+- Find functionality: Search text across documents with real-time highlighting and match navigation (Ctrl/Cmd+F)
 
 **Template System**
 - Create reusable document templates

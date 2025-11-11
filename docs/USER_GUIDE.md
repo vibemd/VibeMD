@@ -1,8 +1,8 @@
 # VibeMD User Guide
 
 **Application:** VibeMD
-**Version:** 1.0.16
-**Updated:** 2025-10-28
+**Version:** 1.0.18
+**Updated:** 2025-01-11
 **License:** MIT © 2025 ONLY1 Pty Ltd
 
 ---
@@ -35,14 +35,14 @@ Download the latest release for your operating system from [GitHub Releases](htt
 
 #### Windows
 
-1. Download `VibeMD-1.0.16-x64.msi` or `VibeMD-win32-x64-1.0.16.zip`
+1. Download `VibeMD-1.0.18-x64.msi` or `VibeMD-win32-x64-1.0.18.zip`
 2. **MSI:** Double-click to run. Windows SmartScreen may warn "Unknown Publisher"—click **"More info" → "Run anyway"**
 3. **ZIP:** Extract to a folder and run `VibeMD.exe`
 4. Launch VibeMD from the Start Menu or desktop shortcut
 
 #### macOS
 
-1. Download `VibeMD-1.0.16-x64.dmg` or `VibeMD-darwin-x64-1.0.16.zip`
+1. Download `VibeMD-1.0.18-x64.dmg` or `VibeMD-darwin-x64-1.0.18.zip`
 2. **DMG:** Double-click to mount, then drag `VibeMD` to the Applications folder
 3. **ZIP:** Extract and move `VibeMD.app` to Applications
 4. **First Launch:** Control-click (right-click) the app → **"Open"** to bypass Gatekeeper
@@ -51,7 +51,7 @@ Download the latest release for your operating system from [GitHub Releases](htt
 #### Linux (Ubuntu/Debian)
 
 ```bash
-sudo dpkg -i vibemd_1.0.16_amd64.deb
+sudo dpkg -i vibemd_1.0.18_amd64.deb
 ```
 
 Or use your package manager (GNOME Software, KDE Discover, etc.)
@@ -59,7 +59,7 @@ Or use your package manager (GNOME Software, KDE Discover, etc.)
 #### Linux (Fedora/RHEL/CentOS)
 
 ```bash
-sudo rpm -i vibemd-1.0.16-1.x86_64.rpm
+sudo rpm -i vibemd-1.0.18-1.x86_64.rpm
 ```
 
 > For detailed security warning resolution, see [Installation & Security Warnings](INSTALLATION_SECURITY_WARNINGS.md)
@@ -196,6 +196,32 @@ Select text and use the alignment buttons in the toolbar:
 
 Insert a visual separator with the HR button in the toolbar.
 
+### Find & Search
+
+The find feature (introduced in v1.0.17, default-open since v1.0.18) lets you search for text across your document:
+
+**Opening the Find Bar:**
+- Press `Ctrl+F` (Windows/Linux) or `Cmd+F` (macOS)
+- The find bar appears at the bottom of the sidebar
+- As of v1.0.18, the find bar is open by default when you launch VibeMD
+
+**Using Find:**
+1. Type your search query in the "Find in document..." input field
+2. Matching text is highlighted in real-time as you type
+3. The match counter shows "X of Y" results (e.g., "1 of 5")
+4. Use the **Next** (↓) button or press `Enter` to jump to the next match
+5. Use the **Previous** (↑) button or press `Shift+Enter` to jump to the previous match
+6. The currently selected match is highlighted differently from other matches
+7. Click the **X** button to clear your search query
+8. Press `Escape` or click the close button to hide the find bar
+
+**Editor Support:**
+- Works in both WYSIWYG (Tiptap) and Plain Text (CodeMirror) editor modes
+- Automatically switches to the correct editor when navigating matches
+- Search results are accurately positioned even in complex document structures
+
+**Note:** Replace functionality is planned for a future release.
+
 ---
 
 ## Settings & Customization
@@ -305,6 +331,15 @@ The **Templates** sidebar tab shows all available templates:
 | Settings | `Ctrl+,` | `Cmd+,` |
 | Toggle Sidebar | `Ctrl+B` | `Cmd+B` |
 | Toggle Dark Mode | (via Settings) | (via Settings) |
+
+### Find & Search
+
+| Action | Windows/Linux | macOS |
+|--------|---------------|-------|
+| Toggle Find Bar | `Ctrl+F` | `Cmd+F` |
+| Next Match | `Enter` | `Enter` |
+| Previous Match | `Shift+Enter` | `Shift+Enter` |
+| Close Find Bar | `Escape` | `Escape` |
 
 ---
 

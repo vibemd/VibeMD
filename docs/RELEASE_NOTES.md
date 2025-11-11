@@ -1,9 +1,32 @@
 # Release Notes
 
 **Application:** VibeMD
-**Latest Version:** 1.0.17
-**Updated:** 2025-01-10
+**Latest Version:** 1.0.18
+**Updated:** 2025-01-11
 **License:** MIT © 2025 ONLY1 Pty Ltd
+
+---
+
+## v1.0.18 — 2025-01-11
+
+### Highlights
+
+**Improved User Experience: Find Bar Now Open by Default**
+
+- **Find Bar Visibility** — The search/find bar now opens by default when you launch VibeMD, making it immediately accessible for quick document searches
+- **User Control** — Users can still close the find bar using the close button or `Escape` key, maintaining full control over their workspace
+- **Seamless Integration** — The find bar remains integrated at the bottom of the sidebar for easy access
+- **Keyboard Toggle** — `Cmd/Ctrl+F` continues to toggle the find bar on/off
+
+### Technical Improvements
+
+- **Default State Update** — Modified `findBarVisible` default from `false` to `true` in UI store (uiStore.ts:49)
+- **No Breaking Changes** — All existing find functionality remains unchanged
+
+### Known Issues
+
+- Replace functionality not yet implemented (find-only)
+- Installers are **unsigned** — Expected security warnings on installation (see [INSTALLATION_SECURITY_WARNINGS.md](INSTALLATION_SECURITY_WARNINGS.md))
 
 ---
 
@@ -326,6 +349,7 @@ For maintainers preparing new releases:
 ## Version History Summary
 | Version | Release Date | Highlights |
 |---------|--------------|------------|
+| 1.0.18  | 2025-01-11   | Find bar now open by default for improved accessibility |
 | 1.0.17  | 2025-01-10   | Find and Replace functionality with dual editor support |
 | 1.0.16  | 2025-10-28   | Comprehensive documentation overhaul, baseline release |
 | 1.0.12  | 2025-10-27   | Plain text editor stability, outline navigation reliability, macOS keychain workaround |
